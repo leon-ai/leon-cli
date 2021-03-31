@@ -1,0 +1,27 @@
+name: 'Lint'
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  lint:
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: 'actions/checkout@v2'
+
+      - name: 'Cache node_modules'
+        uses: 'actions/cache@v2'
+        with:
+          path: 'node_modules'
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+
+      - name: 'Install'
+        run: 'npm ci'
+
+      - name: 'Run linter'
+        run: npm run lint
