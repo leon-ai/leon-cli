@@ -36,6 +36,9 @@
   "jest": {
     "testEnvironment": "node"
   },
+  "standard": {
+    "envs": ["node", "jest"]
+  },
   "scripts": {
     "lint": "standard",
     "test": "jest"

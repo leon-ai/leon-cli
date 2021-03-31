@@ -1,11 +1,12 @@
-const { Command, Option } = require('clipanion')
+const { Command } = require('clipanion')
 
 class CreateBirthCommand extends Command {
-  static paths = [[`create`, `birth`]]
-
-  async execute() {
-    this.context.stdout.write('Hello leon!\n')
+  async execute () {
+    console.log('Hello leon!')
+    return 0
   }
 }
+
+CreateBirthCommand.paths = [['create', 'birth']]
 
 module.exports = CreateBirthCommand
