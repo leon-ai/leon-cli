@@ -23,5 +23,5 @@ jobs:
       - name: 'Install'
         run: 'npm ci'
 
-      - name: 'Run linter'
+      - name: 'Run Tests'
         run: 'npm run test'
