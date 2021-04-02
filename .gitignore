@@ -4,6 +4,12 @@
 node_modules
 .npm
 
+# production
+build
+
+# testing
+coverage
+
 # debug
 npm-debug.log*
 
