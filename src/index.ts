@@ -7,7 +7,7 @@ import { getPackageJSON } from './utils/getPackageJSON'
 
 const [, , ...args] = process.argv
 
-async function main() {
+async function main (): Promise<void> {
   const packageJSON = await getPackageJSON()
   const cli = new Cli({
     binaryLabel: 'leon',
