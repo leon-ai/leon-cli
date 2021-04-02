@@ -1,6 +1,6 @@
-const { Cli } = require('clipanion')
+import { Cli } from 'clipanion'
 
-const CreateBirthCommand = require('../birth')
+import { CreateBirthCommand } from '../birth'
 
 const cli = new Cli()
 cli.register(CreateBirthCommand)
@@ -13,7 +13,7 @@ describe('leon create birth', () => {
 
   it('should succeed', async () => {
     console.log = jest.fn()
-    const exitCode = await cli.run(['create', 'birth'])
+    const exitCode = await cli.run(['create', 'birth'], Cli.defaultContext)
     expect(console.log).toHaveBeenCalled()
     expect(exitCode).toEqual(0)
     jest.clearAllMocks()

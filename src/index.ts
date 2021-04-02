@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-const chalk = require('chalk')
-const { Builtins, Cli } = require('clipanion')
+import chalk from 'chalk'
+import { Builtins, Cli } from 'clipanion'
 
-const packageJSON = require('./package.json')
-const CreateBirthCommand = require('./commands/create/birth')
+import { CreateBirthCommand } from './commands/create/birth'
+import { getPackageJSON } from './utils/getPackageJSON'
 
 const [, , ...args] = process.argv
 
-async function main () {
+async function main (): Promise<void> {
+  const packageJSON = await getPackageJSON()
   const cli = new Cli({
     binaryLabel: 'leon',
     binaryName: 'leon',

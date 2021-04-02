@@ -1,6 +1,7 @@
 <h1 align="center">Leon Command Line Interface (CLI)</h1>
 
 <p align="center">
+  <a href="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml/badge.svg" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/tests.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/tests.yml/badge.svg" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml/badge.svg" /></a>
 </p>
@@ -10,7 +11,7 @@
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 14
-- [npm](https://npmjs.com/) >= 7
+- [npm](https://npmjs.com/) >= 5
 
 ### Installation
 
