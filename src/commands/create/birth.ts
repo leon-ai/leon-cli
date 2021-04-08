@@ -14,15 +14,20 @@ export class CreateBirthCommand extends Command {
 
   async getZip (url: string): Promise<IncomingMessage> {
     return await new Promise((resolve, reject) => {
-      https.get(url, (response: IncomingMessage) => {
-        resolve(response)
-      }).on('error', (error: Error) => {
-        reject(error)
-      })
+      https
+        .get(url, (response: IncomingMessage) => {
+          resolve(response)
+        })
+        .on('error', (error: Error) => {
+          reject(error)
+        })
     })
   }
 
-  async unzipPyenv (streamZip: IncomingMessage, destination: string): Promise<void> {
+  async unzipPyenv (
+    streamZip: IncomingMessage,
+    destination: string
+  ): Promise<void> {
     return await new Promise((resolve, reject) => {
       const unzipLoader = ora('Unzipping Pyenv').start()
 
@@ -32,7 +37,10 @@ export class CreateBirthCommand extends Command {
           if (entry.type === 'Directory') return entry.autodrain()
 
           // all files are contained into a main folder, pyenv-windows only requires the files within
-          const filePath = path.join(destination, entry.path.replace('pyenv-win-master/', ''))
+          const filePath = path.join(
+            destination,
+            entry.path.replace('pyenv-win-master/', '')
+          )
 
           // directories doesn't exists yet, recursive creation ensures that the structure is correct
           fs.mkdirSync(path.dirname(filePath), { recursive: true })
@@ -58,16 +66,22 @@ export class CreateBirthCommand extends Command {
     const source = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
     const destination = `${os.homedir()}\\.pyenv\\`
 
-    const pyenvZip = await this.getZip(source)
-      .catch(() => {
-        downloadLoader.stop()
-      })
+    const pyenvZip = await this.getZip(source).catch(() => {
+      downloadLoader.stop()
+    })
 
-    if (pyenvZip == null) return -1
+    if (pyenvZip == null) {
+      return -1
+    }
 
-    if (pyenvZip.statusCode && (pyenvZip.statusCode < 200 || pyenvZip.statusCode > 299)) {
+    if (
+      pyenvZip.statusCode != null &&
+      (pyenvZip.statusCode < 200 || pyenvZip.statusCode > 299)
+    ) {
       downloadLoader.fail()
-      console.log(`Error ${pyenvZip.statusCode}` + ' while downloading Pyenv for Windows')
+      console.log(
+        `Error ${pyenvZip.statusCode}` + ' while downloading Pyenv for Windows'
+      )
       return -1
     }
 
@@ -79,7 +93,11 @@ export class CreateBirthCommand extends Command {
 
     try {
       await execa(`setx PYENV ${destination}pyenv-win\\`)
-      await execa(`setx path "${process.env.PATH};${destination}pyenv-win\\bin;${destination}pyenv-win\\shims`)
+      await execa(
+        `setx path "${
+          process.env.PATH ?? ''
+        };${destination}pyenv-win\\bin;${destination}pyenv-win\\shims`
+      )
       varEnvLoader.succeed()
     } catch {
       varEnvLoader.fail()
