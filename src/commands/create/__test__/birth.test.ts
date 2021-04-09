@@ -12,9 +12,7 @@ describe('leon create birth', () => {
   })
 
   it('should succeed', async () => {
-    console.log = jest.fn()
     const exitCode = await cli.run(['create', 'birth'], Cli.defaultContext)
-    expect(console.log).toHaveBeenCalled()
     expect(exitCode).toEqual(0)
     jest.clearAllMocks()
   })

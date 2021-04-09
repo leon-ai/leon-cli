@@ -1,93 +1,55 @@
-import fs from 'fs'
-import https from 'https'
-import { IncomingMessage } from 'http'
 import os from 'os'
 import path from 'path'
 
+import AdmZip from 'adm-zip'
+import axios from 'axios'
 import { Command } from 'clipanion'
 import execa from 'execa'
+import { log } from '../../utils/log'
 import ora from 'ora'
-import unzipper, { Entry } from 'unzipper'
+import { PYENV_WINDOWS_URL } from '../../utils/constants'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
 
-  async getAsync (url: string): Promise<IncomingMessage> {
-    return await new Promise((resolve, reject) => {
-      https
-        .get(url, (response: IncomingMessage) => {
-          resolve(response)
-        })
-        .on('error', (error: Error) => {
-          reject(error)
-        })
-    })
-  }
-
-  async downloadPyenvWindows (url: string): Promise<IncomingMessage | undefined> {
+  async downloadPyenvWindowsZip (url: string): Promise<AdmZip> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
 
-    const pyenvZip = await this.getAsync(url).catch(() => {
-      downloadLoader.stop()
-    })
-
-    if (pyenvZip == null) {
-      return
-    }
-
-    if (
-      pyenvZip.statusCode != null &&
-      (pyenvZip.statusCode < 200 || pyenvZip.statusCode > 299)
-    ) {
+    try {
+      const body = await axios.get(url, {
+        responseType: 'arraybuffer'
+      })
+      downloadLoader.succeed()
+      return new AdmZip(body.data)
+    } catch (error) {
       downloadLoader.fail()
-      console.log(
-        `Error ${pyenvZip.statusCode}` + ' while downloading Pyenv for Windows'
-      )
-      return
+      throw new Error(`Could not download Pyenv Windows zip located at ${url} - ${error.message as string}`)
     }
-
-    downloadLoader.succeed()
-
-    return pyenvZip
   }
 
-  async unzipPyenv (
-    streamZip: IncomingMessage,
-    destination: string
-  ): Promise<void> {
-    return await new Promise((resolve, reject) => {
-      const unzipLoader = ora('Unzipping Pyenv').start()
+  async extractPyenvWindowsZip (zip: AdmZip, destination: string): Promise<void> {
+    const extractLoader = ora('Extracting Pyenv zip').start()
 
-      streamZip
-        .pipe(unzipper.Parse())
-        .on('entry', (entry: Entry) => {
-          if (entry.type === 'Directory') return entry.autodrain()
+    try {
+      zip.getEntries().forEach(entry => {
+        const filePath = path.join(
+          destination,
+          entry.entryName.replace('pyenv-win-master/', '')
+        )
 
-          // all files are contained into a main folder, pyenv-windows only requires the files within
-          const filePath = path.join(
-            destination,
-            entry.path.replace('pyenv-win-master/', '')
-          )
+        if (!entry.isDirectory) {
+          zip.extractEntryTo(entry.entryName, path.dirname(filePath), false, true)
+        }
+      })
 
-          // directories doesn't exists yet, recursive creation ensures that the structure is correct
-          fs.mkdirSync(path.dirname(filePath), { recursive: true })
-
-          entry.pipe(fs.createWriteStream(filePath))
-        })
-        .on('error', (err) => {
-          unzipLoader.fail()
-          console.log('Error while unzipping Pyenv for Windows')
-          console.log(err)
-          reject(err)
-        })
-        .on('close', () => {
-          unzipLoader.succeed()
-          resolve()
-        })
-    })
+      extractLoader.succeed()
+    } catch (error) {
+      extractLoader.fail()
+      throw new Error(`Could not extract Pyenv Windows zip - ${error.message as string}`)
+    }
   }
 
-  async registerPyenvEnv (pyenvPath: string): Promise<void> {
+  async registerPyenvInPath (pyenvPath: string): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
 
     try {
@@ -98,30 +60,27 @@ export class CreateBirthCommand extends Command {
         };${pyenvPath}pyenv-win\\bin;${pyenvPath}pyenv-win\\shims`
       )
       varEnvLoader.succeed()
-    } catch {
+    } catch (error) {
       varEnvLoader.fail()
+      throw new Error(`Impossible to register Pyenv environment variables - ${error.message as string}`)
     }
   }
 
-  async installPyenvWindows (): Promise<number> {
-    const source = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
+  async installPyenvWindows (): Promise<void> {
     const destination = `${os.homedir()}\\.pyenv\\`
 
-    const pyenvZip = await this.downloadPyenvWindows(source)
-
-    if (pyenvZip == null) {
-      return -1
-    }
-
-    await this.unzipPyenv(pyenvZip, destination)
-
-    await this.registerPyenvEnv(destination)
-
-    return 0
+    const zip = await this.downloadPyenvWindowsZip(PYENV_WINDOWS_URL)
+    await this.extractPyenvWindowsZip(zip, destination)
+    await this.registerPyenvInPath(destination)
   }
 
   async execute (): Promise<number> {
-    await this.installPyenvWindows()
+    try {
+      await this.installPyenvWindows()
+    } catch (error) {
+      log.error(error.message as string)
+      console.error('For further informations, look at the log file')
+    }
 
     return 0
   }
