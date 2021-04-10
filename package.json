@@ -61,7 +61,7 @@
   "scripts": {
     "build": "rimraf ./build && tsc",
     "develop": "tsc --watch",
-    "lint": "ts-standard --fix",
+    "lint": "ts-standard",
     "test": "jest"
   },
   "dependencies": {
