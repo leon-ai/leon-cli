@@ -78,8 +78,7 @@ export class CreateBirthCommand extends Command {
     try {
       await this.installPyenvWindows()
     } catch (error) {
-      log.error(error.message as string)
-      console.error('For further informations, look at the log file')
+      await log.error(error.message)
     }
 
     return 0
