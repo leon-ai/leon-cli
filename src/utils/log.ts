@@ -1,20 +1,23 @@
-import fs from 'fs'
+import * as fsWithCallbacks from 'fs'
+
+const fs = fsWithCallbacks.promises
+
+export const isExistingFile = async (path: string): Promise<boolean> => {
+  try {
+    await fs.access(path, fsWithCallbacks.constants.F_OK)
+    return true
+  } catch {
+    return false
+  }
+}
 
 export const log = {
   path: `${__dirname}/../../logs/errors.log`,
-
-  error (value: string): void {
-    const errMessage = 'Not able to log the error'
+  async error (value: string): Promise<void> {
     const data = `[${new Date().toString()}] ${value}`
-
-    if (!fs.existsSync(this.path)) {
-      fs.writeFile(this.path, data, { flag: 'w' }, (err) => {
-        if (err != null) console.warn(errMessage, err)
-      })
-    } else {
-      fs.appendFile(this.path, `\n${data}`, (err) => {
-        if (err != null) console.warn(errMessage, err)
-      })
+    if (await isExistingFile(this.path)) {
+      return await fs.appendFile(this. path, `\n${data}`)
     }
+    return await fs.writeFile(this.path, data, { flag: 'w' })
   }
 }
