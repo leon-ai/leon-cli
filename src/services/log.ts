@@ -1,18 +1,13 @@
 import * as fsWithCallbacks from 'fs'
+import path from 'path'
+
+import { isExistingFile } from '../utils/isExistingFile'
 
 const fs = fsWithCallbacks.promises
 
-export const isExistingFile = async (path: string): Promise<boolean> => {
-  try {
-    await fs.access(path, fsWithCallbacks.constants.F_OK)
-    return true
-  } catch {
-    return false
-  }
-}
+class Log {
+  public path = path.join(__dirname, '..', '..', 'logs', 'errors.log')
 
-export const log = {
-  path: `${__dirname}/../../logs/errors.log`,
   async error (value: string): Promise<void> {
     console.error('For further informations, look at the log file')
     const data = `[${new Date().toString()}] ${value}`
@@ -22,3 +17,5 @@ export const log = {
     return await fs.writeFile(this.path, data, { flag: 'w' })
   }
 }
+
+export const log = new Log()
