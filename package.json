@@ -60,6 +60,7 @@
   },
   "scripts": {
     "build": "rimraf ./build && tsc",
+    "start": "node build/index.js",
     "develop": "tsc --watch",
     "lint": "ts-standard",
     "test": "jest"
@@ -70,6 +71,7 @@
     "chalk": "4.1.1",
     "clipanion": "3.0.0-rc.11",
     "execa": "5.0.0",
+    "extract-zip": "2.0.1",
     "ora": "5.4.0"
   },
   "devDependencies": {

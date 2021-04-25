@@ -6,14 +6,14 @@ import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
 
-class InstallPyenv {
-  public PYENV_WINDOWS_URL =
+export class InstallPyenv {
+  static PYENV_WINDOWS_URL =
   'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
-  async downloadPyenvWindowsZip (): Promise<AdmZip> {
+  private async downloadWindowsZip (): Promise<AdmZip> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
     try {
-      const body = await axios.get(this.PYENV_WINDOWS_URL, {
+      const body = await axios.get(InstallPyenv.PYENV_WINDOWS_URL, {
         responseType: 'arraybuffer'
       })
       downloadLoader.succeed()
@@ -22,13 +22,13 @@ class InstallPyenv {
       downloadLoader.fail()
       throw new Error(
         `Could not download Pyenv Windows zip located at ${
-          this.PYENV_WINDOWS_URL
+          InstallPyenv.PYENV_WINDOWS_URL
         } - ${error.message as string}`
       )
     }
   }
 
-  async extractPyenvWindowsZip (
+  private async extractWindowsZip (
     zip: AdmZip,
     destination: string
   ): Promise<void> {
@@ -57,7 +57,7 @@ class InstallPyenv {
     }
   }
 
-  async registerPyenvInPath (pyenvPath: string): Promise<void> {
+  private async registerInPath (pyenvPath: string): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
       await execa(`setx PYENV ${pyenvPath}pyenv-win\\`)
@@ -76,13 +76,11 @@ class InstallPyenv {
       )
     }
   }
-}
 
-export const installPyenv = new InstallPyenv()
-
-export const installPyenvWindows = async (): Promise<void> => {
-  const destination = path.join(os.homedir(), '.pyenv')
-  const zip = await installPyenv.downloadPyenvWindowsZip()
-  await installPyenv.extractPyenvWindowsZip(zip, destination)
-  await installPyenv.registerPyenvInPath(destination)
+  public async installWindows (): Promise<void> {
+    const destination = path.join(os.homedir(), '.pyenv')
+    const zip = await this.downloadWindowsZip()
+    await this.extractWindowsZip(zip, destination)
+    await this.registerInPath(destination)
+  }
 }

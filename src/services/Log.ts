@@ -5,10 +5,10 @@ import { isExistingFile } from '../utils/isExistingFile'
 
 const fs = fsWithCallbacks.promises
 
-class Log {
+export class Log {
   public path = path.join(__dirname, '..', '..', 'logs', 'errors.log')
 
-  async error (value: string): Promise<void> {
+  public async error (value: string): Promise<void> {
     console.error('For further informations, look at the log file')
     const data = `[${new Date().toString()}] ${value}`
     if (await isExistingFile(this.path)) {
@@ -17,5 +17,3 @@ class Log {
     return await fs.writeFile(this.path, data, { flag: 'w' })
   }
 }
-
-export const log = new Log()
