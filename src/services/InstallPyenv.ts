@@ -5,12 +5,13 @@ import AdmZip from 'adm-zip'
 import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
+import { log } from './Log'
 
 export class InstallPyenv {
   static PYENV_WINDOWS_URL =
   'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
-  public async downloadWindowsZip (): Promise<AdmZip> {
+  public async downloadWindowsZip (): Promise<AdmZip | undefined> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
     try {
       const body = await axios.get(InstallPyenv.PYENV_WINDOWS_URL, {
@@ -20,11 +21,11 @@ export class InstallPyenv {
       return new AdmZip(body.data)
     } catch (error) {
       downloadLoader.fail()
-      throw new Error(
-        `Could not download Pyenv Windows zip located at ${
-          InstallPyenv.PYENV_WINDOWS_URL
-        } - ${error.message as string}`
-      )
+      await log.error({
+        stderr: `Could not download Pyenv Windows zip located at ${InstallPyenv.PYENV_WINDOWS_URL}`,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
     }
   }
 
@@ -51,9 +52,11 @@ export class InstallPyenv {
       extractLoader.succeed()
     } catch (error) {
       extractLoader.fail()
-      throw new Error(
-        `Could not extract Pyenv Windows zip - ${error.message as string}`
-      )
+      await log.error({
+        stderr: 'Could not extract Pyenv Windows zip',
+        commandPath: 'create birth',
+        value: error.toString()
+      })
     }
   }
 
@@ -69,18 +72,20 @@ export class InstallPyenv {
       varEnvLoader.succeed()
     } catch (error) {
       varEnvLoader.fail()
-      throw new Error(
-        `Impossible to register Pyenv environment variables - ${
-          error.message as string
-        }`
-      )
+      await log.error({
+        stderr: 'Impossible to register Pyenv environment variables',
+        commandPath: 'create birth',
+        value: error.toString()
+      })
     }
   }
 
   public async installWindows (): Promise<void> {
     const destination = path.join(os.homedir(), '.pyenv')
     const zip = await this.downloadWindowsZip()
-    await this.extractWindowsZip(zip, destination)
-    await this.registerInPath(destination)
+    if (zip != null) {
+      await this.extractWindowsZip(zip, destination)
+      await this.registerInPath(destination)
+    }
   }
 }

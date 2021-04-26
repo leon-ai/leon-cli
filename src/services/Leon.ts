@@ -50,18 +50,27 @@ export class Leon implements LeonOptions {
       downloadLoader.succeed()
     } catch (error) {
       downloadLoader.fail()
-      throw new Error(
-        `Could not download Leon source code located at ${source} - ${
-          error.message as string
-        }`
-      )
+      await log.error({
+        stderr: `Could not download Leon source code located at ${source}`,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
     }
   }
 
   public async extractZip (source: string, target: string): Promise<void> {
     const extractLoader = ora('Extracting Leon').start()
-    await extractZip(source, { dir: target })
-    extractLoader.succeed()
+    try {
+      await extractZip(source, { dir: target })
+      extractLoader.succeed()
+    } catch (error) {
+      extractLoader.fail()
+      await log.error({
+        stderr: `Could not extract Leon source code located at ${source}`,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
+    }
   }
 
   public getSourceCodeInformation (): {
@@ -86,7 +95,12 @@ export class Leon implements LeonOptions {
 
   public async install (): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
-      return await log.error(`${path.resolve(this.birthPath)} already exists, please provide another path.`)
+      return await log.error({
+        stderr: `${path.resolve(
+          this.birthPath
+        )} already exists, please provide another path.`,
+        commandPath: 'create birth'
+      })
     }
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)

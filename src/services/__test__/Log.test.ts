@@ -5,7 +5,7 @@ import { log } from '../Log'
 const fs = fsWithCallbacks.promises
 
 describe('services/Log - error', () => {
-  const errorData = 'Error happened'
+  const stderr = 'Error occured'
 
   beforeEach(async () => {
     console.error = jest.fn()
@@ -20,10 +20,10 @@ describe('services/Log - error', () => {
     fsMock({
       [log.path]: {}
     })
-    await log.error(errorData)
+    await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
     const fileContent = await fs.readFile(log.errorPath, { encoding: 'utf-8' })
-    expect(fileContent.includes(errorData)).toBeTruthy()
+    expect(fileContent.includes(stderr)).toBeTruthy()
   })
 
   it('should append to file the error data', async () => {
@@ -32,9 +32,9 @@ describe('services/Log - error', () => {
     })
     let fileContent = await fs.readFile(log.errorPath, { encoding: 'utf-8' })
     expect(fileContent.length).toEqual(0)
-    await log.error(errorData)
+    await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
     fileContent = await fs.readFile(log.errorPath, { encoding: 'utf-8' })
-    expect(fileContent.includes(errorData)).toBeTruthy()
+    expect(fileContent.includes(stderr)).toBeTruthy()
   })
 })
