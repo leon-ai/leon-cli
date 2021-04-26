@@ -9,6 +9,8 @@ import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
 } from '../utils/createTemporaryEmptyFolder'
+import { isExistingFile } from '../utils/isExistingFile'
+import { log } from './Log'
 
 const fs = fsWithCallbacks.promises
 
@@ -83,6 +85,9 @@ export class Leon implements LeonOptions {
   }
 
   public async install (): Promise<void> {
+    if (await isExistingFile(this.birthPath)) {
+      return await log.error(`${path.resolve(this.birthPath)} already exists, please provide another path.`)
+    }
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
     const extractedPath = path.join(
