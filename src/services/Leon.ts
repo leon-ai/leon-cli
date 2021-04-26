@@ -74,8 +74,7 @@ export class Leon implements LeonOptions {
       url += '/refs/tags'
     }
     const folderName = `${Leon.NAME}-${version}`
-    const zipName =
-      this.version != null ? `${version}.zip` : `${folderName}.zip`
+    const zipName = `${version}.zip`
     return {
       url: `${url}/${zipName}`,
       zipName,

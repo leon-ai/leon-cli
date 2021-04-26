@@ -7,7 +7,7 @@ describe('services/Leon - getSourceCodeInformation', () => {
     })
     const sourceCodeInformation = leon.getSourceCodeInformation()
     expect(sourceCodeInformation.folderName).toEqual(`${Leon.NAME}-master`)
-    expect(sourceCodeInformation.zipName).toEqual(`${Leon.NAME}-master.zip`)
+    expect(sourceCodeInformation.zipName).toEqual('master.zip')
   })
 
   it('should return the develop version', () => {
@@ -16,7 +16,7 @@ describe('services/Leon - getSourceCodeInformation', () => {
     })
     const sourceCodeInformation = leon.getSourceCodeInformation()
     expect(sourceCodeInformation.folderName).toEqual(`${Leon.NAME}-develop`)
-    expect(sourceCodeInformation.zipName).toEqual(`${Leon.NAME}-develop.zip`)
+    expect(sourceCodeInformation.zipName).toEqual('develop.zip')
   })
 
   it('should return the 1.0.0 version', () => {
