@@ -5,7 +5,10 @@ import * as fsWithCallbacks from 'fs'
 import axios from 'axios'
 import ora from 'ora'
 import extractZip from 'extract-zip'
-import { temporary } from './Temporary'
+import {
+  createTemporaryEmptyFolder,
+  TEMPORARY_PATH
+} from '../utils/createTemporaryEmptyFolder'
 
 const fs = fsWithCallbacks.promises
 
@@ -82,14 +85,14 @@ export class Leon implements LeonOptions {
 
   public async install (): Promise<void> {
     const sourceCodeInformation = this.getSourceCodeInformation()
-    const destination = path.join(temporary.PATH, sourceCodeInformation.zipName)
+    const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
     const extractedPath = path.join(
-      temporary.PATH,
+      TEMPORARY_PATH,
       sourceCodeInformation.folderName
     )
-    await temporary.createEmptyFolder()
+    await createTemporaryEmptyFolder()
     await this.downloadSourceCode(sourceCodeInformation.url, destination)
-    await this.extractZip(destination, temporary.PATH)
+    await this.extractZip(destination, TEMPORARY_PATH)
     await fs.rename(extractedPath, this.birthPath)
   }
 }

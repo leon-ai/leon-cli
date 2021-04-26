@@ -10,7 +10,7 @@ export class InstallPyenv {
   static PYENV_WINDOWS_URL =
   'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
-  private async downloadWindowsZip (): Promise<AdmZip> {
+  public async downloadWindowsZip (): Promise<AdmZip> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
     try {
       const body = await axios.get(InstallPyenv.PYENV_WINDOWS_URL, {
@@ -28,7 +28,7 @@ export class InstallPyenv {
     }
   }
 
-  private async extractWindowsZip (
+  public async extractWindowsZip (
     zip: AdmZip,
     destination: string
   ): Promise<void> {
@@ -57,7 +57,7 @@ export class InstallPyenv {
     }
   }
 
-  private async registerInPath (pyenvPath: string): Promise<void> {
+  public async registerInPath (pyenvPath: string): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
       await execa(`setx PYENV ${pyenvPath}pyenv-win\\`)
