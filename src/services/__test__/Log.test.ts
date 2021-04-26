@@ -9,6 +9,7 @@ describe('services/Log - error', () => {
 
   beforeEach(async () => {
     console.error = jest.fn()
+    process.exit = jest.fn() as never
   })
 
   afterEach(async () => {
@@ -22,6 +23,7 @@ describe('services/Log - error', () => {
     })
     await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
+    expect(process.exit).toHaveBeenCalled()
     const fileContent = await fs.readFile(log.errorPath, { encoding: 'utf-8' })
     expect(fileContent.includes(stderr)).toBeTruthy()
   })
@@ -34,6 +36,7 @@ describe('services/Log - error', () => {
     expect(fileContent.length).toEqual(0)
     await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
+    expect(process.exit).toHaveBeenCalled()
     fileContent = await fs.readFile(log.errorPath, { encoding: 'utf-8' })
     expect(fileContent.includes(stderr)).toBeTruthy()
   })
