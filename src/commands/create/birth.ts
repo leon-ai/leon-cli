@@ -2,15 +2,12 @@ import { Command, Option } from 'clipanion'
 
 import { Leon } from '../../services/Leon'
 
-const commandPath = 'create birth'
-
 export class CreateBirthCommand extends Command {
-  static paths = [commandPath.split(' ')]
+  static paths = [['create', 'birth']]
 
   static usage = {
     description:
-      'Brings Leon to life by checking all requirements and install them with permissions from user.',
-    examples: [['Basic example', `$0 ${commandPath}`] as [string, string]]
+      'Brings Leon to life by checking all requirements and install them with permissions from user.'
   }
 
   public useDevelopGitBranch = Option.Boolean('--develop', false, {

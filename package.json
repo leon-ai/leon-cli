@@ -73,7 +73,8 @@
     "execa": "5.0.0",
     "extract-zip": "2.0.1",
     "get-stream": "6.0.1",
-    "ora": "5.4.0"
+    "ora": "5.4.0",
+    "typanion": "3.3.0"
   },
   "devDependencies": {
     "@types/adm-zip": "0.4.34",
