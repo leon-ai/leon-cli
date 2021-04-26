@@ -4,6 +4,8 @@ import * as fsWithCallbacks from 'fs'
 
 import axios from 'axios'
 import ora from 'ora'
+import execa from 'execa'
+import getStream from 'get-stream'
 import extractZip from 'extract-zip'
 import {
   createTemporaryEmptyFolder,
@@ -18,6 +20,7 @@ export interface LeonOptions {
   useDevelopGitBranch?: boolean
   birthPath?: string
   version?: string
+  useDocker?: boolean
 }
 
 export class Leon implements LeonOptions {
@@ -29,13 +32,20 @@ export class Leon implements LeonOptions {
   public useDevelopGitBranch: boolean
   public birthPath: string
   public version?: string
+  public useDocker: boolean
 
   constructor (options: LeonOptions) {
-    const { useDevelopGitBranch, birthPath, version } = options
-    this.useDevelopGitBranch = useDevelopGitBranch ?? false
+    const {
+      useDevelopGitBranch = false,
+      birthPath,
+      version,
+      useDocker = false
+    } = options
+    this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
       birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
     this.version = version
+    this.useDocker = useDocker
   }
 
   public async downloadSourceCode (
@@ -96,6 +106,18 @@ export class Leon implements LeonOptions {
     }
   }
 
+  public async buildDockerImage (): Promise<void> {
+    const loader = ora('Building the Leon Docker image').start()
+    const dockerBuildStream = execa('npm', ['run', 'docker:build']).stdout
+    if (dockerBuildStream == null) {
+      return
+    }
+    dockerBuildStream.pipe(process.stdout)
+    const value = await getStream(dockerBuildStream)
+    console.log(value)
+    loader.succeed()
+  }
+
   public async install (): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
       return await log.error({
@@ -113,5 +135,9 @@ export class Leon implements LeonOptions {
     await this.downloadSourceCode(sourceCodeInformation.url, destination)
     await this.extractZip(destination, TEMPORARY_PATH)
     await fs.rename(extractedPath, this.birthPath)
+    process.chdir(this.birthPath)
+    if (this.useDocker) {
+      await this.buildDockerImage()
+    }
   }
 }

@@ -33,7 +33,8 @@ export class CreateBirthCommand extends Command {
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,
       birthPath: this.birthPath,
-      version: this.version
+      version: this.version,
+      useDocker: this.useDocker
     })
     await leon.install()
     return 0
