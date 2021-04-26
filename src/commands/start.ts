@@ -1,6 +1,7 @@
 import * as typanion from 'typanion'
 
 import { Command, Option } from 'clipanion'
+import { LeonInstance } from '../services/LeonInstance'
 
 export class StartCommand extends Command {
   static paths = [['start']]
@@ -15,6 +16,8 @@ export class StartCommand extends Command {
   })
 
   async execute (): Promise<number> {
+    const leonInstance = await LeonInstance.get()
+    await leonInstance.start()
     return 0
   }
 }

@@ -13,6 +13,7 @@ import {
 } from '../utils/createTemporaryEmptyFolder'
 import { isExistingFile } from '../utils/isExistingFile'
 import { log } from './Log'
+import { LeonInstance } from './LeonInstance'
 
 const fs = fsWithCallbacks.promises
 
@@ -135,6 +136,10 @@ export class Leon implements LeonOptions {
     await this.downloadSourceCode(sourceCodeInformation.url, destination)
     await this.extractZip(destination, TEMPORARY_PATH)
     await fs.rename(extractedPath, this.birthPath)
+    await LeonInstance.create({
+      mode: this.useDocker ? 'docker' : 'classic',
+      path: this.birthPath
+    })
     process.chdir(this.birthPath)
     if (this.useDocker) {
       await this.buildDockerImage()

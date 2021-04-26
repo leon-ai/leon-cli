@@ -22,3 +22,4 @@ npm-debug.log*
 .DS_Store
 temp
 logs/errors.log
+config/config.json
