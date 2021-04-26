@@ -1,4 +1,5 @@
 import path from 'path'
+import os from 'os'
 import * as fsWithCallbacks from 'fs'
 
 import axios from 'axios'
@@ -9,8 +10,9 @@ import { temporary } from './Temporary'
 const fs = fsWithCallbacks.promises
 
 export interface LeonOptions {
-  useDevelopGitBranch: boolean
-  birthPath: string
+  useDevelopGitBranch?: boolean
+  birthPath?: string
+  version?: string
 }
 
 export class Leon implements LeonOptions {
@@ -20,17 +22,21 @@ export class Leon implements LeonOptions {
 
   public useDevelopGitBranch: boolean
   public birthPath: string
+  public version?: string
 
   constructor (options: LeonOptions) {
-    this.useDevelopGitBranch = options.useDevelopGitBranch
-    this.birthPath = options.birthPath
+    this.useDevelopGitBranch = options.useDevelopGitBranch ?? false
+    this.birthPath = options.birthPath ?? path.join(os.homedir(), '.leon')
+    this.version = options.version
   }
 
-  private async downloadSourceCode (destination: string, gitBranch: string): Promise<void> {
-    const downloadLoader = ora(`Downloading Leon from the ${gitBranch} git branch`).start()
-    const leonSourceCodeURL = `${Leon.LEON_GITHUB_URL}/archive/${gitBranch}.zip`
+  public async downloadSourceCode (
+    source: string,
+    destination: string
+  ): Promise<void> {
+    const downloadLoader = ora(`Downloading Leon from ${source}`).start()
     try {
-      const body = await axios.get(leonSourceCodeURL, {
+      const body = await axios.get(source, {
         responseType: 'arraybuffer'
       })
       await fs.writeFile(destination, Buffer.from(body.data), {
@@ -40,25 +46,49 @@ export class Leon implements LeonOptions {
     } catch (error) {
       downloadLoader.fail()
       throw new Error(
-        `Could not download Leon source code located at ${leonSourceCodeURL} - ${
+        `Could not download Leon source code located at ${source} - ${
           error.message as string
         }`
       )
     }
   }
 
-  private async extractZip (source: string, target: string): Promise<void> {
+  public async extractZip (source: string, target: string): Promise<void> {
     const extractLoader = ora('Extracting Leon').start()
     await extractZip(source, { dir: target })
     extractLoader.succeed()
   }
 
+  public getSourceCodeInformation (): {
+    url: string
+    zipName: string
+    folderName: string
+  } {
+    let url = `${Leon.LEON_GITHUB_URL}/archive`
+    let version = this.useDevelopGitBranch ? 'develop' : 'master'
+    if (this.version != null) {
+      version = this.version
+      url += '/refs/tags'
+    }
+    const folderName = `${Leon.NAME}-${version}`
+    const zipName =
+      this.version != null ? `${version}.zip` : `${folderName}.zip`
+    return {
+      url: `${url}/${zipName}`,
+      zipName,
+      folderName
+    }
+  }
+
   public async install (): Promise<void> {
-    const gitBranch = this.useDevelopGitBranch ? 'develop' : 'master'
-    const destination = path.join(temporary.PATH, `${Leon.NAME}.zip`)
-    const extractedPath = path.join(temporary.PATH, `${Leon.NAME}-${gitBranch}`)
+    const sourceCodeInformation = this.getSourceCodeInformation()
+    const destination = path.join(temporary.PATH, sourceCodeInformation.zipName)
+    const extractedPath = path.join(
+      temporary.PATH,
+      sourceCodeInformation.folderName
+    )
     await temporary.createEmptyFolder()
-    await this.downloadSourceCode(destination, gitBranch)
+    await this.downloadSourceCode(sourceCodeInformation.url, destination)
     await this.extractZip(destination, temporary.PATH)
     await fs.rename(extractedPath, this.birthPath)
   }

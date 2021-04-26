@@ -1,6 +1,3 @@
-import path from 'path'
-import os from 'os'
-
 import { Command, Option } from 'clipanion'
 
 import { Leon } from '../../services/Leon'
@@ -13,7 +10,7 @@ export class CreateBirthCommand extends Command {
   static usage = {
     description:
       'Brings Leon to life by checking all requirements and install them with permissions from user.',
-    examples: [['A basic example', `$0 ${commandPath}`] as [string, string]]
+    examples: [['Basic example', `$0 ${commandPath}`] as [string, string]]
   }
 
   public useDevelopGitBranch = Option.Boolean('--develop', false, {
@@ -35,7 +32,8 @@ export class CreateBirthCommand extends Command {
   async execute (): Promise<number> {
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,
-      birthPath: this.birthPath ?? path.join(os.homedir(), '.leon')
+      birthPath: this.birthPath,
+      version: this.version
     })
     await leon.install()
     return 0
