@@ -23,16 +23,19 @@ export interface LeonOptions {
 export class Leon implements LeonOptions {
   static NAME = 'leon'
   static ORGANIZATION_NAME = 'leon-ai'
-  static LEON_GITHUB_URL = `https://github.com/${Leon.ORGANIZATION_NAME}/${Leon.NAME}`
+  static GITHUB_URL = `https://github.com/${Leon.ORGANIZATION_NAME}/${Leon.NAME}`
+  static DEFAULT_BIRTH_PATH = path.join(os.homedir(), '.leon')
 
   public useDevelopGitBranch: boolean
   public birthPath: string
   public version?: string
 
   constructor (options: LeonOptions) {
-    this.useDevelopGitBranch = options.useDevelopGitBranch ?? false
-    this.birthPath = options.birthPath ?? path.join(os.homedir(), '.leon')
-    this.version = options.version
+    const { useDevelopGitBranch, birthPath, version } = options
+    this.useDevelopGitBranch = useDevelopGitBranch ?? false
+    this.birthPath =
+      birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
+    this.version = version
   }
 
   public async downloadSourceCode (
@@ -78,7 +81,7 @@ export class Leon implements LeonOptions {
     zipName: string
     folderName: string
   } {
-    let url = `${Leon.LEON_GITHUB_URL}/archive`
+    let url = `${Leon.GITHUB_URL}/archive`
     let version = this.useDevelopGitBranch ? 'develop' : 'master'
     if (this.version != null) {
       version = this.version
@@ -96,9 +99,7 @@ export class Leon implements LeonOptions {
   public async install (): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
       return await log.error({
-        stderr: `${path.resolve(
-          this.birthPath
-        )} already exists, please provide another path.`,
+        stderr: `${this.birthPath} already exists, please provide another path.`,
         commandPath: 'create birth'
       })
     }
