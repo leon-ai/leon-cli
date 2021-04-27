@@ -80,7 +80,7 @@ export class InstallPyenv {
     }
   }
 
-  public async installWindows (): Promise<void> {
+  public async onWindows (): Promise<void> {
     const destination = path.join(os.homedir(), '.pyenv')
     const zip = await this.downloadWindowsZip()
     if (zip != null) {
