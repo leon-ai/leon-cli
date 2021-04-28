@@ -70,6 +70,12 @@ export class LeonInstance implements LeonInstanceOptions {
     return await this.startClassic(LEON_PORT)
   }
 
+  static find (config: Config, name?: string): LeonInstance | undefined {
+    return config.data.instances.find((instance) => {
+      return instance.name === name
+    })
+  }
+
   static async get (name?: string): Promise<LeonInstance> {
     const config = await Config.get()
     if (config.data.instances.length === 0) {
@@ -78,20 +84,18 @@ export class LeonInstance implements LeonInstanceOptions {
     if (name == null) {
       return config.data.instances[0]
     }
-    const leonInstance = config.data.instances.find((instance) => {
-      return instance.name === name
-    })
+    const leonInstance = LeonInstance.find(config, name)
     if (leonInstance == null) {
-      throw new Error("This instance doesn't exists, please provider another name.")
+      throw new Error(
+        "This instance doesn't exists, please provider another name."
+      )
     }
     return leonInstance
   }
 
   static async create (options: CreateOptions): Promise<void> {
     const config = await Config.get()
-    const leonInstance = config.data.instances.find((instance) => {
-      return instance.name === options.name
-    })
+    const leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
       return await log.error({
         stderr: 'This instance name already exists, please choose another name',
