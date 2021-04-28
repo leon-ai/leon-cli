@@ -16,9 +16,13 @@ export class StartCommand extends Command {
     validator: typanion.isNumber()
   })
 
+  public name = Option.String('--name', {
+    description: 'Specify the instance name to start.'
+  })
+
   async execute (): Promise<number> {
     try {
-      const leonInstance = await LeonInstance.get()
+      const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.start(this.port)
       return 0
     } catch (error) {

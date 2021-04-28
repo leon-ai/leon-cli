@@ -26,12 +26,17 @@ export class CreateBirthCommand extends Command {
     description: 'Install a specific version of Leon.'
   })
 
+  public name = Option.String('--name', {
+    description: 'Give a name to the new Leon instance.'
+  })
+
   async execute (): Promise<number> {
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,
       birthPath: this.birthPath,
       version: this.version,
-      useDocker: this.useDocker
+      useDocker: this.useDocker,
+      name: this.name
     })
     await leon.install()
     return 0

@@ -1,19 +1,18 @@
-import { v4 as uuidv4 } from 'uuid'
 import execa from 'execa'
 import getStream from 'get-stream'
 
 import { Config } from './Config'
+import { log } from './Log'
 
 export type InstanceType = 'classic' | 'docker'
 
 export interface CreateOptions {
-  name?: string
+  name: string
   path: string
   mode: InstanceType
 }
 
 export interface LeonInstanceOptions extends CreateOptions {
-  name: string
   birthDate: string
 }
 
@@ -73,17 +72,35 @@ export class LeonInstance implements LeonInstanceOptions {
 
   static async get (name?: string): Promise<LeonInstance> {
     const config = await Config.get()
-    if (name == null && config.data.instances.length >= 1) {
+    if (config.data.instances.length === 0) {
+      throw new Error('You should have at least one instance.')
+    }
+    if (name == null) {
       return config.data.instances[0]
     }
-    throw new Error('You should have at least one instance.')
+    const leonInstance = config.data.instances.find((instance) => {
+      return instance.name === name
+    })
+    if (leonInstance == null) {
+      throw new Error("This instance doesn't exists, please provider another name.")
+    }
+    return leonInstance
   }
 
   static async create (options: CreateOptions): Promise<void> {
     const config = await Config.get()
+    const leonInstance = config.data.instances.find((instance) => {
+      return instance.name === options.name
+    })
+    if (leonInstance != null) {
+      return await log.error({
+        stderr: 'This instance name already exists, please choose another name',
+        commandPath: 'create birth'
+      })
+    }
     config.data.instances.push(
       new LeonInstance({
-        name: options.name ?? uuidv4(),
+        name: options.name,
         path: options.path,
         mode: options.mode,
         birthDate: new Date().toISOString()

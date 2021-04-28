@@ -7,6 +7,8 @@ import ora from 'ora'
 import execa from 'execa'
 import getStream from 'get-stream'
 import extractZip from 'extract-zip'
+import { v4 as uuidv4 } from 'uuid'
+
 import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
@@ -22,6 +24,7 @@ export interface LeonOptions {
   birthPath?: string
   version?: string
   useDocker?: boolean
+  name?: string
 }
 
 export class Leon implements LeonOptions {
@@ -34,19 +37,22 @@ export class Leon implements LeonOptions {
   public birthPath: string
   public version?: string
   public useDocker: boolean
+  public name: string
 
   constructor (options: LeonOptions) {
     const {
       useDevelopGitBranch = false,
       birthPath,
       version,
-      useDocker = false
+      useDocker = false,
+      name = uuidv4()
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
       birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
     this.version = version
     this.useDocker = useDocker
+    this.name = name
   }
 
   public async downloadSourceCode (
@@ -137,6 +143,7 @@ export class Leon implements LeonOptions {
     await this.extractZip(destination, TEMPORARY_PATH)
     await fs.rename(extractedPath, this.birthPath)
     await LeonInstance.create({
+      name: this.name,
       mode: this.useDocker ? 'docker' : 'classic',
       path: this.birthPath
     })
