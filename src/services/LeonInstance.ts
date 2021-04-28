@@ -31,23 +31,49 @@ export class LeonInstance implements LeonInstanceOptions {
     this.birthDate = birthDate
   }
 
-  public async start (): Promise<void> {
-    process.chdir(this.path)
-    const dockerStartStream = execa('npm', ['run', 'docker:run']).stdout
+  public async startDocker (LEON_PORT: string): Promise<void> {
+    const dockerStartStream = execa('npm', ['run', 'docker:run'], {
+      env: {
+        LEON_PORT
+      }
+    }).stdout
     if (dockerStartStream == null) {
       return
     }
-    process.on('SIGINT', (async () => {
+    process.on('SIGINT', ((async () => {
       await execa('docker-compose', ['down'])
-    }) as unknown as () => void)
+    }) as unknown) as () => void)
     dockerStartStream.pipe(process.stdout)
     const value = await getStream(dockerStartStream)
     console.log(value)
   }
 
+  public async startClassic (LEON_PORT: string): Promise<void> {
+    const npmStartStream = execa('npm', ['run', 'start'], {
+      env: {
+        LEON_PORT
+      }
+    }).stdout
+    if (npmStartStream == null) {
+      return
+    }
+    npmStartStream.pipe(process.stdout)
+    const value = await getStream(npmStartStream)
+    console.log(value)
+  }
+
+  public async start (port?: number): Promise<void> {
+    process.chdir(this.path)
+    const LEON_PORT = port?.toString() ?? '1337'
+    if (this.mode === 'docker') {
+      return await this.startDocker(LEON_PORT)
+    }
+    return await this.startClassic(LEON_PORT)
+  }
+
   static async get (name?: string): Promise<LeonInstance> {
     const config = await Config.get()
-    if (name == null && config.data.instances.length === 1) {
+    if (name == null && config.data.instances.length >= 1) {
       return config.data.instances[0]
     }
     throw new Error('You should have at least one instance.')
