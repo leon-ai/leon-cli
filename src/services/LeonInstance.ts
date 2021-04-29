@@ -70,7 +70,7 @@ export class LeonInstance implements LeonInstanceOptions {
     return await this.startClassic(LEON_PORT)
   }
 
-  static find (config: Config, name?: string): LeonInstance | undefined {
+  static find (config: Config, name: string): LeonInstance | undefined {
     return config.data.instances.find((instance) => {
       return instance.name === name
     })
