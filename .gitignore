@@ -20,5 +20,6 @@ npm-debug.log*
 
 # misc
 .DS_Store
-
+temp
 logs/errors.log
+config/config.json
