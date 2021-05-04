@@ -60,15 +60,21 @@ export class InstallPyenv {
     }
   }
 
-  public async registerInPath (pyenvPath: string): Promise<void> {
+  async getWindowsUserPath (): Promise<string> {
+    if (process.platform !== 'win32') {
+      return ''
+    }
+    const { stdout } = await execa('[Environment]::GetEnvironmentVariable(\'PATH\', \'User\');', [], { shell: 'powershell.exe' })
+    return stdout
+  }
+
+  async registerInPath (pyenvPath: string): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
-      await execa(`setx PYENV ${pyenvPath}pyenv-win\\`)
-      await execa(
-        `setx path "${
-          process.env.PATH ?? ''
-        };${pyenvPath}pyenv-win\\bin;${pyenvPath}pyenv-win\\shims`
-      )
+      await execa(`[Environment]::SetEnvironmentVariable('PYENV', "${pyenvPath}\\pyenv-win\\",'User')`, [], { shell: 'powershell.exe' })
+      const userPath = await this.getWindowsUserPath()
+      const extraPath = `${pyenvPath}\\pyenv-win\\bin;${pyenvPath}\\pyenv-win\\shims`
+      await execa(`[Environment]::SetEnvironmentVariable('PATH', "${extraPath};${userPath}",'User')`, [], { shell: 'powershell.exe' })
       varEnvLoader.succeed()
     } catch (error) {
       varEnvLoader.fail()
