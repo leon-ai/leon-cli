@@ -25,6 +25,7 @@ export interface LeonOptions {
   version?: string
   useDocker?: boolean
   name?: string
+  preaccept?: boolean
 }
 
 export class Leon implements LeonOptions {
@@ -38,6 +39,7 @@ export class Leon implements LeonOptions {
   public version?: string
   public useDocker: boolean
   public name: string
+  public preaccept: boolean
 
   constructor (options: LeonOptions) {
     const {
@@ -45,7 +47,8 @@ export class Leon implements LeonOptions {
       birthPath,
       version,
       useDocker = false,
-      name = uuidv4()
+      name = uuidv4(),
+      preaccept = false
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
@@ -53,6 +56,7 @@ export class Leon implements LeonOptions {
     this.version = version
     this.useDocker = useDocker
     this.name = name
+    this.preaccept = preaccept
   }
 
   public async downloadSourceCode (

@@ -30,13 +30,18 @@ export class CreateBirthCommand extends Command {
     description: 'Give a name to the new Leon instance.'
   })
 
+  public preaccept = Option.Boolean('--yes', {
+    description: 'Accept to install all requirements without being prompted.'
+  })
+
   async execute (): Promise<number> {
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,
       birthPath: this.birthPath,
       version: this.version,
       useDocker: this.useDocker,
-      name: this.name
+      name: this.name,
+      preaccept: this.preaccept
     })
     await leon.install()
     return 0
