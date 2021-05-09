@@ -1,6 +1,6 @@
 import readline from 'readline'
 
-export async function isValidAnswer(answer: string) {
+export function isValidAnswer (answer: string): boolean {
   const cleanedAnswer = answer.toLowerCase().trim()
   const acceptedAnswers = ['yes', 'y', 'no', 'n']
   return acceptedAnswers.includes(cleanedAnswer)
