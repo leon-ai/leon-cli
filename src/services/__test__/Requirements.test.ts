@@ -7,11 +7,11 @@ describe('services/Requirements - checkVersion', () => {
     const commandAnswer = 'this command does not exist'
 
     expect(await checkVersion(commandAnswer, requirement)).toBeFalsy()
-    
+
     const commandAnswer2 = 'python version is 3.2.0'
-    
+
     expect(await checkVersion(commandAnswer2, requirement)).toBeFalsy()
-  }),
+  })
 
   it('should return false when requirement is wrongly typed', async () => {
     const requirement = 'wrong requirement'
@@ -19,7 +19,7 @@ describe('services/Requirements - checkVersion', () => {
     const commandAnswer = '3.7.2'
 
     expect(await checkVersion(commandAnswer, requirement)).toBeFalsy()
-  }),
+  })
 
   it('should return true when the version is higher or equal than the requirement', async () => {
     const requirement = '3.0.0'
