@@ -31,3 +31,13 @@ export async function checkPyenv (): Promise<boolean> {
     return false
   }
 }
+
+export async function checkEnvironmentVariable(variable: string, content: string) {
+  const environmentVariable = process.env[variable]
+
+  if(!environmentVariable) {
+    return false
+  }
+
+  return environmentVariable.includes(content)
+}
