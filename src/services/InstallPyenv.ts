@@ -7,6 +7,8 @@ import execa from 'execa'
 import ora from 'ora'
 import { log } from './Log'
 
+import { checkEnvironmentVariable } from './Requirements'
+
 export class InstallPyenv {
   static PYENV_WINDOWS_URL =
   'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
@@ -68,13 +70,48 @@ export class InstallPyenv {
     return stdout
   }
 
+  async downloadPython (): Promise<void> {
+    const version = '3.9.4'
+    const pythonLoader = ora(`Downloading python ${version}`).start()
+    try {
+      await execa(`pyenv install ${version} --quiet`)
+      await execa(`pyenv global ${version}`)
+      pythonLoader.succeed()
+    } catch (error) {
+      pythonLoader.fail()
+      await log.error({
+        stderr: `Could not install python ${version}`,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
+    }
+  }
+
+  async rehash (): Promise<void> {
+    try {
+      await execa('pyenv rehash')
+    } catch (error) {
+      await log.error({
+        stderr: 'Could not rehash pyenv commands',
+        commandPath: 'create birth',
+        value: error.toString()
+      })
+    }
+  }
+
   async registerInPath (pyenvPath: string): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
-      await execa(`[Environment]::SetEnvironmentVariable('PYENV', "${pyenvPath}\\pyenv-win\\",'User')`, [], { shell: 'powershell.exe' })
-      const userPath = await this.getWindowsUserPath()
-      const extraPath = `${pyenvPath}\\pyenv-win\\bin;${pyenvPath}\\pyenv-win\\shims`
-      await execa(`[Environment]::SetEnvironmentVariable('PATH', "${extraPath};${userPath}",'User')`, [], { shell: 'powershell.exe' })
+      if (!await checkEnvironmentVariable('PYENV', 'pyenv-win')) {
+        process.env.PYENV = `${pyenvPath}\\pyenv-win\\`
+        await execa(`[Environment]::SetEnvironmentVariable('PYENV', "${pyenvPath}\\pyenv-win\\",'User')`, [], { shell: 'powershell.exe' })
+      }
+      if (!await checkEnvironmentVariable('PATH', 'pyenv-win\\bin') || !await checkEnvironmentVariable('PATH', 'pyenv-win\\shims')) {
+        const userPath = await this.getWindowsUserPath()
+        const extraPath = `${pyenvPath}\\pyenv-win\\bin;${pyenvPath}\\pyenv-win\\shims`
+        await execa(`[Environment]::SetEnvironmentVariable('PATH', "${extraPath};${userPath}",'User')`, [], { shell: 'powershell.exe' })
+        process.env.PATH = `${extraPath};${process.env.PATH}`
+      }
       varEnvLoader.succeed()
     } catch (error) {
       varEnvLoader.fail()
@@ -93,5 +130,7 @@ export class InstallPyenv {
       await this.extractWindowsZip(zip, destination)
       await this.registerInPath(destination)
     }
+    await this.downloadPython()
+    await this.rehash()
   }
 }

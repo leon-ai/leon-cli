@@ -1,6 +1,9 @@
 import { Command, Option } from 'clipanion'
 
 import { Leon } from '../../services/Leon'
+import { prompt } from '../../services/Prompt'
+import { checkPython } from '../../services/Requirements'
+import { InstallPyenv } from '../../services/InstallPyenv'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -35,6 +38,17 @@ export class CreateBirthCommand extends Command {
   })
 
   async execute (): Promise<number> {
+
+    const hasPython = await checkPython()
+    if (!hasPython) {
+      const wantPython = await prompt('Python')
+      if (wantPython) {
+        const installPyenv = new InstallPyenv()
+        installPyenv.onWindows()
+      }
+    }
+
+
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,
       birthPath: this.birthPath,
@@ -43,7 +57,7 @@ export class CreateBirthCommand extends Command {
       name: this.name,
       yes: this.yes
     })
-    await leon.createBirth()
+    //await leon.install()
     return 0
   }
 }
