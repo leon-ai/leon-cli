@@ -1,29 +1,33 @@
 import readline from 'readline'
 
-export function isValidAnswer (answer: string): boolean {
-  const cleanedAnswer = answer.toLowerCase().trim()
-  const acceptedAnswers = ['yes', 'y', 'no', 'n']
-  return acceptedAnswers.includes(cleanedAnswer)
-}
+export const positiveAnswers = ['y', 'yes']
+export const negativeAnswers = ['n', 'no']
+export const acceptedAnswers = [...positiveAnswers, ...negativeAnswers]
 
 export async function prompt (requirement: string): Promise<boolean> {
-  const rl = readline.createInterface({
+  const readlineInterface = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   })
-
   return await new Promise(function (resolve) {
     const ask = function (): void {
-      rl.question(`Would you like to download ${requirement} ? It is a necessary requirement. (Y/n)`, function (answer: string) {
-        if (isValidAnswer(answer)) {
-          rl.close()
-          const isUserAccepting = answer.includes('y')
-          resolve(isUserAccepting)
-        } else {
-          console.log('The value you provided is unknown. Please reply Yes or No.')
-          ask()
+      readlineInterface.question(
+        `Would you like to download ${requirement} ? It is a necessary requirement. (Y/n)`,
+        function (answer: string) {
+          const cleanedAnswer = answer.toLowerCase().trim()
+          const isAcceptedAnswer = acceptedAnswers.includes(cleanedAnswer)
+          if (isAcceptedAnswer) {
+            readlineInterface.close()
+            const isUserAccepting = positiveAnswers.includes(cleanedAnswer)
+            resolve(isUserAccepting)
+          } else {
+            console.log(
+              'The value you provided is unknown. Please reply Yes or No.'
+            )
+            ask()
+          }
         }
-      })
+      )
     }
     ask()
   })
