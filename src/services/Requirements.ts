@@ -17,7 +17,7 @@ export async function checkVersion (version: string, requirement: string): Promi
 export async function checkPython (): Promise<boolean> {
   try {
     const { stdout } = await execa('python --v')
-    return await checkVersion(stdout, '3.7.2')
+    return await checkVersion(stdout, '3.0.0')
   } catch {
     return false
   }
