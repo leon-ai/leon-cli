@@ -30,7 +30,7 @@ export class CreateBirthCommand extends Command {
     description: 'Give a name to the new Leon instance.'
   })
 
-  public preaccept = Option.Boolean('--yes', {
+  public yes = Option.Boolean('--yes', {
     description: 'Accept to install all requirements without being prompted.'
   })
 
@@ -41,7 +41,7 @@ export class CreateBirthCommand extends Command {
       version: this.version,
       useDocker: this.useDocker,
       name: this.name,
-      preaccept: this.preaccept
+      yes: this.yes
     })
     await leon.install()
     return 0
