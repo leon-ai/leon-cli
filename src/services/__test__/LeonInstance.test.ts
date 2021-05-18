@@ -1,14 +1,19 @@
 import fsMock from 'mock-fs'
 
 import { Config, ConfigData } from '../Config'
-import { LeonInstance, LeonInstanceOptions } from '../LeonInstance'
+import { CreateOptions, LeonInstance, LeonInstanceOptions } from '../LeonInstance'
 import { log } from '../Log'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
   birthDate: 'birthDate',
-  mode: 'classic',
+  mode: 'docker',
   path: '/path'
+}
+
+const leonCreateOptions: CreateOptions = {
+  ...leonInstanceOptions,
+  shouldBuild: false
 }
 
 const leonInstance = new LeonInstance(leonInstanceOptions)
@@ -93,17 +98,18 @@ describe('services/LeonInstance - create', () => {
       [log.path]: {},
       [Config.PATH]: JSON.stringify(configData)
     })
-    await LeonInstance.create(leonInstanceOptions)
+    await LeonInstance.create(leonCreateOptions)
     expect(console.error).toHaveBeenCalled()
     expect(process.exit).toHaveBeenCalled()
   })
 
   it('should create the new instance', async () => {
     fsMock({
+      '/path': {},
       [log.path]: {},
       [Config.FOLDER_PATH]: {}
     })
-    await LeonInstance.create(leonInstanceOptions)
+    await LeonInstance.create(leonCreateOptions)
     const config = await Config.get()
     expect(config.data.instances.length).toEqual(1)
     expect(config.data.instances[0].name).toEqual(leonInstance.name)
