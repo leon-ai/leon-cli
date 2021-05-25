@@ -43,7 +43,7 @@ export class CreateBirthCommand extends Command {
       name: this.name,
       yes: this.yes
     })
-    await leon.install()
+    await leon.createBirth()
     return 0
   }
 }

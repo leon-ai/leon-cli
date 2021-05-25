@@ -1,18 +1,29 @@
 import execa from 'execa'
 import getStream from 'get-stream'
+import ora from 'ora'
 
 import { Config } from './Config'
 import { log } from './Log'
 
 export type InstanceType = 'classic' | 'docker'
 
+export interface RunNpmScriptOptions {
+  workingDirectory: string
+  loader: {
+    message: string
+    stderr: string
+  }
+  command: string
+}
+
 export interface CreateOptions {
   name: string
   path: string
   mode: InstanceType
+  shouldBuild?: boolean
 }
 
-export interface LeonInstanceOptions extends CreateOptions {
+export interface LeonInstanceOptions extends Omit<CreateOptions, 'shouldBuild'> {
   birthDate: string
 }
 
@@ -39,9 +50,9 @@ export class LeonInstance implements LeonInstanceOptions {
     if (dockerStartStream == null) {
       return
     }
-    process.on('SIGINT', ((async () => {
+    process.on('SIGINT', (async () => {
       await execa('docker-compose', ['down'])
-    }) as unknown) as () => void)
+    }) as unknown as () => void)
     dockerStartStream.pipe(process.stdout)
     const value = await getStream(dockerStartStream)
     console.log(value)
@@ -70,6 +81,61 @@ export class LeonInstance implements LeonInstanceOptions {
     return await this.startClassic(LEON_PORT)
   }
 
+  public async runNpmScript (options: RunNpmScriptOptions): Promise<void> {
+    const { command, loader, workingDirectory } = options
+    process.chdir(workingDirectory)
+    const npmRunLoader = ora(loader.message).start()
+    try {
+      const npmRunStream = execa('npm', ['run', command]).stdout
+      if (npmRunStream == null) {
+        return
+      }
+      npmRunStream.pipe(process.stdout)
+      const value = await getStream(npmRunStream)
+      console.log(value)
+    } catch (error) {
+      npmRunLoader.fail()
+      await log.error({
+        stderr: loader.stderr,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
+    }
+  }
+
+  public async buildDockerImage (): Promise<void> {
+    await this.runNpmScript({
+      command: 'docker:build',
+      loader: {
+        message: 'Building the Leon Docker image',
+        stderr: 'Could not build Leon with Docker'
+      },
+      workingDirectory: this.path
+    })
+  }
+
+  public async build (): Promise<void> {
+    await this.runNpmScript({
+      command: 'build',
+      loader: {
+        message: 'Building Leon',
+        stderr: 'Could not build Leon'
+      },
+      workingDirectory: this.path
+    })
+  }
+
+  public async install (): Promise<void> {
+    await this.runNpmScript({
+      command: 'install',
+      loader: {
+        message: 'Installing npm dependencies',
+        stderr: 'Could not install the npm dependencies'
+      },
+      workingDirectory: this.path
+    })
+  }
+
   static find (config: Config, name: string): LeonInstance | undefined {
     return config.data.instances.find((instance) => {
       return instance.name === name
@@ -78,7 +144,8 @@ export class LeonInstance implements LeonInstanceOptions {
 
   static async get (name?: string): Promise<LeonInstance> {
     const config = await Config.get()
-    if (config.data.instances.length === 0) {
+    const isEmptyInstances = config.data.instances.length === 0
+    if (isEmptyInstances) {
       throw new Error('You should have at least one instance.')
     }
     if (name == null) {
@@ -94,22 +161,29 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   static async create (options: CreateOptions): Promise<void> {
+    const { shouldBuild = true } = options
     const config = await Config.get()
-    const leonInstance = LeonInstance.find(config, options.name)
+    let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
       return await log.error({
         stderr: 'This instance name already exists, please choose another name',
         commandPath: 'create birth'
       })
     }
-    config.data.instances.push(
-      new LeonInstance({
-        name: options.name,
-        path: options.path,
-        mode: options.mode,
-        birthDate: new Date().toISOString()
-      })
-    )
+    leonInstance = new LeonInstance({
+      name: options.name,
+      path: options.path,
+      mode: options.mode,
+      birthDate: new Date().toISOString()
+    })
+    config.data.instances.push(leonInstance)
     await config.save()
+    if (shouldBuild) {
+      if (leonInstance.mode === 'docker') {
+        return await leonInstance.buildDockerImage()
+      }
+      await leonInstance.install()
+      await leonInstance.build()
+    }
   }
 }

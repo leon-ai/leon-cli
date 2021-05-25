@@ -4,8 +4,6 @@ import * as fsWithCallbacks from 'fs'
 
 import axios from 'axios'
 import ora from 'ora'
-import execa from 'execa'
-import getStream from 'get-stream'
 import extractZip from 'extract-zip'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -48,7 +46,7 @@ export class Leon implements LeonOptions {
       version,
       useDocker = false,
       name = uuidv4(),
-      yes: yes = false
+      yes = false
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
@@ -117,19 +115,7 @@ export class Leon implements LeonOptions {
     }
   }
 
-  public async buildDockerImage (): Promise<void> {
-    const loader = ora('Building the Leon Docker image').start()
-    const dockerBuildStream = execa('npm', ['run', 'docker:build']).stdout
-    if (dockerBuildStream == null) {
-      return
-    }
-    dockerBuildStream.pipe(process.stdout)
-    const value = await getStream(dockerBuildStream)
-    console.log(value)
-    loader.succeed()
-  }
-
-  public async install (): Promise<void> {
+  public async createBirth (): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
       return await log.error({
         stderr: `${this.birthPath} already exists, please provide another path.`,
@@ -151,9 +137,5 @@ export class Leon implements LeonOptions {
       mode: this.useDocker ? 'docker' : 'classic',
       path: this.birthPath
     })
-    process.chdir(this.birthPath)
-    if (this.useDocker) {
-      await this.buildDockerImage()
-    }
   }
 }
