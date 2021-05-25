@@ -93,6 +93,7 @@ export class LeonInstance implements LeonInstanceOptions {
       npmRunStream.pipe(process.stdout)
       const value = await getStream(npmRunStream)
       console.log(value)
+      npmRunLoader.succeed()
     } catch (error) {
       npmRunLoader.fail()
       await log.error({
