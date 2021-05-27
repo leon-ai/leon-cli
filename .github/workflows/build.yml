@@ -7,21 +7,66 @@ on:
     branches: [master, develop]
 
 jobs:
-  lint:
+  build:
     runs-on: 'ubuntu-20.04'
     steps:
       - uses: 'actions/checkout@v2.3.4'
 
-      - name: 'Cache node_modules'
+      - name: 'Use Node.js'
+        uses: 'actions/setup-node@v2.1.5'
+        with:
+          node-version: '14.x'
+
+      - name: 'Cache dependencies'
         uses: 'actions/cache@v2.1.5'
         with:
-          path: 'node_modules'
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node_modules-
+          path: '.npm'
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: 'Install'
-        run: 'npm ci'
+        run: 'npm ci --cache .npm --prefer-offline'
 
-      - name: 'Run Build'
+      - name: 'Build'
         run: 'npm run build'
+
+      - name: 'Archive Build'
+        run: 'tar --exclude="./node_modules" --exclude="./src"  --exclude=".git" --exclude=".github" -cvf "./leon-cli.tar.gz" "./" --warning=no-file-changed'
+
+      - name: 'Upload Build artifact'
+        uses: 'actions/upload-artifact@v2.2.3'
+        with:
+          name: 'build'
+          path: './leon-cli.tar.gz'
+
+  release:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: 'build'
+    runs-on: 'ubuntu-20.04'
+    steps:
+
+      - uses: 'actions/checkout@v2.3.4'
+
+      - name: 'Use Node.js'
+        uses: 'actions/setup-node@v2.1.5'
+        with:
+          node-version: '14.x'
+
+      - name: 'Cache dependencies'
+        uses: 'actions/cache@v2.1.5'
+        with:
+          path: '.npm'
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: 'Install'
+        run: 'npm ci --cache .npm --prefer-offline'
+
+      - name: 'Download Build artifact'
+        uses: 'actions/download-artifact@v2.0.9'
+        with:
+          name: 'build'
+          path: './'
+
+      - name: 'Release'
+        run: 'npm run release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
