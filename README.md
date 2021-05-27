@@ -6,7 +6,7 @@
   <a href="./CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg" alt="Contributor Covenant" /></a>
   <br />
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml/badge.svg?branch=develop" /></a>
-  <a href="https://github.com/leon-ai/leon-cli/actions/workflows/test.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/tests.yml/badge.svg?branch=develop" /></a>
+  <a href="https://github.com/leon-ai/leon-cli/actions/workflows/test.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/test.yml/badge.svg?branch=develop" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml/badge.svg?branch=develop" /></a>
   <br />
   <a href="https://www.npmjs.com/package/ts-standard"><img alt="TypeScript Standard Style" src="https://camo.githubusercontent.com/f87caadb70f384c0361ec72ccf07714ef69a5c0a/68747470733a2f2f62616467656e2e6e65742f62616467652f636f64652532307374796c652f74732d7374616e646172642f626c75653f69636f6e3d74797065736372697074"/></a>
