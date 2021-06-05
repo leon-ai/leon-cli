@@ -4,6 +4,7 @@ import { Leon } from '../../services/Leon'
 import { prompt } from '../../services/Prompt'
 import { checkPython } from '../../services/Requirements'
 import { InstallPyenv } from '../../services/InstallPyenv'
+import { installPipenv } from '../../services/Pipenv'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -41,13 +42,19 @@ export class CreateBirthCommand extends Command {
 
     const hasPython = await checkPython()
     if (!hasPython) {
-      const wantPython = await prompt('Python')
-      if (wantPython) {
+      const shouldInstallPython = await prompt('Python')
+      if (this.yes || shouldInstallPython) {
         const installPyenv = new InstallPyenv()
-        installPyenv.onWindows()
+        await installPyenv.onWindows()
       }
     }
 
+    const shouldInstallPipenv = await prompt('Pipenv')
+    if (this.yes || shouldInstallPipenv) {
+      await installPipenv()
+      const installPyenv = new InstallPyenv()
+      installPyenv.rehash()
+    }
 
     const leon = new Leon({
       useDevelopGitBranch: this.useDevelopGitBranch,

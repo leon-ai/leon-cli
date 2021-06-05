@@ -88,9 +88,12 @@ export class InstallPyenv {
   }
 
   async rehash (): Promise<void> {
+    const rehashLoader = ora(`Rehashing Pyenv commands`).start()
     try {
       await execa('pyenv rehash')
+      rehashLoader.succeed()
     } catch (error) {
+      rehashLoader.fail()
       await log.error({
         stderr: 'Could not rehash pyenv commands',
         commandPath: 'create birth',
