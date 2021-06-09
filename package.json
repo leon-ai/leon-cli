@@ -76,7 +76,7 @@
     "execa": "5.1.1",
     "extract-zip": "2.0.1",
     "get-stream": "6.0.1",
-    "ora": "5.4.0",
+    "ora": "5.4.1",
     "semver": "7.3.5",
     "typanion": "3.3.1",
     "uuid": "8.3.2"
