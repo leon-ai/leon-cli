@@ -2,9 +2,9 @@ import { Command, Option } from 'clipanion'
 
 import { Leon } from '../../services/Leon'
 import { prompt } from '../../services/Prompt'
-import { checkPython } from '../../services/Requirements'
+import { checkPipenv, checkPython } from '../../services/Requirements'
 import { InstallPyenv } from '../../services/InstallPyenv'
-import { installPipenv } from '../../services/Pipenv'
+import { installPipenv, setPipenvPath } from '../../services/Pipenv'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -48,12 +48,15 @@ export class CreateBirthCommand extends Command {
         await installPyenv.onWindows()
       }
     }
-
-    const shouldInstallPipenv = await prompt('Pipenv')
-    if (this.yes || shouldInstallPipenv) {
-      await installPipenv()
-      const installPyenv = new InstallPyenv()
-      installPyenv.rehash()
+    const hasPipenv = await checkPipenv()
+    if (!hasPipenv) {
+      const shouldInstallPipenv = await prompt('Pipenv')
+      if (this.yes || shouldInstallPipenv) {
+        await installPipenv()
+        await setPipenvPath()
+        const installPyenv = new InstallPyenv()
+        installPyenv.rehash()
+      }
     }
 
     const leon = new Leon({
@@ -64,7 +67,7 @@ export class CreateBirthCommand extends Command {
       name: this.name,
       yes: this.yes
     })
-    //await leon.install()
+    await leon.createBirth()
     return 0
   }
 }
