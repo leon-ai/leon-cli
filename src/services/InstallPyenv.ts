@@ -88,7 +88,7 @@ export class InstallPyenv {
   }
 
   async rehash (): Promise<void> {
-    const rehashLoader = ora(`Rehashing Pyenv commands`).start()
+    const rehashLoader = ora('Rehashing Pyenv commands').start()
     try {
       await execa('pyenv rehash')
       rehashLoader.succeed()
@@ -117,7 +117,7 @@ export class InstallPyenv {
         const userPath = await this.getWindowsUserPath()
         const extraPath = `${pyenvPath}\\pyenv-win\\bin;${pyenvPath}\\pyenv-win\\shims`
         await execa(`[Environment]::SetEnvironmentVariable('PATH', "${extraPath};${userPath}",'User')`, [], { shell: 'powershell.exe' })
-        process.env.PATH = `${extraPath};${process.env.PATH}`
+        process.env.PATH = `${extraPath};${process.env.PATH ?? ''}`
       }
       varEnvLoader.succeed()
     } catch (error) {

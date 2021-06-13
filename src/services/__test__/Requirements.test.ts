@@ -4,8 +4,6 @@ import path from 'path'
 
 import { checkEnvironmentVariable, checkPyenv, checkPython, checkVersion } from '../Requirements'
 
-
-
 describe('services/Requirements - checkVersion', () => {
   it('should return false when there is no match', async () => {
     const requirement = '3.7.2'
@@ -56,8 +54,8 @@ describe('services/Requirements - checkPyenv', () => {
 
 describe('services/Requirements - checkEnvironmentVariable', () => {
   it('should return false because the environment variable is not set', async () => {
-    let restore = mockedEnv({
-      PYENV: undefined,
+    const restore = mockedEnv({
+      PYENV: undefined
     })
 
     expect(await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))).toBe(false)
@@ -66,8 +64,8 @@ describe('services/Requirements - checkEnvironmentVariable', () => {
   })
 
   it('should return false because the environment variable doesn\'t contains the specifield value', async () => {
-    let restore = mockedEnv({
-      PYENV: path.join('some', 'value', 'here'),
+    const restore = mockedEnv({
+      PYENV: path.join('some', 'value', 'here')
     })
 
     expect(await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))).toBe(false)
@@ -77,9 +75,9 @@ describe('services/Requirements - checkEnvironmentVariable', () => {
 
   it('should return true because the environment variable contains the specifield value', async () => {
     const pyenvValue = path.join(os.homedir(), '.pyenv', 'pyenv-win')
-    
-    let restore = mockedEnv({
-      PYENV: pyenvValue,
+
+    const restore = mockedEnv({
+      PYENV: pyenvValue
     })
 
     expect(await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))).toBe(true)

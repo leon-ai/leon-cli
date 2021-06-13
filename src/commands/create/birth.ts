@@ -39,11 +39,10 @@ export class CreateBirthCommand extends Command {
   })
 
   async execute (): Promise<number> {
-
     const hasPython = await checkPython()
     if (!hasPython) {
       const shouldInstallPython = await prompt('Python')
-      if (this.yes || shouldInstallPython) {
+      if (this.yes ?? shouldInstallPython) {
         const installPyenv = new InstallPyenv()
         await installPyenv.onWindows()
       }
@@ -51,11 +50,11 @@ export class CreateBirthCommand extends Command {
     const hasPipenv = await checkPipenv()
     if (!hasPipenv) {
       const shouldInstallPipenv = await prompt('Pipenv')
-      if (this.yes || shouldInstallPipenv) {
+      if (this.yes ?? shouldInstallPipenv) {
         await installPipenv()
         await setPipenvPath()
         const installPyenv = new InstallPyenv()
-        installPyenv.rehash()
+        await installPyenv.rehash()
       }
     }
 
