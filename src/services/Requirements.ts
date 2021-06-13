@@ -32,6 +32,15 @@ export async function checkPyenv (): Promise<boolean> {
   }
 }
 
+export async function checkPipenv (): Promise<boolean> {
+  try  {
+    const { stdout } = await execa('pipenv --version')
+    return await checkVersion(stdout, '2019.0.0')
+  } catch {
+    return false;
+  }
+}
+
 export async function checkEnvironmentVariable(variable: string, content: string) {
   const environmentVariable = process.env[variable]
 
