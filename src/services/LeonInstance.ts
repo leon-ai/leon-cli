@@ -127,14 +127,29 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async install (): Promise<void> {
-    await this.runNpmScript({
-      command: 'install',
-      loader: {
-        message: 'Installing npm dependencies',
-        stderr: 'Could not install the npm dependencies'
-      },
-      workingDirectory: this.path
-    })
+    const loader = {
+      message: 'Installing npm dependencies',
+      stderr: 'Could not install the npm dependencies'
+    }
+    process.chdir(this.path)
+    const npmRunLoader = ora(loader.message).start()
+    try {
+      const npmRunStream = execa('npm', ['install']).stdout
+      if (npmRunStream == null) {
+        return
+      }
+      npmRunStream.pipe(process.stdout)
+      const value = await getStream(npmRunStream)
+      console.log(value)
+      npmRunLoader.succeed()
+    } catch (error) {
+      npmRunLoader.fail()
+      await log.error({
+        stderr: loader.stderr,
+        commandPath: 'create birth',
+        value: error.toString()
+      })
+    }
   }
 
   static find (config: Config, name: string): LeonInstance | undefined {
