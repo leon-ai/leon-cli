@@ -16,7 +16,7 @@ export async function checkVersion (version: string, requirement: string): Promi
 
 export async function checkPython (): Promise<boolean> {
   try {
-    const { stdout } = await execa('python --v')
+    const { stdout } = await execa('python --version')
     return await checkVersion(stdout, '3.0.0')
   } catch {
     return false
@@ -25,7 +25,7 @@ export async function checkPython (): Promise<boolean> {
 
 export async function checkPyenv (): Promise<boolean> {
   try {
-    const { stdout } = await execa('pyenv --v')
+    const { stdout } = await execa('pyenv --version')
     return await checkVersion(stdout, '0.0.0')
   } catch {
     return false
