@@ -109,6 +109,10 @@ export class InstallPyenv {
         process.env.PYENV = `${pyenvPath}\\pyenv-win\\`
         await execa(`[Environment]::SetEnvironmentVariable('PYENV', "${pyenvPath}\\pyenv-win\\",'User')`, [], { shell: 'powershell.exe' })
       }
+      if (!await checkEnvironmentVariable('PYENV_HOME', 'pyenv-win')) {
+        process.env.PYENV = `${pyenvPath}\\pyenv-win\\`
+        await execa(`[Environment]::SetEnvironmentVariable('PYENV', "${pyenvPath}\\pyenv-win\\",'User')`, [], { shell: 'powershell.exe' })
+      }
       if (!await checkEnvironmentVariable('PATH', 'pyenv-win\\bin') || !await checkEnvironmentVariable('PATH', 'pyenv-win\\shims')) {
         const userPath = await this.getWindowsUserPath()
         const extraPath = `${pyenvPath}\\pyenv-win\\bin;${pyenvPath}\\pyenv-win\\shims`
