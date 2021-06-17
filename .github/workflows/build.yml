@@ -60,7 +60,7 @@ jobs:
         run: 'npm ci --cache .npm --prefer-offline'
 
       - name: 'Download Build artifact'
-        uses: 'actions/download-artifact@v2.0.9'
+        uses: 'actions/download-artifact@v2.0.10'
         with:
           name: 'build'
           path: './'
