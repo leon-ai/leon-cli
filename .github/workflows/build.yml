@@ -33,7 +33,7 @@ jobs:
         run: 'tar --exclude="./node_modules" --exclude="./src"  --exclude=".git" --exclude=".github" --exclude=".npm" -cvf "./leon-cli.tar.gz" "./" --warning=no-file-changed'
 
       - name: 'Upload Build artifact'
-        uses: 'actions/upload-artifact@v2.2.3'
+        uses: 'actions/upload-artifact@v2.2.4'
         with:
           name: 'build'
           path: './leon-cli.tar.gz'
