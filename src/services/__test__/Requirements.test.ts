@@ -1,6 +1,7 @@
-import mockedEnv from 'mocked-env'
 import os from 'os'
 import path from 'path'
+
+import mockedEnv from 'mocked-env'
 
 import { checkEnvironmentVariable, checkPyenv, checkPython, checkVersion } from '../Requirements'
 

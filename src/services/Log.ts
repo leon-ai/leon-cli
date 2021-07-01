@@ -1,12 +1,10 @@
-import * as fsWithCallbacks from 'fs'
+import fs from 'fs'
 import path from 'path'
 
 import chalk from 'chalk'
 
 import { isExistingFile } from '../utils/isExistingFile'
 import { Leon } from './Leon'
-
-const fs = fsWithCallbacks.promises
 
 interface LogErrorOptions {
   value?: string
@@ -28,9 +26,9 @@ class Log {
     const commandString = command != null ? `[${Leon.NAME} ${command}]` : ''
     const data = `${dateString} ${commandString} ${stderr}\n${value}\n\n`
     if (await isExistingFile(this.errorPath)) {
-      await fs.appendFile(this.errorPath, data)
+      await fs.promises.appendFile(this.errorPath, data)
     } else {
-      await fs.writeFile(this.errorPath, data, { flag: 'w' })
+      await fs.promises.writeFile(this.errorPath, data, { flag: 'w' })
     }
     process.exit(1)
   }

@@ -1,6 +1,6 @@
 import path from 'path'
 import os from 'os'
-import * as fsWithCallbacks from 'fs'
+import fs from 'fs'
 
 import axios from 'axios'
 import ora from 'ora'
@@ -14,8 +14,6 @@ import {
 import { isExistingFile } from '../utils/isExistingFile'
 import { log } from './Log'
 import { LeonInstance } from './LeonInstance'
-
-const fs = fsWithCallbacks.promises
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
@@ -66,7 +64,7 @@ export class Leon implements LeonOptions {
       const body = await axios.get(source, {
         responseType: 'arraybuffer'
       })
-      await fs.writeFile(destination, Buffer.from(body.data), {
+      await fs.promises.writeFile(destination, Buffer.from(body.data), {
         encoding: 'binary'
       })
       downloadLoader.succeed()
@@ -131,7 +129,7 @@ export class Leon implements LeonOptions {
     await createTemporaryEmptyFolder()
     await this.downloadSourceCode(sourceCodeInformation.url, destination)
     await this.extractZip(destination, TEMPORARY_PATH)
-    await fs.rename(extractedPath, this.birthPath)
+    await fs.promises.rename(extractedPath, this.birthPath)
     await LeonInstance.create({
       name: this.name,
       mode: this.useDocker ? 'docker' : 'classic',
