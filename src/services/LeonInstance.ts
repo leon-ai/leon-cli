@@ -27,7 +27,8 @@ export interface CreateOptions {
   shouldBuild?: boolean
 }
 
-export interface LeonInstanceOptions extends Omit<CreateOptions, 'shouldBuild' | 'yes'> {
+export interface LeonInstanceOptions
+  extends Omit<CreateOptions, 'shouldBuild' | 'yes'> {
   birthDate: string
 }
 
@@ -37,7 +38,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public mode: InstanceType
   public birthDate: string
 
-  public constructor (options: LeonInstanceOptions) {
+  public constructor(options: LeonInstanceOptions) {
     const { name, path, mode, birthDate } = options
     this.name = name
     this.path = path
@@ -45,7 +46,7 @@ export class LeonInstance implements LeonInstanceOptions {
     this.birthDate = birthDate
   }
 
-  public async startDocker (LEON_PORT: string): Promise<void> {
+  public async startDocker(LEON_PORT: string): Promise<void> {
     const dockerStartStream = execa('npm', ['run', 'docker:run'], {
       env: {
         LEON_PORT
@@ -62,7 +63,7 @@ export class LeonInstance implements LeonInstanceOptions {
     console.log(value)
   }
 
-  public async startClassic (LEON_PORT: string): Promise<void> {
+  public async startClassic(LEON_PORT: string): Promise<void> {
     const npmStartStream = execa('npm', ['run', 'start'], {
       env: {
         LEON_PORT
@@ -76,7 +77,7 @@ export class LeonInstance implements LeonInstanceOptions {
     console.log(value)
   }
 
-  public async start (port?: number): Promise<void> {
+  public async start(port?: number): Promise<void> {
     process.chdir(this.path)
     const LEON_PORT = port?.toString() ?? '1337'
     if (this.mode === 'docker') {
@@ -85,7 +86,7 @@ export class LeonInstance implements LeonInstanceOptions {
     return await this.startClassic(LEON_PORT)
   }
 
-  public async runNpmScript (options: RunNpmScriptOptions): Promise<void> {
+  public async runNpmScript(options: RunNpmScriptOptions): Promise<void> {
     const { command, loader, workingDirectory } = options
     process.chdir(workingDirectory)
     const npmRunLoader = ora(loader.message).start()
@@ -104,7 +105,7 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  public async buildDockerImage (): Promise<void> {
+  public async buildDockerImage(): Promise<void> {
     await this.runNpmScript({
       command: 'docker:build',
       loader: {
@@ -115,7 +116,7 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
-  public async getPrerequisites (yes: boolean): Promise<void> {
+  public async getPrerequisites(yes: boolean): Promise<void> {
     const hasPython = await checkPython()
     if (!hasPython) {
       const shouldInstallPython = await prompt('Python')
@@ -136,7 +137,7 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  public async build (): Promise<void> {
+  public async build(): Promise<void> {
     await this.runNpmScript({
       command: 'build',
       loader: {
@@ -147,7 +148,7 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
-  public async install (): Promise<void> {
+  public async install(): Promise<void> {
     const loader = {
       message: 'Installing npm dependencies',
       stderr: 'Could not install the npm dependencies'
@@ -169,13 +170,13 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  static find (config: Config, name: string): LeonInstance | undefined {
+  static find(config: Config, name: string): LeonInstance | undefined {
     return config.data.instances.find((instance) => {
       return instance.name === name
     })
   }
 
-  static async get (name?: string): Promise<LeonInstance> {
+  static async get(name?: string): Promise<LeonInstance> {
     const config = await Config.get()
     const isEmptyInstances = config.data.instances.length === 0
     if (isEmptyInstances) {
@@ -193,12 +194,14 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
-  static async create (options: CreateOptions): Promise<void> {
+  static async create(options: CreateOptions): Promise<void> {
     const { shouldBuild = true, yes } = options
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
-      throw new Error('This instance name already exists, please choose another name')
+      throw new Error(
+        'This instance name already exists, please choose another name'
+      )
     }
     leonInstance = new LeonInstance({
       name: options.name,

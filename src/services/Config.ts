@@ -18,12 +18,12 @@ export class Config implements ConfigOptions {
 
   public data: ConfigData
 
-  private constructor (options: ConfigOptions) {
+  private constructor(options: ConfigOptions) {
     const { data } = options
     this.data = data
   }
 
-  static async get (): Promise<Config> {
+  static async get(): Promise<Config> {
     if (await isExistingFile(Config.PATH)) {
       const rawConfigData = await fs.promises.readFile(Config.PATH, {
         encoding: 'utf8'
@@ -49,9 +49,13 @@ export class Config implements ConfigOptions {
     return new Config(configOptions)
   }
 
-  public async save (): Promise<void> {
-    await fs.promises.writeFile(Config.PATH, JSON.stringify(this.data, null, 2), {
-      flag: 'w'
-    })
+  public async save(): Promise<void> {
+    await fs.promises.writeFile(
+      Config.PATH,
+      JSON.stringify(this.data, null, 2),
+      {
+        flag: 'w'
+      }
+    )
   }
 }

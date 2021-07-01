@@ -36,7 +36,7 @@ export class Leon implements LeonOptions {
   public name: string
   public yes: boolean
 
-  constructor (options: LeonOptions) {
+  constructor(options: LeonOptions) {
     const {
       useDevelopGitBranch = false,
       birthPath,
@@ -54,7 +54,7 @@ export class Leon implements LeonOptions {
     this.yes = yes
   }
 
-  public async downloadSourceCode (
+  public async downloadSourceCode(
     source: string,
     destination: string
   ): Promise<void> {
@@ -69,22 +69,30 @@ export class Leon implements LeonOptions {
       downloadLoader.succeed()
     } catch (error) {
       downloadLoader.fail()
-      throw new Error(`Could not download Leon source code located at ${source}\n${error.toString() as string}`)
+      throw new Error(
+        `Could not download Leon source code located at ${source}\n${
+          error.toString() as string
+        }`
+      )
     }
   }
 
-  public async extractZip (source: string, target: string): Promise<void> {
+  public async extractZip(source: string, target: string): Promise<void> {
     const extractLoader = ora('Extracting Leon').start()
     try {
       await extractZip(source, { dir: target })
       extractLoader.succeed()
     } catch (error) {
       extractLoader.fail()
-      throw new Error(`Could not extract Leon source code located at ${source}\n${error.toString() as string}`)
+      throw new Error(
+        `Could not extract Leon source code located at ${source}\n${
+          error.toString() as string
+        }`
+      )
     }
   }
 
-  public getSourceCodeInformation (): {
+  public getSourceCodeInformation(): {
     url: string
     zipName: string
     folderName: string
@@ -104,9 +112,11 @@ export class Leon implements LeonOptions {
     }
   }
 
-  public async createBirth (): Promise<void> {
+  public async createBirth(): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
-      throw new Error(`${this.birthPath} already exists, please provide another path.`)
+      throw new Error(
+        `${this.birthPath} already exists, please provide another path.`
+      )
     }
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)

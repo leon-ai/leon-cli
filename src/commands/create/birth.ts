@@ -35,7 +35,7 @@ export class CreateBirthCommand extends Command {
     description: 'Accept to install all requirements without being prompted.'
   })
 
-  async execute (): Promise<number> {
+  async execute(): Promise<number> {
     try {
       const leon = new Leon({
         useDevelopGitBranch: this.useDevelopGitBranch,

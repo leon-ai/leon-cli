@@ -23,7 +23,9 @@ describe('services/Log - error', () => {
     await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
     expect(process.exit).toHaveBeenCalled()
-    const fileContent = await fs.promises.readFile(log.errorPath, { encoding: 'utf-8' })
+    const fileContent = await fs.promises.readFile(log.errorPath, {
+      encoding: 'utf-8'
+    })
     expect(fileContent.includes(stderr)).toBeTruthy()
   })
 
@@ -31,12 +33,16 @@ describe('services/Log - error', () => {
     fsMock({
       [log.errorPath]: ''
     })
-    let fileContent = await fs.promises.readFile(log.errorPath, { encoding: 'utf-8' })
+    let fileContent = await fs.promises.readFile(log.errorPath, {
+      encoding: 'utf-8'
+    })
     expect(fileContent.length).toEqual(0)
     await log.error({ stderr })
     expect(console.error).toHaveBeenCalled()
     expect(process.exit).toHaveBeenCalled()
-    fileContent = await fs.promises.readFile(log.errorPath, { encoding: 'utf-8' })
+    fileContent = await fs.promises.readFile(log.errorPath, {
+      encoding: 'utf-8'
+    })
     expect(fileContent.includes(stderr)).toBeTruthy()
   })
 })

@@ -15,7 +15,7 @@ class Log {
   public path = path.join(__dirname, '..', '..', 'logs')
   public errorPath = path.join(this.path, 'errors.log')
 
-  public async error (options: LogErrorOptions): Promise<void> {
+  public async error(options: LogErrorOptions): Promise<void> {
     const { commandPath: command, stderr } = options
     console.error(`${chalk.red('Error')}: ${stderr}`)
     console.error(

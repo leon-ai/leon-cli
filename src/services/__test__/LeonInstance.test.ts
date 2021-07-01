@@ -1,7 +1,11 @@
 import fsMock from 'mock-fs'
 
 import { Config, ConfigData } from '../Config'
-import { CreateOptions, LeonInstance, LeonInstanceOptions } from '../LeonInstance'
+import {
+  CreateOptions,
+  LeonInstance,
+  LeonInstanceOptions
+} from '../LeonInstance'
 import { log } from '../Log'
 
 const leonInstanceOptions: LeonInstanceOptions = {
@@ -101,7 +105,9 @@ describe('services/LeonInstance - create', () => {
     })
     await expect(async () => {
       await LeonInstance.create(leonCreateOptions)
-    }).rejects.toThrowError('This instance name already exists, please choose another name')
+    }).rejects.toThrowError(
+      'This instance name already exists, please choose another name'
+    )
   })
 
   it('should create the new instance', async () => {
