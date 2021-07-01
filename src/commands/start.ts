@@ -20,7 +20,7 @@ export class StartCommand extends Command {
     description: 'Specify the instance name to start.'
   })
 
-  async execute (): Promise<number> {
+  async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.start(this.port)

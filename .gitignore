@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 node_modules
 .npm
@@ -13,13 +11,25 @@ coverage
 # debug
 npm-debug.log*
 
-# editors
-.vscode
-.theia
-.idea
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # misc
 .DS_Store
+tmp
 temp
 logs/errors.log
 config/config.json

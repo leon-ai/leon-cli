@@ -1,10 +1,8 @@
-import * as fsWithCallbacks from 'fs'
-
-const fs = fsWithCallbacks.promises
+import fs from 'fs'
 
 export const isExistingFile = async (path: string): Promise<boolean> => {
   try {
-    await fs.access(path, fsWithCallbacks.constants.F_OK)
+    await fs.promises.access(path, fs.constants.F_OK)
     return true
   } catch {
     return false

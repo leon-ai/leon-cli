@@ -1,23 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "commonjs",
-    "lib": ["ES2020"],
+    "lib": ["ESNext"],
     "moduleResolution": "node",
-    "allowJs": false,
-    "checkJs": false,
-    "declaration": false,
-    "sourceMap": true,
     "outDir": "./build",
     "rootDir": "./src",
-    "removeComments": false,
-    "noEmitOnError": true,
-    "importHelpers": false,
     "strict": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "temp", "tmp"]
 }

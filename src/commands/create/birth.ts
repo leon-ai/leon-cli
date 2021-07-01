@@ -1,6 +1,7 @@
 import { Command, Option } from 'clipanion'
 
 import { Leon } from '../../services/Leon'
+import { log } from '../../services/Log'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -34,16 +35,24 @@ export class CreateBirthCommand extends Command {
     description: 'Accept to install all requirements without being prompted.'
   })
 
-  async execute (): Promise<number> {
-    const leon = new Leon({
-      useDevelopGitBranch: this.useDevelopGitBranch,
-      birthPath: this.birthPath,
-      version: this.version,
-      useDocker: this.useDocker,
-      name: this.name,
-      yes: this.yes
-    })
-    await leon.createBirth()
-    return 0
+  async execute(): Promise<number> {
+    try {
+      const leon = new Leon({
+        useDevelopGitBranch: this.useDevelopGitBranch,
+        birthPath: this.birthPath,
+        version: this.version,
+        useDocker: this.useDocker,
+        name: this.name,
+        yes: this.yes
+      })
+      await leon.createBirth()
+      return 0
+    } catch (error) {
+      await log.error({
+        stderr: error.message,
+        commandPath: 'create birth'
+      })
+      return 1
+    }
   }
 }

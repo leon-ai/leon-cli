@@ -1,10 +1,8 @@
-import * as fsWithCallbacks from 'fs'
+import fs from 'fs'
 import path from 'path'
 
 import { isExistingFile } from '../utils/isExistingFile'
 import { LeonInstance } from './LeonInstance'
-
-const fs = fsWithCallbacks.promises
 
 export interface ConfigOptions {
   data: ConfigData
@@ -20,14 +18,14 @@ export class Config implements ConfigOptions {
 
   public data: ConfigData
 
-  private constructor (options: ConfigOptions) {
+  private constructor(options: ConfigOptions) {
     const { data } = options
     this.data = data
   }
 
-  static async get (): Promise<Config> {
+  static async get(): Promise<Config> {
     if (await isExistingFile(Config.PATH)) {
-      const rawConfigData = await fs.readFile(Config.PATH, {
+      const rawConfigData = await fs.promises.readFile(Config.PATH, {
         encoding: 'utf8'
       })
       const data: ConfigData = JSON.parse(rawConfigData)
@@ -41,7 +39,7 @@ export class Config implements ConfigOptions {
         instances: []
       }
     }
-    await fs.writeFile(
+    await fs.promises.writeFile(
       Config.PATH,
       JSON.stringify(configOptions.data, null, 2),
       {
@@ -51,9 +49,13 @@ export class Config implements ConfigOptions {
     return new Config(configOptions)
   }
 
-  public async save (): Promise<void> {
-    await fs.writeFile(Config.PATH, JSON.stringify(this.data, null, 2), {
-      flag: 'w'
-    })
+  public async save(): Promise<void> {
+    await fs.promises.writeFile(
+      Config.PATH,
+      JSON.stringify(this.data, null, 2),
+      {
+        flag: 'w'
+      }
+    )
   }
 }

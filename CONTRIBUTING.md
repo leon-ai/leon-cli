@@ -21,7 +21,7 @@ All work on **Leon** happens directly on [GitHub](https://github.com/leon-ai). B
 
 - **Please first discuss** the change you wish to make via [issue](https://github.com/leon-ai/leon-cli/issues) before making a change. It might avoid a waste of your time.
 
-- Ensure your code respect [Typescript Standard Style](https://www.npmjs.com/package/ts-standard).
+- Ensure your code respect `eslint` and `prettier`.
 
 - Make sure your **code passes the tests**.
 

@@ -1,4 +1,14 @@
-import { checkPyenv, checkPython, checkVersion } from '../Requirements'
+import os from 'os'
+import path from 'path'
+
+import mockedEnv from 'mocked-env'
+
+import {
+  checkEnvironmentVariable,
+  checkPyenv,
+  checkPython,
+  checkVersion
+} from '../Requirements'
 
 describe('services/Requirements - checkVersion', () => {
   it('should return false when there is no match', async () => {
@@ -37,13 +47,53 @@ describe('services/Requirements - checkVersion', () => {
 describe('services/Requirements - checkPython', () => {
   it('should return a boolean', async () => {
     const result = await checkPython()
-    expect(typeof (result) === 'boolean').toBeTruthy()
+    expect(typeof result === 'boolean').toBeTruthy()
   })
 })
 
 describe('services/Requirements - checkPyenv', () => {
   it('should return a boolean', async () => {
     const result = await checkPyenv()
-    expect(typeof (result) === 'boolean').toBeTruthy()
+    expect(typeof result === 'boolean').toBeTruthy()
+  })
+})
+
+describe('services/Requirements - checkEnvironmentVariable', () => {
+  it('should return false because the environment variable is not set', async () => {
+    const restore = mockedEnv({
+      PYENV: undefined
+    })
+
+    expect(
+      await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))
+    ).toBe(false)
+
+    restore()
+  })
+
+  it("should return false because the environment variable doesn't contains the specifield value", async () => {
+    const restore = mockedEnv({
+      PYENV: path.join('some', 'value', 'here')
+    })
+
+    expect(
+      await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))
+    ).toBe(false)
+
+    restore()
+  })
+
+  it('should return true because the environment variable contains the specifield value', async () => {
+    const pyenvValue = path.join(os.homedir(), '.pyenv', 'pyenv-win')
+
+    const restore = mockedEnv({
+      PYENV: pyenvValue
+    })
+
+    expect(
+      await checkEnvironmentVariable('PYENV', path.join('.pyenv', 'pyenv-win'))
+    ).toBe(true)
+
+    restore()
   })
 })
