@@ -133,7 +133,8 @@ export class Leon implements LeonOptions {
     await LeonInstance.create({
       name: this.name,
       mode: this.useDocker ? 'docker' : 'classic',
-      path: this.birthPath
+      path: this.birthPath,
+      yes: this.yes
     })
   }
 }

@@ -2,6 +2,10 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
+import { prompt } from '../services/Prompt'
+import { checkPipenv, checkPython } from '../services/Requirements'
+import { InstallPyenv } from '../services/InstallPyenv'
+import { installPipenv, setPipenvPath } from '../services/Pipenv'
 import { Config } from './Config'
 import { log } from './Log'
 
@@ -20,10 +24,11 @@ export interface CreateOptions {
   name: string
   path: string
   mode: InstanceType
+  yes: boolean
   shouldBuild?: boolean
 }
 
-export interface LeonInstanceOptions extends Omit<CreateOptions, 'shouldBuild'> {
+export interface LeonInstanceOptions extends Omit<CreateOptions, 'shouldBuild' | 'yes'> {
   birthDate: string
 }
 
@@ -115,6 +120,27 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
+  public async getPrerequisites (yes: boolean): Promise<void> {
+    const hasPython = await checkPython()
+    if (!hasPython) {
+      const shouldInstallPython = await prompt('Python')
+      if (yes || shouldInstallPython) {
+        const installPyenv = new InstallPyenv()
+        await installPyenv.onWindows()
+      }
+    }
+    const hasPipenv = await checkPipenv()
+    if (!hasPipenv) {
+      const shouldInstallPipenv = await prompt('Pipenv')
+      if (yes || shouldInstallPipenv) {
+        await installPipenv()
+        await setPipenvPath()
+        const installPyenv = new InstallPyenv()
+        await installPyenv.rehash()
+      }
+    }
+  }
+
   public async build (): Promise<void> {
     await this.runNpmScript({
       command: 'build',
@@ -177,7 +203,7 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   static async create (options: CreateOptions): Promise<void> {
-    const { shouldBuild = true } = options
+    const { shouldBuild = true, yes } = options
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
@@ -198,6 +224,7 @@ export class LeonInstance implements LeonInstanceOptions {
       if (leonInstance.mode === 'docker') {
         return await leonInstance.buildDockerImage()
       }
+      await leonInstance.getPrerequisites(yes)
       await leonInstance.install()
       await leonInstance.build()
     }

@@ -13,7 +13,8 @@ const leonInstanceOptions: LeonInstanceOptions = {
 
 const leonCreateOptions: CreateOptions = {
   ...leonInstanceOptions,
-  shouldBuild: false
+  shouldBuild: false,
+  yes: false
 }
 
 const leonInstance = new LeonInstance(leonInstanceOptions)
