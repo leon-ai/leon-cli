@@ -7,7 +7,6 @@ import { checkPipenv, checkPython } from '../services/Requirements'
 import { InstallPyenv } from '../services/InstallPyenv'
 import { installPipenv, setPipenvPath } from '../services/Pipenv'
 import { Config } from './Config'
-import { log } from './Log'
 
 export type InstanceType = 'classic' | 'docker'
 
@@ -101,11 +100,7 @@ export class LeonInstance implements LeonInstanceOptions {
       npmRunLoader.succeed()
     } catch (error) {
       npmRunLoader.fail()
-      await log.error({
-        stderr: loader.stderr,
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`${loader.stderr}\n${error.toString() as string}`)
     }
   }
 
@@ -170,11 +165,7 @@ export class LeonInstance implements LeonInstanceOptions {
       npmRunLoader.succeed()
     } catch (error) {
       npmRunLoader.fail()
-      await log.error({
-        stderr: loader.stderr,
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`${loader.stderr}\n${error.toString() as string}`)
     }
   }
 
@@ -207,10 +198,7 @@ export class LeonInstance implements LeonInstanceOptions {
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
-      return await log.error({
-        stderr: 'This instance name already exists, please choose another name',
-        commandPath: 'create birth'
-      })
+      throw new Error('This instance name already exists, please choose another name')
     }
     leonInstance = new LeonInstance({
       name: options.name,

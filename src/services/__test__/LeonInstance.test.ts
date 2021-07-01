@@ -99,9 +99,9 @@ describe('services/LeonInstance - create', () => {
       [log.path]: {},
       [Config.PATH]: JSON.stringify(configData)
     })
-    await LeonInstance.create(leonCreateOptions)
-    expect(console.error).toHaveBeenCalled()
-    expect(process.exit).toHaveBeenCalled()
+    await expect(async () => {
+      await LeonInstance.create(leonCreateOptions)
+    }).rejects.toThrowError('This instance name already exists, please choose another name')
   })
 
   it('should create the new instance', async () => {

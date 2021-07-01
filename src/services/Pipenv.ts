@@ -1,6 +1,5 @@
 import execa from 'execa'
 import ora from 'ora'
-import { log } from './Log'
 
 import { checkEnvironmentVariable } from './Requirements'
 
@@ -11,11 +10,7 @@ export async function installPipenv (): Promise<void> {
     pipenvLoader.succeed()
   } catch (error) {
     pipenvLoader.fail()
-    await log.error({
-      stderr: 'Could not install pipenv',
-      commandPath: 'create birth',
-      value: error.toString()
-    })
+    throw new Error(`Could not install pipenv\n${error.toString() as string}`)
   }
 }
 
@@ -39,10 +34,6 @@ export async function setPipenvPath (): Promise<void> {
       }
     }
   } catch (error) {
-    await log.error({
-      stderr: 'Impossible to register Pipenv environment variables',
-      commandPath: 'create birth',
-      value: error.toString()
-    })
+    throw new Error(`Impossible to register Pipenv environment variables\n${error.toString() as string}`)
   }
 }

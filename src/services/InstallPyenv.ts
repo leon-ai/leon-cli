@@ -5,7 +5,6 @@ import AdmZip from 'adm-zip'
 import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
-import { log } from './Log'
 
 import { checkEnvironmentVariable } from './Requirements'
 
@@ -23,11 +22,7 @@ export class InstallPyenv {
       return new AdmZip(body.data)
     } catch (error) {
       downloadLoader.fail()
-      await log.error({
-        stderr: `Could not download Pyenv Windows zip located at ${InstallPyenv.PYENV_WINDOWS_URL}`,
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`Could not download Pyenv Windows zip located at ${InstallPyenv.PYENV_WINDOWS_URL}\n${error.toString() as string}`)
     }
   }
 
@@ -54,11 +49,7 @@ export class InstallPyenv {
       extractLoader.succeed()
     } catch (error) {
       extractLoader.fail()
-      await log.error({
-        stderr: 'Could not extract Pyenv Windows zip',
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`Could not extract Pyenv Windows zip\n${error.toString() as string}`)
     }
   }
 
@@ -79,11 +70,7 @@ export class InstallPyenv {
       pythonLoader.succeed()
     } catch (error) {
       pythonLoader.fail()
-      await log.error({
-        stderr: `Could not install python ${version}`,
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`Could not install python ${version}\n${error.toString() as string}`)
     }
   }
 
@@ -94,11 +81,7 @@ export class InstallPyenv {
       rehashLoader.succeed()
     } catch (error) {
       rehashLoader.fail()
-      await log.error({
-        stderr: 'Could not rehash pyenv commands',
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`Could not rehash pyenv commands\n${error.toString() as string}`)
     }
   }
 
@@ -122,11 +105,7 @@ export class InstallPyenv {
       varEnvLoader.succeed()
     } catch (error) {
       varEnvLoader.fail()
-      await log.error({
-        stderr: 'Impossible to register Pyenv environment variables',
-        commandPath: 'create birth',
-        value: error.toString()
-      })
+      throw new Error(`Impossible to register Pyenv environment variables\n${error.toString() as string}`)
     }
   }
 
