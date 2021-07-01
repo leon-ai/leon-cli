@@ -15,16 +15,11 @@ jobs:
       - name: 'Use Node.js'
         uses: 'actions/setup-node@v2.2.0'
         with:
-          node-version: '14.x'
-
-      - name: 'Cache dependencies'
-        uses: 'actions/cache@v2.1.6'
-        with:
-          path: '.npm'
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          node-version: 'lts/*'
+          cache: 'npm'
 
       - name: 'Install'
-        run: 'npm ci --cache .npm --prefer-offline'
+        run: 'npm install'
 
       - name: 'Test'
         run: 'npm run test'
