@@ -72,7 +72,7 @@ export class InstallPyenv {
   }
 
   async downloadPython(): Promise<void> {
-    const version = '3.9.4'
+    const version = '3.9.6'
     const pythonLoader = ora(`Downloading python ${version}`).start()
     try {
       await execa(`pyenv install ${version} --quiet`)
