@@ -13,6 +13,7 @@ import {
 } from '../utils/createTemporaryEmptyFolder'
 import { isExistingFile } from '../utils/isExistingFile'
 import { LeonInstance } from './LeonInstance'
+import { LogError } from '../utils/LogError'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
@@ -69,11 +70,10 @@ export class Leon implements LeonOptions {
       downloadLoader.succeed()
     } catch (error) {
       downloadLoader.fail()
-      throw new Error(
-        `Could not download Leon source code located at ${source}\n${
-          error.toString() as string
-        }`
-      )
+      throw new LogError({
+        message: `Could not download Leon source code located at ${source}`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -84,11 +84,10 @@ export class Leon implements LeonOptions {
       extractLoader.succeed()
     } catch (error) {
       extractLoader.fail()
-      throw new Error(
-        `Could not extract Leon source code located at ${source}\n${
-          error.toString() as string
-        }`
-      )
+      throw new LogError({
+        message: `Could not extract Leon source code located at ${source}`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -114,9 +113,9 @@ export class Leon implements LeonOptions {
 
   public async createBirth(): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
-      throw new Error(
-        `${this.birthPath} already exists, please provide another path.`
-      )
+      throw new LogError({
+        message: `${this.birthPath} already exists, please provide another path.`
+      })
     }
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)

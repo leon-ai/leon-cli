@@ -1,10 +1,11 @@
 import fs from 'fs'
 
 import fsMock from 'mock-fs'
+import { LogError } from '../../utils/LogError'
 import { log } from '../Log'
 
 describe('services/Log - error', () => {
-  const stderr = 'Error occured'
+  const message = 'Error occured'
 
   beforeEach(async () => {
     console.error = jest.fn()
@@ -20,29 +21,27 @@ describe('services/Log - error', () => {
     fsMock({
       [log.path]: {}
     })
-    await log.error({ stderr })
+    await log.error({ error: new LogError({ message }) })
     expect(console.error).toHaveBeenCalled()
-    expect(process.exit).toHaveBeenCalled()
-    const fileContent = await fs.promises.readFile(log.errorPath, {
+    const fileContent = await fs.promises.readFile(log.ERROR_LOG_PATH, {
       encoding: 'utf-8'
     })
-    expect(fileContent.includes(stderr)).toBeTruthy()
+    expect(fileContent.includes(message)).toBeTruthy()
   })
 
   it('should append to file the error data', async () => {
     fsMock({
-      [log.errorPath]: ''
+      [log.ERROR_LOG_PATH]: ''
     })
-    let fileContent = await fs.promises.readFile(log.errorPath, {
+    let fileContent = await fs.promises.readFile(log.ERROR_LOG_PATH, {
       encoding: 'utf-8'
     })
     expect(fileContent.length).toEqual(0)
-    await log.error({ stderr })
+    await log.error({ error: new LogError({ message }) })
     expect(console.error).toHaveBeenCalled()
-    expect(process.exit).toHaveBeenCalled()
-    fileContent = await fs.promises.readFile(log.errorPath, {
+    fileContent = await fs.promises.readFile(log.ERROR_LOG_PATH, {
       encoding: 'utf-8'
     })
-    expect(fileContent.includes(stderr)).toBeTruthy()
+    expect(fileContent.includes(message)).toBeTruthy()
   })
 })

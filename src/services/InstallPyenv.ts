@@ -7,6 +7,7 @@ import execa from 'execa'
 import ora from 'ora'
 
 import { checkEnvironmentVariable } from './Requirements'
+import { LogError } from '../utils/LogError'
 
 export class InstallPyenv {
   static PYENV_WINDOWS_URL =
@@ -22,11 +23,10 @@ export class InstallPyenv {
       return new AdmZip(body.data)
     } catch (error) {
       downloadLoader.fail()
-      throw new Error(
-        `Could not download Pyenv Windows zip located at ${
-          InstallPyenv.PYENV_WINDOWS_URL
-        }\n${error.toString() as string}`
-      )
+      throw new LogError({
+        message: `Could not download Pyenv Windows zip located at ${InstallPyenv.PYENV_WINDOWS_URL}`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -53,9 +53,10 @@ export class InstallPyenv {
       extractLoader.succeed()
     } catch (error) {
       extractLoader.fail()
-      throw new Error(
-        `Could not extract Pyenv Windows zip\n${error.toString() as string}`
-      )
+      throw new LogError({
+        message: `Could not extract Pyenv Windows zip`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -80,9 +81,10 @@ export class InstallPyenv {
       pythonLoader.succeed()
     } catch (error) {
       pythonLoader.fail()
-      throw new Error(
-        `Could not install python ${version}\n${error.toString() as string}`
-      )
+      throw new LogError({
+        message: `Could not install python ${version}`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -93,9 +95,10 @@ export class InstallPyenv {
       rehashLoader.succeed()
     } catch (error) {
       rehashLoader.fail()
-      throw new Error(
-        `Could not rehash pyenv commands\n${error.toString() as string}`
-      )
+      throw new LogError({
+        message: 'Could not rehash pyenv commands',
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -134,11 +137,10 @@ export class InstallPyenv {
       varEnvLoader.succeed()
     } catch (error) {
       varEnvLoader.fail()
-      throw new Error(
-        `Impossible to register Pyenv environment variables\n${
-          error.toString() as string
-        }`
-      )
+      throw new LogError({
+        message: 'Impossible to register Pyenv environment variables',
+        logFileMessage: error.toString()
+      })
     }
   }
 

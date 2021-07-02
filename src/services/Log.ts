@@ -5,31 +5,36 @@ import chalk from 'chalk'
 
 import { isExistingFile } from '../utils/isExistingFile'
 import { Leon } from './Leon'
+import { LogError } from '../utils/LogError'
 
 interface LogErrorOptions {
   commandPath?: string
-  stderr: string
+  error: unknown
 }
 
 class Log {
   public path = path.join(__dirname, '..', '..', 'logs')
-  public errorPath = path.join(this.path, 'errors.log')
+  public ERROR_LOG_PATH = path.join(this.path, 'errors.log')
 
   public async error(options: LogErrorOptions): Promise<void> {
-    const { commandPath: command, stderr } = options
-    console.error(`${chalk.red('Error')}: ${stderr}`)
-    console.error(
-      `For further informations, look at the log file located at ${this.errorPath}`
-    )
-    const dateString = `[${new Date().toString()}]`
-    const commandString = command != null ? `[${Leon.NAME} ${command}]` : ''
-    const data = `${dateString} ${commandString} ${stderr}\n\n`
-    if (await isExistingFile(this.errorPath)) {
-      await fs.promises.appendFile(this.errorPath, data)
-    } else {
-      await fs.promises.writeFile(this.errorPath, data, { flag: 'w' })
+    const { commandPath, error } = options
+    const message = error instanceof Error ? error.message : 'Fatal'
+    console.error(`${chalk.red('Error')}: ${message}`)
+    if (error instanceof LogError) {
+      console.error(
+        `For further informations, look at the log file located at ${this.ERROR_LOG_PATH}`
+      )
+      const logFileMessage = error.logFileMessage ?? ''
+      const dateString = `[${new Date().toString()}]`
+      const commandString =
+        commandPath != null ? `[${Leon.NAME} ${commandPath}]` : ''
+      const data = `${dateString} ${commandString} ${error.message}\n${logFileMessage}\n\n`
+      if (await isExistingFile(this.ERROR_LOG_PATH)) {
+        await fs.promises.appendFile(this.ERROR_LOG_PATH, data)
+      } else {
+        await fs.promises.writeFile(this.ERROR_LOG_PATH, data, { flag: 'w' })
+      }
     }
-    process.exit(1)
   }
 }
 

@@ -7,6 +7,7 @@ import { checkPipenv, checkPython } from '../services/Requirements'
 import { InstallPyenv } from '../services/InstallPyenv'
 import { installPipenv, setPipenvPath } from '../services/Pipenv'
 import { Config } from './Config'
+import { LogError } from '../utils/LogError'
 
 export type InstanceType = 'classic' | 'docker'
 
@@ -101,7 +102,10 @@ export class LeonInstance implements LeonInstanceOptions {
       npmRunLoader.succeed()
     } catch (error) {
       npmRunLoader.fail()
-      throw new Error(`${loader.stderr}\n${error.toString() as string}`)
+      throw new LogError({
+        message: loader.stderr,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -166,7 +170,10 @@ export class LeonInstance implements LeonInstanceOptions {
       npmRunLoader.succeed()
     } catch (error) {
       npmRunLoader.fail()
-      throw new Error(`${loader.stderr}\n${error.toString() as string}`)
+      throw new LogError({
+        message: loader.stderr,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -180,16 +187,18 @@ export class LeonInstance implements LeonInstanceOptions {
     const config = await Config.get()
     const isEmptyInstances = config.data.instances.length === 0
     if (isEmptyInstances) {
-      throw new Error('You should have at least one instance.')
+      throw new LogError({
+        message: 'You should have at least one instance.'
+      })
     }
     if (name == null) {
       return config.data.instances[0]
     }
     const leonInstance = LeonInstance.find(config, name)
     if (leonInstance == null) {
-      throw new Error(
-        "This instance doesn't exists, please provider another name."
-      )
+      throw new LogError({
+        message: "This instance doesn't exists, please provider another name."
+      })
     }
     return leonInstance
   }
@@ -199,9 +208,9 @@ export class LeonInstance implements LeonInstanceOptions {
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
-      throw new Error(
-        'This instance name already exists, please choose another name'
-      )
+      throw new LogError({
+        message: 'This instance name already exists, please choose another name'
+      })
     }
     leonInstance = new LeonInstance({
       name: options.name,
