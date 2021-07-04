@@ -1,34 +1,28 @@
-import * as typanion from 'typanion'
 import { Command, Option } from 'clipanion'
 
 import { LeonInstance } from '../services/LeonInstance'
 import { log } from '../services/Log'
 
-export class StartCommand extends Command {
-  static paths = [['start']]
+export class CheckCommand extends Command {
+  static paths = [['check']]
 
   static usage = {
-    description: 'Start a Leon instance.'
+    description: 'Check the setup went well for a Leon instance.'
   }
 
-  public port = Option.String('--port', {
-    description: 'Specify listening server port.',
-    validator: typanion.isNumber()
-  })
-
   public name = Option.String('--name', {
-    description: 'Specify the instance name to start.'
+    description: 'Specify the instance name to check.'
   })
 
   async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
-      await leonInstance.start(this.port)
+      await leonInstance.check()
       return 0
     } catch (error: unknown) {
       await log.error({
         error,
-        commandPath: 'start'
+        commandPath: 'check'
       })
       return 1
     }
