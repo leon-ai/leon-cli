@@ -70,7 +70,7 @@
     "@types/jest": "26.0.23",
     "@types/mock-fs": "4.13.0",
     "@types/node": "16.0.0",
-    "@types/semver": "7.3.6",
+    "@types/semver": "7.3.7",
     "@types/uuid": "8.3.0",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "editorconfig-checker": "4.0.2",
