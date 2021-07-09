@@ -69,7 +69,7 @@
     "@types/adm-zip": "0.4.34",
     "@types/jest": "26.0.24",
     "@types/mock-fs": "4.13.1",
-    "@types/node": "16.0.0",
+    "@types/node": "16.0.3",
     "@types/semver": "7.3.7",
     "@types/uuid": "8.3.1",
     "@typescript-eslint/eslint-plugin": "4.28.2",
