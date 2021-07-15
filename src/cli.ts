@@ -2,6 +2,7 @@ import { Builtins, Cli } from 'clipanion'
 
 import { CreateBirthCommand } from './commands/create/birth'
 import { StartCommand } from './commands/start'
+import { CheckCommand } from './commands/check'
 import { Leon } from './services/Leon'
 
 export const cli = new Cli({
@@ -13,3 +14,4 @@ cli.register(Builtins.HelpCommand)
 cli.register(Builtins.VersionCommand)
 cli.register(CreateBirthCommand)
 cli.register(StartCommand)
+cli.register(CheckCommand)

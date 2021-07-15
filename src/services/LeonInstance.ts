@@ -109,6 +109,17 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
+  public async check(): Promise<void> {
+    await this.runNpmScript({
+      command: this.mode === 'docker' ? 'docker:check' : 'check',
+      loader: {
+        message: 'Checking that the setup went well',
+        stderr: 'Could not check the setup'
+      },
+      workingDirectory: this.path
+    })
+  }
+
   public async buildDockerImage(): Promise<void> {
     await this.runNpmScript({
       command: 'docker:build',
