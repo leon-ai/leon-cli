@@ -1,5 +1,5 @@
 import { Builtins, Cli } from 'clipanion'
-import { readPackageSync } from 'read-pkg'
+import readPackage from 'read-pkg'
 
 import { CreateBirthCommand } from './commands/create/birth'
 import { StartCommand } from './commands/start'
@@ -9,7 +9,7 @@ import { Leon } from './services/Leon'
 export const cli = new Cli({
   binaryLabel: Leon.NAME,
   binaryName: Leon.NAME,
-  binaryVersion: readPackageSync().version
+  binaryVersion: readPackage.sync().version
 })
 cli.register(Builtins.HelpCommand)
 cli.register(Builtins.VersionCommand)
