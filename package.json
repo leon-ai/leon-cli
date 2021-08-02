@@ -53,7 +53,7 @@
   "dependencies": {
     "adm-zip": "0.5.5",
     "axios": "0.21.1",
-    "chalk": "4.1.1",
+    "chalk": "4.1.2",
     "clipanion": "3.0.1",
     "execa": "5.1.1",
     "extract-zip": "2.0.1",
