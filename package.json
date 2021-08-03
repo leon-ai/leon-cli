@@ -73,7 +73,7 @@
     "@types/node": "16.4.5",
     "@types/semver": "7.3.8",
     "@types/uuid": "8.3.1",
-    "@typescript-eslint/eslint-plugin": "4.28.5",
+    "@typescript-eslint/eslint-plugin": "4.29.0",
     "editorconfig-checker": "4.0.2",
     "eslint": "7.31.0",
     "eslint-config-prettier": "8.3.0",
