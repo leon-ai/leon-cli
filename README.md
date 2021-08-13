@@ -6,7 +6,6 @@
   <a href="./CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg" alt="Contributor Covenant" /></a>
   <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release" /></a>
   <br />
-  <a href="https://github.com/leon-ai/leon-cli/actions/workflows/analyze.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/analyze.yml/badge.svg?branch=develop" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/build.yml/badge.svg?branch=develop" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/test.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/test.yml/badge.svg?branch=develop" /></a>
   <a href="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml"><img src="https://github.com/leon-ai/leon-cli/actions/workflows/lint.yml/badge.svg?branch=develop" /></a>
