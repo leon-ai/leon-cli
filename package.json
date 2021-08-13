@@ -68,7 +68,7 @@
     "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "13.1.0",
     "@types/adm-zip": "0.4.34",
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.0.1",
     "@types/mock-fs": "4.13.1",
     "@types/node": "16.4.13",
     "@types/semver": "7.3.8",
