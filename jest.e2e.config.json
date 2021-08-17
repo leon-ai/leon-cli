@@ -1,0 +1,7 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "rootDir": "./src",
+  "setupFilesAfterEnv": ["<rootDir>/e2e/setup.ts"],
+  "testPathIgnorePatterns": ["/__test__/"]
+}

@@ -1,0 +1,6 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "rootDir": "./src",
+  "testPathIgnorePatterns": ["/e2e/"]
+}
