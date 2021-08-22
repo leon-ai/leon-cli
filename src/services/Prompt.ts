@@ -4,7 +4,7 @@ export const positiveAnswers = ['y', 'yes']
 export const negativeAnswers = ['n', 'no']
 export const acceptedAnswers = [...positiveAnswers, ...negativeAnswers]
 
-export async function prompt(requirement: string): Promise<boolean> {
+export async function shouldInstall(requirement: string): Promise<boolean> {
   const readlineInterface = readline.createInterface({
     input: process.stdin,
     output: process.stdout
