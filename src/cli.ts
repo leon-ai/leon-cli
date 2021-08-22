@@ -1,3 +1,5 @@
+import path from 'path'
+
 import { Builtins, Cli } from 'clipanion'
 import readPackage from 'read-pkg'
 
@@ -9,7 +11,7 @@ import { Leon } from './services/Leon'
 export const cli = new Cli({
   binaryLabel: Leon.NAME,
   binaryName: Leon.NAME,
-  binaryVersion: readPackage.sync().version
+  binaryVersion: readPackage.sync({ cwd: path.join(__dirname, '..') }).version
 })
 cli.register(Builtins.HelpCommand)
 cli.register(Builtins.VersionCommand)
