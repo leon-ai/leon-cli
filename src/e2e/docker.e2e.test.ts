@@ -1,9 +1,11 @@
-import waitOn from 'wait-on'
+import os from 'os'
 
+import waitOn from 'wait-on'
 import execa from 'execa'
 
 describe('Docker End To End (e2e)', () => {
   it('should brings Leon to life and start the instance', (done) => {
+    process.chdir(os.homedir())
     const PORT = 1337
     let startSubprocess: execa.ExecaChildProcess<string> | null = null
     execa('leon', ['create', 'birth', '--docker', '--develop'])
