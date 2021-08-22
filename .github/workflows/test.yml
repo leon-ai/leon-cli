@@ -49,8 +49,5 @@ jobs:
       - name: 'Install leon'
         run: 'npm install --global'
 
-      - name: 'Change directory'
-        run: 'cd "${HOME}"'
-
       - name: 'End To End (e2e) Test with Docker'
         run: 'npm run test:e2e-docker'
