@@ -59,7 +59,7 @@
     "execa": "5.1.1",
     "extract-zip": "2.0.1",
     "get-stream": "6.0.1",
-    "ora": "5.4.1",
+    "ora": "6.0.0",
     "read-pkg": "5.2.0",
     "semver": "7.3.5",
     "typanion": "3.3.2",
