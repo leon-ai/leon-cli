@@ -1,60 +1,69 @@
 import execa from 'execa'
 import ora from 'ora'
 
-import { checkEnvironmentVariable } from './Requirements'
+import { requirements } from './Requirements'
 import { LogError } from '../utils/LogError'
+import { pyenv } from './Pyenv'
 
-export async function installPipenv(): Promise<void> {
-  const pipenvLoader = ora('Installing pipenv').start()
-  try {
-    await execa('pip install --user pipenv')
-    pipenvLoader.succeed()
-  } catch (error) {
-    pipenvLoader.fail()
-    throw new LogError({
-      message: 'Could not install pipenv',
-      logFileMessage: error.toString()
-    })
+class Pipenv {
+  public async install(): Promise<void> {
+    const pipenvLoader = ora('Installing pipenv').start()
+    try {
+      await execa('pip install --user pipenv')
+      pipenvLoader.succeed()
+      await pipenv.setPath()
+      await pyenv.rehash()
+    } catch (error: any) {
+      pipenvLoader.fail()
+      throw new LogError({
+        message: 'Could not install pipenv',
+        logFileMessage: error.toString()
+      })
+    }
+  }
+
+  public async setPath(): Promise<void> {
+    const appdataDir =
+      process.env.APPDATA ??
+      (process.platform === 'darwin'
+        ? process.env.HOME ?? '' + '/Library/Preferences'
+        : process.env.HOME ?? '' + '/.local/share')
+    const sitePackageEnv = `${appdataDir}\\Python\\Python39\\site-packages`
+    const scriptEnv = `${appdataDir}\\Python\\Python39\\Scripts`
+
+    try {
+      if (
+        !(await requirements.checkEnvironmentVariable('PATH', sitePackageEnv))
+      ) {
+        if (process.platform === 'win32') {
+          await execa(
+            `[Environment]::SetEnvironmentVariable('PATH', "${sitePackageEnv};${
+              process.env.PATH ?? ''
+            }",'User')`,
+            [],
+            { shell: 'powershell.exe' }
+          )
+        }
+      }
+
+      if (!(await requirements.checkEnvironmentVariable('PATH', scriptEnv))) {
+        if (process.platform === 'win32') {
+          await execa(
+            `[Environment]::SetEnvironmentVariable('PATH', "${scriptEnv};${
+              process.env.PATH ?? ''
+            }",'User')`,
+            [],
+            { shell: 'powershell.exe' }
+          )
+        }
+      }
+    } catch (error: any) {
+      throw new LogError({
+        message: 'Impossible to register Pipenv environment variables',
+        logFileMessage: error.toString()
+      })
+    }
   }
 }
 
-export async function setPipenvPath(): Promise<void> {
-  const appdataDir =
-    process.env.APPDATA ??
-    (process.platform === 'darwin'
-      ? process.env.HOME ?? '' + '/Library/Preferences'
-      : process.env.HOME ?? '' + '/.local/share')
-  const sitePackageEnv = `${appdataDir}\\Python\\Python39\\site-packages`
-  const scriptEnv = `${appdataDir}\\Python\\Python39\\Scripts`
-
-  try {
-    if (!(await checkEnvironmentVariable('PATH', sitePackageEnv))) {
-      if (process.platform === 'win32') {
-        await execa(
-          `[Environment]::SetEnvironmentVariable('PATH', "${sitePackageEnv};${
-            process.env.PATH ?? ''
-          }",'User')`,
-          [],
-          { shell: 'powershell.exe' }
-        )
-      }
-    }
-
-    if (!(await checkEnvironmentVariable('PATH', scriptEnv))) {
-      if (process.platform === 'win32') {
-        await execa(
-          `[Environment]::SetEnvironmentVariable('PATH', "${scriptEnv};${
-            process.env.PATH ?? ''
-          }",'User')`,
-          [],
-          { shell: 'powershell.exe' }
-        )
-      }
-    }
-  } catch (error) {
-    throw new LogError({
-      message: 'Impossible to register Pipenv environment variables',
-      logFileMessage: error.toString()
-    })
-  }
-}
+export const pipenv = new Pipenv()

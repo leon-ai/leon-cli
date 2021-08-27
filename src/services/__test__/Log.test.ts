@@ -4,7 +4,7 @@ import fsMock from 'mock-fs'
 import { LogError } from '../../utils/LogError'
 import { log } from '../Log'
 
-describe('services/Log - error', () => {
+describe('services/Log', () => {
   const message = 'Error occured'
 
   beforeEach(async () => {

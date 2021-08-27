@@ -19,7 +19,7 @@ export class CheckCommand extends Command {
       const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.check()
       return 0
-    } catch (error: unknown) {
+    } catch (error) {
       await log.error({
         error,
         commandPath: 'check'

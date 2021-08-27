@@ -25,7 +25,7 @@ export class StartCommand extends Command {
       const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.start(this.port)
       return 0
-    } catch (error: unknown) {
+    } catch (error) {
       await log.error({
         error,
         commandPath: 'start'

@@ -2,10 +2,10 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
-import { shouldInstall } from '../services/Prompt'
-import { checkPipenv, checkPython } from '../services/Requirements'
-import { InstallPyenv } from '../services/InstallPyenv'
-import { installPipenv, setPipenvPath } from '../services/Pipenv'
+import { prompt } from '../services/Prompt'
+import { requirements } from '../services/Requirements'
+import { pyenv } from './Pyenv'
+import { pipenv } from '../services/Pipenv'
 import { Config } from './Config'
 import { LogError } from '../utils/LogError'
 
@@ -100,7 +100,7 @@ export class LeonInstance implements LeonInstanceOptions {
       const value = await getStream(npmRunStream)
       console.log(value)
       npmRunLoader.succeed()
-    } catch (error) {
+    } catch (error: any) {
       npmRunLoader.fail()
       throw new LogError({
         message: loader.stderr,
@@ -132,20 +132,16 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async getPrerequisites(yes: boolean): Promise<void> {
-    const hasPython = await checkPython()
+    const hasPython = await requirements.checkPython()
     if (!hasPython) {
-      if (yes || (await shouldInstall('Python'))) {
-        const installPyenv = new InstallPyenv()
-        await installPyenv.onWindows()
+      if (yes || (await prompt.shouldInstall('Python'))) {
+        await pyenv.install()
       }
     }
-    const hasPipenv = await checkPipenv()
+    const hasPipenv = await requirements.checkPipenv()
     if (!hasPipenv) {
-      if (yes || (await shouldInstall('Pipenv'))) {
-        await installPipenv()
-        await setPipenvPath()
-        const installPyenv = new InstallPyenv()
-        await installPyenv.rehash()
+      if (yes || (await prompt.shouldInstall('Pipenv'))) {
+        await pipenv.install()
       }
     }
   }
@@ -177,7 +173,7 @@ export class LeonInstance implements LeonInstanceOptions {
       const value = await getStream(npmRunStream)
       console.log(value)
       npmRunLoader.succeed()
-    } catch (error) {
+    } catch (error: any) {
       npmRunLoader.fail()
       throw new LogError({
         message: loader.stderr,

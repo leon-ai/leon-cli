@@ -47,7 +47,7 @@ export class CreateBirthCommand extends Command {
       })
       await leon.createBirth()
       return 0
-    } catch (error: unknown) {
+    } catch (error) {
       await log.error({
         error,
         commandPath: 'create birth'

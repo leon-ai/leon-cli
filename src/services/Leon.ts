@@ -68,7 +68,7 @@ export class Leon implements LeonOptions {
         encoding: 'binary'
       })
       downloadLoader.succeed()
-    } catch (error) {
+    } catch (error: any) {
       downloadLoader.fail()
       throw new LogError({
         message: `Could not download Leon source code located at ${source}`,
@@ -82,7 +82,7 @@ export class Leon implements LeonOptions {
     try {
       await extractZip(source, { dir: target })
       extractLoader.succeed()
-    } catch (error) {
+    } catch (error: any) {
       extractLoader.fail()
       throw new LogError({
         message: `Could not extract Leon source code located at ${source}`,
