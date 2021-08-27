@@ -2,7 +2,7 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
-import { shouldInstall } from '../services/Prompt'
+import { prompt } from '../services/Prompt'
 import { requirements } from '../services/Requirements'
 import { pyenv } from './Pyenv'
 import { pipenv } from '../services/Pipenv'
@@ -134,13 +134,13 @@ export class LeonInstance implements LeonInstanceOptions {
   public async getPrerequisites(yes: boolean): Promise<void> {
     const hasPython = await requirements.checkPython()
     if (!hasPython) {
-      if (yes || (await shouldInstall('Python'))) {
+      if (yes || (await prompt.shouldInstall('Python'))) {
         await pyenv.install()
       }
     }
     const hasPipenv = await requirements.checkPipenv()
     if (!hasPipenv) {
-      if (yes || (await shouldInstall('Pipenv'))) {
+      if (yes || (await prompt.shouldInstall('Pipenv'))) {
         await pipenv.install()
       }
     }
