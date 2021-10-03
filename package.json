@@ -55,7 +55,7 @@
     "adm-zip": "0.5.6",
     "axios": "0.21.4",
     "chalk": "4.1.2",
-    "clipanion": "3.0.1",
+    "clipanion": "3.1.0",
     "execa": "5.1.1",
     "extract-zip": "2.0.1",
     "get-stream": "6.0.1",
