@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "14.1.0",
-    "@commitlint/config-conventional": "13.2.0",
+    "@commitlint/config-conventional": "14.1.0",
     "@types/adm-zip": "0.4.34",
     "@types/jest": "27.0.2",
     "@types/mock-fs": "4.13.1",
