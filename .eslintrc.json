@@ -1,6 +1,6 @@
 {
-  "extends": ["standard-with-typescript", "eslint-config-prettier"],
-  "plugins": ["eslint-plugin-prettier"],
+  "extends": ["standard-with-typescript", "prettier"],
+  "plugins": ["unicorn", "prettier"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
@@ -9,6 +9,7 @@
     "jest": true
   },
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "unicorn/prefer-node-protocol": "error"
   }
 }

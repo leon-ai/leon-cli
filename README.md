@@ -19,8 +19,8 @@
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 14
-- [npm](https://npmjs.com/) >= 5
+- [Node.js](https://nodejs.org/) >= 16.0.0
+- [npm](https://npmjs.com/) >= 8.0.0
 
 ### Installation
 

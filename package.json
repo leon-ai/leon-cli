@@ -27,8 +27,8 @@
     "url": "https://github.com/leon-ai/leon-cli/issues"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=5.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "files": [
     "build",
@@ -62,8 +62,7 @@
     "ora": "5.4.1",
     "read-pkg": "5.2.0",
     "semver": "7.3.5",
-    "typanion": "3.7.1",
-    "uuid": "8.3.2"
+    "typanion": "3.7.1"
   },
   "devDependencies": {
     "@commitlint/cli": "14.1.0",
@@ -73,7 +72,6 @@
     "@types/mock-fs": "4.13.1",
     "@types/node": "16.11.6",
     "@types/semver": "7.3.9",
-    "@types/uuid": "8.3.1",
     "@types/wait-on": "5.3.1",
     "@typescript-eslint/eslint-plugin": "4.32.0",
     "editorconfig-checker": "4.0.2",
@@ -84,6 +82,7 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-promise": "5.1.1",
+    "eslint-plugin-unicorn": "38.0.0",
     "jest": "27.3.1",
     "markdownlint-cli": "0.29.0",
     "mock-fs": "5.1.1",
