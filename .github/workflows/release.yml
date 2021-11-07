@@ -13,7 +13,7 @@ jobs:
       - name: 'Use Node.js'
         uses: 'actions/setup-node@v2.4.1'
         with:
-          node-version: 'lts/*'
+          node-version: '16.x'
           cache: 'npm'
 
       - name: 'Install'

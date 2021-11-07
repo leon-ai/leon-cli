@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import { isExistingFile } from '../utils/isExistingFile'
 import { LeonInstance } from './LeonInstance'

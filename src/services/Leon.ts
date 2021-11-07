@@ -1,11 +1,11 @@
-import path from 'path'
-import os from 'os'
-import fs from 'fs'
+import path from 'node:path'
+import os from 'node:os'
+import fs from 'node:fs'
+import crypto from 'node:crypto'
 
 import axios from 'axios'
 import ora from 'ora'
 import extractZip from 'extract-zip'
-import { v4 as uuidv4 } from 'uuid'
 
 import {
   createTemporaryEmptyFolder,
@@ -43,7 +43,7 @@ export class Leon implements LeonOptions {
       birthPath,
       version,
       useDocker = false,
-      name = uuidv4(),
+      name = crypto.randomUUID(),
       yes = false
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch

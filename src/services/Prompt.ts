@@ -1,4 +1,4 @@
-import readline from 'readline'
+import readline from 'node:readline'
 
 export const positiveAnswers = ['y', 'yes']
 export const negativeAnswers = ['n', 'no']
