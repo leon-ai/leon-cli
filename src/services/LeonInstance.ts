@@ -5,7 +5,7 @@ import ora from 'ora'
 import { prompt } from '../services/Prompt'
 import { requirements } from '../services/Requirements'
 import { pyenv } from './Pyenv'
-import { pipenv } from '../services/Pipenv'
+import { pipenv } from './Pipenv'
 import { Config } from './Config'
 import { LogError } from '../utils/LogError'
 
@@ -147,11 +147,28 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async build(): Promise<void> {
+    await this.check()
     await this.runNpmScript({
-      command: 'build',
+      command: 'build:server',
       loader: {
-        message: 'Building Leon',
-        stderr: 'Could not build Leon'
+        message: 'Building Leon Server',
+        stderr: 'Could not build Leon Server'
+      },
+      workingDirectory: this.path
+    })
+    await this.runNpmScript({
+      command: 'build:app',
+      loader: {
+        message: 'Building Leon App',
+        stderr: 'Could not build Leon App'
+      },
+      workingDirectory: this.path
+    })
+    await this.runNpmScript({
+      command: 'train expressions',
+      loader: {
+        message: 'Training Leon',
+        stderr: 'Could not train Leon'
       },
       workingDirectory: this.path
     })

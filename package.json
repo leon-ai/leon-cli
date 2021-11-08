@@ -48,7 +48,8 @@
     "lint:markdown": "markdownlint '**/*.md' --dot --ignore node_modules",
     "lint:typescript": "eslint '**/*.{js,ts,jsx,tsx}'",
     "test:unit": "jest",
-    "test:e2e-docker": "jest --config='jest.e2e.config.json' --testFile='docker.e2e.test.ts'",
+    "test:e2e-docker": "jest --testNamePattern='Docker' --config='jest.e2e.config.json'",
+    "test:e2e-classic": "jest --testNamePattern='Classic' --config='jest.e2e.config.json'",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -82,7 +83,7 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-promise": "5.1.1",
-    "eslint-plugin-unicorn": "38.0.0",
+    "eslint-plugin-unicorn": "38.0.1",
     "jest": "27.3.1",
     "markdownlint-cli": "0.29.0",
     "mock-fs": "5.1.1",

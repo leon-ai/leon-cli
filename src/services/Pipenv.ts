@@ -3,16 +3,14 @@ import ora from 'ora'
 
 import { requirements } from './Requirements'
 import { LogError } from '../utils/LogError'
-import { pyenv } from './Pyenv'
 
 class Pipenv {
   public async install(): Promise<void> {
     const pipenvLoader = ora('Installing pipenv').start()
     try {
-      await execa('pip install --user pipenv')
+      await execa('pip install pipenv')
       pipenvLoader.succeed()
       await pipenv.setPath()
-      await pyenv.rehash()
     } catch (error: any) {
       pipenvLoader.fail()
       throw new LogError({
@@ -28,8 +26,8 @@ class Pipenv {
       (process.platform === 'darwin'
         ? process.env.HOME ?? '' + '/Library/Preferences'
         : process.env.HOME ?? '' + '/.local/share')
-    const sitePackageEnv = `${appdataDir}\\Python\\Python39\\site-packages`
-    const scriptEnv = `${appdataDir}\\Python\\Python39\\Scripts`
+    const sitePackageEnv = `${appdataDir}\\Python\\Python310\\site-packages`
+    const scriptEnv = `${appdataDir}\\Python\\Python310\\Scripts`
 
     try {
       if (
