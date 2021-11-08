@@ -54,12 +54,15 @@ jobs:
 
   test-e2e-classic:
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         include:
           - os: 'macos-latest'
           - os: 'windows-latest'
           - os: 'ubuntu-latest'
+      fail-fast: false
+
     steps:
       - uses: 'actions/checkout@v2.3.4'
 
