@@ -80,6 +80,9 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
 
+      - name: 'Install npm v8'
+        run: 'npm install --global npm@8'
+
       - name: 'Install'
         run: 'npm install'
 
