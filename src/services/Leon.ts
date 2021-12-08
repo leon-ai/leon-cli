@@ -14,6 +14,7 @@ import {
 import { isExistingFile } from '../utils/isExistingFile'
 import { LeonInstance } from './LeonInstance'
 import { LogError } from '../utils/LogError'
+import { copyDirectory } from '../utils/copyDirectory'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
@@ -126,7 +127,8 @@ export class Leon implements LeonOptions {
     await createTemporaryEmptyFolder()
     await this.downloadSourceCode(sourceCodeInformation.url, destination)
     await this.extractZip(destination, TEMPORARY_PATH)
-    await fs.promises.rename(extractedPath, this.birthPath)
+    await fs.promises.mkdir(this.birthPath, { recursive: true })
+    await copyDirectory(extractedPath, this.birthPath)
     await LeonInstance.create({
       name: this.name,
       mode: this.useDocker ? 'docker' : 'classic',

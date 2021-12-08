@@ -72,31 +72,18 @@ class Pyenv {
     return stdout
   }
 
-  public async downloadPython(): Promise<void> {
-    const version = '3.9.6'
-    const pythonLoader = ora(`Downloading python ${version}`).start()
+  public async installPython(): Promise<void> {
+    const version = '3.10.0'
+    const pythonLoader = ora(`Installing python ${version}`).start()
     try {
-      await execa(`pyenv install ${version} --quiet`)
+      await execa(`pyenv install ${version}`)
+      await execa('pyenv rehash')
       await execa(`pyenv global ${version}`)
       pythonLoader.succeed()
     } catch (error: any) {
       pythonLoader.fail()
       throw new LogError({
         message: `Could not install python ${version}`,
-        logFileMessage: error.toString()
-      })
-    }
-  }
-
-  public async rehash(): Promise<void> {
-    const rehashLoader = ora('Rehashing Pyenv commands').start()
-    try {
-      await execa('pyenv rehash')
-      rehashLoader.succeed()
-    } catch (error: any) {
-      rehashLoader.fail()
-      throw new LogError({
-        message: 'Could not rehash pyenv commands',
         logFileMessage: error.toString()
       })
     }
@@ -164,8 +151,7 @@ class Pyenv {
       await this.extractWindowsZip(zip, destination)
       await this.registerInPathWindows(destination)
     }
-    await this.downloadPython()
-    await this.rehash()
+    await this.installPython()
   }
 
   public async install(): Promise<void> {

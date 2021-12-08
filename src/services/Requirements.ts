@@ -6,20 +6,18 @@ class Requirements {
     version: string,
     requirement: string
   ): Promise<boolean> {
-    if (requirement.match(/(\d+\.)(\d+\.)?(\*|\d+)/g) === null) {
+    try {
+      return semver.gte(version, requirement)
+    } catch {
       return false
     }
-    const match = version.match(/(\d+\.)(\d+\.)?(\*|\d+)/g)
-    if (match === null || match.length === 0) {
-      return false
-    }
-    return semver.gte(match[0], requirement)
   }
 
   public async checkPython(): Promise<boolean> {
     try {
-      const { stdout } = await execa('python --version')
-      return await this.checkVersion(stdout, '3.0.0')
+      const { stdout } = await execa.command('python --version')
+      const [, actualVersion] = stdout.split(' ')
+      return await this.checkVersion(actualVersion, '3.0.0')
     } catch {
       return false
     }
@@ -27,8 +25,9 @@ class Requirements {
 
   public async checkPyenv(): Promise<boolean> {
     try {
-      const { stdout } = await execa('pyenv --version')
-      return await this.checkVersion(stdout, '0.0.0')
+      const { stdout } = await execa.command('pyenv --version')
+      const [, actualVersion] = stdout.split(' ')
+      return await this.checkVersion(actualVersion, '0.0.0')
     } catch {
       return false
     }
@@ -36,8 +35,9 @@ class Requirements {
 
   public async checkPipenv(): Promise<boolean> {
     try {
-      const { stdout } = await execa('pipenv --version')
-      return await this.checkVersion(stdout, '2019.0.0')
+      const { stdout } = await execa.command('pipenv --version')
+      const [, , actualVersion] = stdout.split(' ')
+      return await this.checkVersion(actualVersion, '2019.0.0')
     } catch {
       return false
     }
