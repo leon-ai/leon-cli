@@ -9,6 +9,16 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: 'actions/checkout@v2.4.0'
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 'Import GPG key'
+        uses: 'crazy-max/ghaction-import-gpg@v4'
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
       - name: 'Use Node.js'
         uses: 'actions/setup-node@v2.5.0'
@@ -22,10 +32,9 @@ jobs:
       - name: 'Build'
         run: 'npm run build'
 
-      - name: 'Archive Build'
-        run: 'tar --exclude="./node_modules" --exclude="./src"  --exclude=".git" --exclude=".github" --exclude=".npm" -cvf "./leon-cli.tar.gz" "./" --warning=no-file-changed'
-
       - name: 'Release'
         run: 'npm run release'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GIT_COMMITTER_NAME: ${{ secrets.GIT_NAME }}
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}

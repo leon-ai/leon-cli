@@ -68,6 +68,9 @@
   "devDependencies": {
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
+    "@saithodev/semantic-release-backmerge": "2.1.0",
+    "@semantic-release/exec": "6.0.2",
+    "@semantic-release/git": "10.0.1",
     "@types/adm-zip": "0.4.34",
     "@types/jest": "27.0.3",
     "@types/mock-fs": "4.13.1",
@@ -91,7 +94,7 @@
     "prettier": "2.5.1",
     "rimraf": "3.0.2",
     "semantic-release": "18.0.1",
-    "ts-jest": "27.1.0",
+    "ts-jest": "27.1.1",
     "typescript": "4.5.2",
     "wait-on": "6.0.0"
   }

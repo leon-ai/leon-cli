@@ -4,6 +4,7 @@ node_modules
 
 # production
 build
+leon-cli.tar.gz
 
 # testing
 coverage
