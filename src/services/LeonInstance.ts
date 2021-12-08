@@ -93,13 +93,7 @@ export class LeonInstance implements LeonInstanceOptions {
     process.chdir(workingDirectory)
     const runLoader = ora(loader.message).start()
     try {
-      const runStream = execa.command(command).stdout
-      if (runStream == null) {
-        return
-      }
-      runStream.pipe(process.stdout)
-      const value = await getStream(runStream)
-      console.log(value)
+      await execa.command(command)
       runLoader.succeed()
     } catch (error: any) {
       runLoader.fail()
@@ -112,7 +106,7 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async check(): Promise<void> {
     await this.runScript({
-      command: 'npm run ' + this.mode === 'docker' ? 'docker:check' : 'check',
+      command: 'npm run ' + (this.mode === 'docker' ? 'docker:check' : 'check'),
       loader: {
         message: 'Checking that the setup went well',
         stderr: 'Could not check the setup'
@@ -151,8 +145,8 @@ export class LeonInstance implements LeonInstanceOptions {
     await this.runScript({
       command: 'npm run build',
       loader: {
-        message: 'Building Leon Server',
-        stderr: 'Could not build Leon Server'
+        message: 'Building Leon core',
+        stderr: 'Could not build Leon core'
       },
       workingDirectory: this.path
     })

@@ -21,18 +21,23 @@ class Log {
     const message = error instanceof Error ? error.message : 'Fatal'
     console.error(`${chalk.red('Error')}: ${message}`)
     if (error instanceof LogError) {
-      console.error(
-        `For further informations, look at the log file located at ${this.ERROR_LOG_PATH}`
-      )
       const logFileMessage = error.logFileMessage ?? ''
       const dateString = `[${new Date().toString()}]`
       const commandString =
         commandPath != null ? `[${Leon.NAME} ${commandPath}]` : ''
       const data = `${dateString} ${commandString} ${error.message}\n${logFileMessage}\n\n`
-      if (await isExistingFile(this.ERROR_LOG_PATH)) {
-        await fs.promises.appendFile(this.ERROR_LOG_PATH, data)
+      if (process.env.NODE_ENV === 'test-e2e') {
+        console.error(chalk.bold('logs/errors.log:\n'))
+        console.log(data)
       } else {
-        await fs.promises.writeFile(this.ERROR_LOG_PATH, data, { flag: 'w' })
+        console.error(
+          `For further informations, look at the log file located at ${this.ERROR_LOG_PATH}`
+        )
+        if (await isExistingFile(this.ERROR_LOG_PATH)) {
+          await fs.promises.appendFile(this.ERROR_LOG_PATH, data)
+        } else {
+          await fs.promises.writeFile(this.ERROR_LOG_PATH, data, { flag: 'w' })
+        }
       }
     }
   }

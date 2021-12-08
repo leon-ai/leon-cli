@@ -1,4 +1,5 @@
 import { Command, Option } from 'clipanion'
+import chalk from 'chalk'
 
 import { Leon } from '../../services/Leon'
 import { log } from '../../services/Log'
@@ -46,6 +47,9 @@ export class CreateBirthCommand extends Command {
         yes: this.yes
       })
       await leon.createBirth()
+      console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)
+      console.log('You can start your leon instance using:')
+      console.log(`${chalk.cyan('leon start')}`)
       return 0
     } catch (error) {
       await log.error({
