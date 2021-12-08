@@ -65,7 +65,7 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
-    const npmStartStream = execa('npm', ['run', 'start'], {
+    const npmStartStream = execa.command('npm start', {
       env: {
         LEON_PORT
       }
@@ -74,6 +74,7 @@ export class LeonInstance implements LeonInstanceOptions {
       return
     }
     npmStartStream.pipe(process.stdout)
+    npmStartStream.pipe(process.stderr)
     const value = await getStream(npmStartStream)
     console.log(value)
   }
@@ -87,21 +88,21 @@ export class LeonInstance implements LeonInstanceOptions {
     return await this.startClassic(LEON_PORT)
   }
 
-  public async runNpmScript(options: RunNpmScriptOptions): Promise<void> {
+  public async runScript(options: RunNpmScriptOptions): Promise<void> {
     const { command, loader, workingDirectory } = options
     process.chdir(workingDirectory)
-    const npmRunLoader = ora(loader.message).start()
+    const runLoader = ora(loader.message).start()
     try {
-      const npmRunStream = execa('npm', ['run', command]).stdout
-      if (npmRunStream == null) {
+      const runStream = execa.command(command).stdout
+      if (runStream == null) {
         return
       }
-      npmRunStream.pipe(process.stdout)
-      const value = await getStream(npmRunStream)
+      runStream.pipe(process.stdout)
+      const value = await getStream(runStream)
       console.log(value)
-      npmRunLoader.succeed()
+      runLoader.succeed()
     } catch (error: any) {
-      npmRunLoader.fail()
+      runLoader.fail()
       throw new LogError({
         message: loader.stderr,
         logFileMessage: error.toString()
@@ -110,8 +111,8 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async check(): Promise<void> {
-    await this.runNpmScript({
-      command: this.mode === 'docker' ? 'docker:check' : 'check',
+    await this.runScript({
+      command: 'npm run ' + this.mode === 'docker' ? 'docker:check' : 'check',
       loader: {
         message: 'Checking that the setup went well',
         stderr: 'Could not check the setup'
@@ -121,8 +122,8 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async buildDockerImage(): Promise<void> {
-    await this.runNpmScript({
-      command: 'docker:build',
+    await this.runScript({
+      command: 'npm run docker:build',
       loader: {
         message: 'Building the Leon Docker image',
         stderr: 'Could not build Leon with Docker'
@@ -147,8 +148,8 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async build(): Promise<void> {
-    await this.runNpmScript({
-      command: 'build',
+    await this.runScript({
+      command: 'npm run build',
       loader: {
         message: 'Building Leon Server',
         stderr: 'Could not build Leon Server'
@@ -158,8 +159,8 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async install(): Promise<void> {
-    await this.runNpmScript({
-      command: 'install',
+    await this.runScript({
+      command: 'npm install',
       workingDirectory: this.path,
       loader: {
         message: 'Installing npm dependencies',
