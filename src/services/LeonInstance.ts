@@ -133,14 +133,12 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async getPrerequisites(yes: boolean): Promise<void> {
     const hasPython = await requirements.checkPython()
-    console.log(`hasPython: ${hasPython.toString()}`)
     if (!hasPython) {
       if (yes || (await prompt.shouldInstall('Python'))) {
         await pyenv.install()
       }
     }
     const hasPipenv = await requirements.checkPipenv()
-    console.log(`hasPipenv: ${hasPipenv.toString()}`)
     if (!hasPipenv) {
       if (yes || (await prompt.shouldInstall('Pipenv'))) {
         await pipenv.install()
@@ -149,28 +147,11 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async build(): Promise<void> {
-    await this.check()
     await this.runNpmScript({
-      command: 'build:server',
+      command: 'build',
       loader: {
         message: 'Building Leon Server',
         stderr: 'Could not build Leon Server'
-      },
-      workingDirectory: this.path
-    })
-    await this.runNpmScript({
-      command: 'build:app',
-      loader: {
-        message: 'Building Leon App',
-        stderr: 'Could not build Leon App'
-      },
-      workingDirectory: this.path
-    })
-    await this.runNpmScript({
-      command: 'train expressions',
-      loader: {
-        message: 'Training Leon',
-        stderr: 'Could not train Leon'
       },
       workingDirectory: this.path
     })
