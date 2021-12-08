@@ -7,7 +7,7 @@ describe('Classic End To End (e2e)', () => {
   it('should brings Leon to life and start the instance', (done) => {
     process.chdir(os.homedir())
     let startSubprocess: execa.ExecaChildProcess<string> | null = null
-    execa('leon', ['create', 'birth', '--yes'])
+    execa('leon', ['create', 'birth', '--yes', '--develop'])
       .then(async ({ stdout }) => {
         console.log(stdout)
         startSubprocess = execa('leon', ['start'])
@@ -25,7 +25,7 @@ describe('Classic End To End (e2e)', () => {
       })
       .finally(() => {
         if (startSubprocess != null) {
-          startSubprocess.kill('SIGINT')
+          startSubprocess.kill()
         }
       })
   })
