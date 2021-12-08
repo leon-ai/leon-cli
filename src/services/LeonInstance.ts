@@ -133,12 +133,14 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async getPrerequisites(yes: boolean): Promise<void> {
     const hasPython = await requirements.checkPython()
+    console.log(`hasPython: ${hasPython.toString()}`)
     if (!hasPython) {
       if (yes || (await prompt.shouldInstall('Python'))) {
         await pyenv.install()
       }
     }
     const hasPipenv = await requirements.checkPipenv()
+    console.log(`hasPipenv: ${hasPipenv.toString()}`)
     if (!hasPipenv) {
       if (yes || (await prompt.shouldInstall('Pipenv'))) {
         await pipenv.install()

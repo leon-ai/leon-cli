@@ -13,6 +13,7 @@ class Pipenv {
       await pipenv.setPath()
     } catch (error: any) {
       pipenvLoader.fail()
+      console.error(error.toString())
       throw new LogError({
         message: 'Could not install pipenv',
         logFileMessage: error.toString()
