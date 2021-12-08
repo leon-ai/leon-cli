@@ -52,16 +52,20 @@ export class LeonInstance implements LeonInstanceOptions {
       env: {
         LEON_PORT
       }
-    }).stdout
-    if (dockerStartStream == null) {
-      return
+    })
+    if (dockerStartStream.stdout != null) {
+      dockerStartStream.stdout.pipe(process.stdout)
+      const value = await getStream(dockerStartStream.stdout)
+      console.log(value)
+    }
+    if (dockerStartStream.stderr != null) {
+      dockerStartStream.stderr.pipe(process.stderr)
+      const value = await getStream(dockerStartStream.stderr)
+      console.log(value)
     }
     process.on('SIGINT', (async () => {
       await execa('docker-compose', ['down'])
     }) as unknown as () => void)
-    dockerStartStream.pipe(process.stdout)
-    const value = await getStream(dockerStartStream)
-    console.log(value)
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
@@ -69,14 +73,17 @@ export class LeonInstance implements LeonInstanceOptions {
       env: {
         LEON_PORT
       }
-    }).stdout
-    if (npmStartStream == null) {
-      return
+    })
+    if (npmStartStream.stdout != null) {
+      npmStartStream.stdout.pipe(process.stdout)
+      const value = await getStream(npmStartStream.stdout)
+      console.log(value)
     }
-    npmStartStream.pipe(process.stdout)
-    npmStartStream.pipe(process.stderr)
-    const value = await getStream(npmStartStream)
-    console.log(value)
+    if (npmStartStream.stderr != null) {
+      npmStartStream.stderr.pipe(process.stderr)
+      const value = await getStream(npmStartStream.stderr)
+      console.log(value)
+    }
   }
 
   public async start(port?: number): Promise<void> {
@@ -93,13 +100,18 @@ export class LeonInstance implements LeonInstanceOptions {
     process.chdir(workingDirectory)
     const runLoader = ora(loader.message).start()
     try {
-      const runStream = execa.command(command).stdout
-      if (runStream == null) {
-        return
+      const runStream = execa.command(command)
+      if (runStream.stdout != null) {
+        runStream.stdout.pipe(process.stdout)
+        const value = await getStream(runStream.stdout)
+        console.log(value)
       }
-      runStream.pipe(process.stdout)
-      const value = await getStream(runStream)
-      console.log(value)
+      if (runStream.stderr != null) {
+        runStream.stderr.pipe(process.stderr)
+        const value = await getStream(runStream.stderr)
+        console.log(value)
+        throw new Error(value)
+      }
       runLoader.succeed()
     } catch (error: any) {
       runLoader.fail()

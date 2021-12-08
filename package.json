@@ -48,8 +48,8 @@
     "lint:markdown": "markdownlint '**/*.md' --dot --ignore node_modules",
     "lint:typescript": "eslint '**/*.{js,ts,jsx,tsx}'",
     "test:unit": "jest",
-    "test:e2e-docker": "jest --testNamePattern='Docker' --config='jest.e2e.config.json'",
-    "test:e2e-classic": "jest --testNamePattern='Classic' --config='jest.e2e.config.json'",
+    "test:e2e-docker": "jest --testNamePattern='Docker' --config='jest.e2e.config.json' --forceExit",
+    "test:e2e-classic": "jest --testNamePattern='Classic' --config='jest.e2e.config.json' --forceExit",
     "release": "semantic-release"
   },
   "dependencies": {
