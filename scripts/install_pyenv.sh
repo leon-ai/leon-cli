@@ -9,3 +9,4 @@ export PATH="${PYENV_ROOT}/bin:${PATH}"
 eval "$(pyenv init --path)"
 pyenv install 3.10.0
 pyenv global 3.10.0
+pyenv exec pip install --user pipenv

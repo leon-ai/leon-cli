@@ -133,10 +133,12 @@ export class LeonInstance implements LeonInstanceOptions {
         await pyenv.install()
       }
     }
-    const hasPipenv = await requirements.checkPipenv()
-    if (!hasPipenv) {
-      if (yes || (await prompt.shouldInstall('Pipenv'))) {
-        await pipenv.install()
+    if (process.platform === 'win32') {
+      const hasPipenv = await requirements.checkPipenv()
+      if (!hasPipenv) {
+        if (yes || (await prompt.shouldInstall('Pipenv'))) {
+          await pipenv.install()
+        }
       }
     }
   }
