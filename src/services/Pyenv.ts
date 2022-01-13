@@ -170,7 +170,6 @@ class Pyenv {
         },
         (error) => {
           if (error != null) {
-            console.log(error)
             reject(error)
           } else {
             resolve()
@@ -180,15 +179,17 @@ class Pyenv {
     })
   }
 
-  public async installOnLinux(): Promise<void> {
+  public async installOnUnix(
+    shouldInstallAptPackages: boolean = false
+  ): Promise<void> {
     const loader = ora(`Installing python ${Pyenv.PYTHON_VERSION}`).start()
     try {
-      // await execa.command(`bash ${Pyenv.SCRIPTS_PATH}/install_apt_packages.sh`)
-      await this.installAptPackages()
+      if (shouldInstallAptPackages) {
+        await this.installAptPackages()
+      }
       await execa.command(`bash ${Pyenv.SCRIPTS_PATH}/install_pyenv.sh`)
       loader.succeed()
     } catch (error: any) {
-      console.log(error)
       loader.fail()
       throw new LogError({
         message: `Could not install python ${Pyenv.PYTHON_VERSION}`,
@@ -200,10 +201,19 @@ class Pyenv {
   public async install(): Promise<void> {
     const isWindows = process.platform === 'win32'
     const isLinux = process.platform === 'linux'
+    const isMacOS = process.platform === 'darwin'
     if (isWindows) {
       await this.installOnWindows()
     } else if (isLinux) {
-      await this.installOnLinux()
+      await this.installOnUnix(true)
+    } else if (isMacOS) {
+      await this.installOnUnix(false)
+    } else {
+      const message = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
+      throw new LogError({
+        message,
+        logFileMessage: message
+      })
     }
   }
 }
