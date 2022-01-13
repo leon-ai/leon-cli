@@ -9,8 +9,8 @@ class Pipenv {
     const pipenvLoader = ora('Installing pipenv').start()
     try {
       await execa('pip install pipenv')
-      pipenvLoader.succeed()
       await pipenv.setPath()
+      pipenvLoader.succeed()
     } catch (error: any) {
       pipenvLoader.fail()
       throw new LogError({

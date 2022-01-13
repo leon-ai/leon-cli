@@ -13,6 +13,8 @@ class Pyenv {
   static WINDOWS_URL =
     'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
+  static PYTHON_VERSION = '3.10.0'
+
   public async downloadWindowsZip(): Promise<AdmZip | undefined> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
     try {
@@ -73,17 +75,18 @@ class Pyenv {
   }
 
   public async installPython(): Promise<void> {
-    const version = '3.10.0'
-    const pythonLoader = ora(`Installing python ${version}`).start()
+    const pythonLoader = ora(
+      `Installing python ${Pyenv.PYTHON_VERSION}`
+    ).start()
     try {
-      await execa(`pyenv install ${version}`)
+      await execa(`pyenv install ${Pyenv.PYTHON_VERSION}`)
       await execa('pyenv rehash')
-      await execa(`pyenv global ${version}`)
+      await execa(`pyenv global ${Pyenv.PYTHON_VERSION}`)
       pythonLoader.succeed()
     } catch (error: any) {
       pythonLoader.fail()
       throw new LogError({
-        message: `Could not install python ${version}`,
+        message: `Could not install python ${Pyenv.PYTHON_VERSION}`,
         logFileMessage: error.toString()
       })
     }
@@ -151,14 +154,19 @@ class Pyenv {
       await this.extractWindowsZip(zip, destination)
       await this.registerInPathWindows(destination)
     }
-    await this.installPython()
   }
+
+  public async installOnLinux(): Promise<void> {}
 
   public async install(): Promise<void> {
     const isWindows = process.platform === 'win32'
+    const isLinux = process.platform === 'linux'
     if (isWindows) {
-      return await this.installOnWindows()
+      await this.installOnWindows()
+    } else if (isLinux) {
+      await this.installOnLinux()
     }
+    await this.installPython()
   }
 }
 
