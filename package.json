@@ -33,7 +33,8 @@
   "files": [
     "build",
     "config",
-    "logs"
+    "logs",
+    "scripts"
   ],
   "main": "build/index.js",
   "bin": {
@@ -63,6 +64,7 @@
     "ora": "5.4.1",
     "read-pkg": "5.2.0",
     "semver": "7.3.5",
+    "sudo-prompt": "9.2.1",
     "typanion": "3.7.1"
   },
   "devDependencies": {

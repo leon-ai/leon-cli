@@ -5,15 +5,19 @@ import AdmZip from 'adm-zip'
 import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
+import sudoPrompt from 'sudo-prompt'
 
 import { requirements } from './Requirements'
 import { LogError } from '../utils/LogError'
+import { Leon } from './Leon'
 
 class Pyenv {
   static WINDOWS_URL =
     'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
   static PYTHON_VERSION = '3.10.0'
+
+  static SCRIPTS_PATH = path.join(__dirname, '..', '..', 'scripts')
 
   public async downloadWindowsZip(): Promise<AdmZip | undefined> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
@@ -154,9 +158,44 @@ class Pyenv {
       await this.extractWindowsZip(zip, destination)
       await this.registerInPathWindows(destination)
     }
+    await this.installPython()
   }
 
-  public async installOnLinux(): Promise<void> {}
+  public async installAptPackages(): Promise<void> {
+    return await new Promise((resolve, reject) => {
+      sudoPrompt.exec(
+        `bash ${Pyenv.SCRIPTS_PATH}/install_apt_packages.sh`,
+        {
+          name: Leon.NAME
+        },
+        (error) => {
+          if (error != null) {
+            console.log(error)
+            reject(error)
+          } else {
+            resolve()
+          }
+        }
+      )
+    })
+  }
+
+  public async installOnLinux(): Promise<void> {
+    const loader = ora(`Installing python ${Pyenv.PYTHON_VERSION}`).start()
+    try {
+      // await execa.command(`bash ${Pyenv.SCRIPTS_PATH}/install_apt_packages.sh`)
+      await this.installAptPackages()
+      await execa.command(`bash ${Pyenv.SCRIPTS_PATH}/install_pyenv.sh`)
+      loader.succeed()
+    } catch (error: any) {
+      console.log(error)
+      loader.fail()
+      throw new LogError({
+        message: `Could not install python ${Pyenv.PYTHON_VERSION}`,
+        logFileMessage: error.toString()
+      })
+    }
+  }
 
   public async install(): Promise<void> {
     const isWindows = process.platform === 'win32'
@@ -166,7 +205,6 @@ class Pyenv {
     } else if (isLinux) {
       await this.installOnLinux()
     }
-    await this.installPython()
   }
 }
 
