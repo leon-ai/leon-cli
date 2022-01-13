@@ -8,7 +8,7 @@ class Pipenv {
   public async install(): Promise<void> {
     const pipenvLoader = ora('Installing pipenv').start()
     try {
-      await execa.command('pyenv exec pip install --user pipenv')
+      await execa.command('pip install pipenv')
       await pipenv.setPath()
       pipenvLoader.succeed()
     } catch (error: any) {
