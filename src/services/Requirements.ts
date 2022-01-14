@@ -79,7 +79,7 @@ class Requirements {
     const scriptsPath = path.join(__dirname, '..', '..', 'scripts')
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
-      if (sudo) {
+      if (sudo && process.env.NODE_ENV !== 'test') {
         await sudoExec(commandPath)
       } else {
         await execa.command(commandPath)
@@ -127,7 +127,7 @@ class Requirements {
   }
 
   public async installPythonOnUnix(): Promise<void> {
-    // await this.installPackages()
+    await this.installPackages()
     await this.executeScript({
       scriptCommand: ['install_pyenv.sh'],
       loader: {
