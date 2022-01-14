@@ -7,6 +7,10 @@ import ora from 'ora'
 import { LogError } from '../utils/LogError'
 import { sudoExec } from '../utils/sudoExec'
 import { prompt } from './Prompt'
+import { pyenvWindows } from './Windows/PyenvWindows'
+import { pipenvWindows } from './Windows/PipenvWindows'
+
+const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
 
 export interface ExecuteScriptOptions {
   loader: {
@@ -18,6 +22,17 @@ export interface ExecuteScriptOptions {
 }
 
 class Requirements {
+  public async checkEnvironmentVariable(
+    variable: string,
+    content: string
+  ): Promise<boolean> {
+    const environmentVariable = process.env[variable]
+    if (environmentVariable === undefined || environmentVariable === '') {
+      return false
+    }
+    return environmentVariable.includes(content)
+  }
+
   public async checkVersion(
     version: string,
     requirement: string
@@ -122,36 +137,44 @@ class Requirements {
     })
   }
 
-  public async installPythonOnWindows(): Promise<void> {}
-
   public async install(yes: boolean): Promise<void> {
     const hasPython = await this.checkPython()
+    const hasPipenv = await this.checkPipenv()
+    const isLinux = process.platform === 'linux'
+    const isMacOS = process.platform === 'darwin'
+    const isWindows = process.platform === 'win32'
     if (!hasPython) {
       if (yes || (await prompt.shouldInstall('Python'))) {
-        const isLinux = process.platform === 'linux'
-        const isMacOS = process.platform === 'darwin'
-        const isWindows = process.platform === 'win32'
         if (isLinux || isMacOS) {
           await this.installPythonOnUnix()
         } else if (isWindows) {
-          await this.installPythonOnWindows()
+          await pyenvWindows.install()
         } else {
-          const message = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
           throw new LogError({
-            message,
-            logFileMessage: message
+            message: UNSUPPORTED_OS_MESSAGE,
+            logFileMessage: UNSUPPORTED_OS_MESSAGE
           })
         }
       }
-    } else if (!(await this.checkPipenv())) {
+    } else if (!hasPipenv) {
       if (yes || (await prompt.shouldInstall('Pipenv'))) {
-        await this.executeScript({
-          scriptCommand: ['install_pipenv.sh'],
-          loader: {
-            message: 'Installing Pipenv',
-            stderr: 'Failed to install Pipenv'
-          }
-        })
+        const loader = {
+          message: 'Installing Pipenv',
+          stderr: 'Failed to install Pipenv'
+        }
+        if (isLinux || isMacOS) {
+          await this.executeScript({
+            scriptCommand: ['install_pipenv.sh'],
+            loader
+          })
+        } else if (isWindows) {
+          await pipenvWindows.install()
+        } else {
+          throw new LogError({
+            message: UNSUPPORTED_OS_MESSAGE,
+            logFileMessage: UNSUPPORTED_OS_MESSAGE
+          })
+        }
       }
     }
   }
