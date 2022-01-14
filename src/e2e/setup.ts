@@ -1,2 +1,2 @@
-process.env.NODE_ENV = 'test'
-jest.setTimeout(15 * 60_000)
+process.env.NODE_ENV = 'test-e2e'
+jest.setTimeout(10 * 60_000)
