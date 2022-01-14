@@ -26,7 +26,7 @@ class Log {
       const commandString =
         commandPath != null ? `[${Leon.NAME} ${commandPath}]` : ''
       const data = `${dateString} ${commandString} ${error.message}\n${logFileMessage}\n\n`
-      if (process.env.NODE_ENV === 'test-e2e') {
+      if (process.env.NODE_ENV === 'test') {
         console.error(chalk.bold('logs/errors.log:\n'))
         console.log(data)
       } else {
