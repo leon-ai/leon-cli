@@ -9,6 +9,7 @@ import { sudoExec } from '../utils/sudoExec'
 import { prompt } from './Prompt'
 import { pyenvWindows } from './Windows/PyenvWindows'
 import { pipenvWindows } from './Windows/PipenvWindows'
+import { isLinux, isMacOS, isWindows } from '../utils/operatingSystem'
 
 const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
 
@@ -144,9 +145,6 @@ class Requirements {
   public async install(yes: boolean): Promise<void> {
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
-    const isLinux = process.platform === 'linux'
-    const isMacOS = process.platform === 'darwin'
-    const isWindows = process.platform === 'win32'
     if (!hasPython) {
       if (yes || (await prompt.shouldInstall('Python'))) {
         if (isLinux || isMacOS) {

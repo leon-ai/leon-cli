@@ -3,6 +3,7 @@ import chalk from 'chalk'
 
 import { Leon } from '../../services/Leon'
 import { log } from '../../services/Log'
+import { isLinux, isMacOS } from '../../utils/operatingSystem'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -49,6 +50,9 @@ export class CreateBirthCommand extends Command {
       await leon.createBirth()
       console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)
       console.log('You can start your leon instance using:')
+      if (isLinux || isMacOS) {
+        console.log(`${chalk.cyan('exec $SHELL')}`)
+      }
       console.log(`${chalk.cyan('leon start')}`)
       return 0
     } catch (error) {
