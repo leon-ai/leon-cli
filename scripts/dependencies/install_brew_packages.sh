@@ -1,4 +1,4 @@
 #!/bin/sh
 
-brew update
+brew update --yes
 brew install --yes openssl readline sqlite xz zlib git bash
