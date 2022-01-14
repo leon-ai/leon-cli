@@ -2,10 +2,6 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
-import { prompt } from '../services/Prompt'
-import { requirements } from '../services/Requirements'
-import { pyenv } from './Pyenv'
-import { pipenv } from './Pipenv'
 import { Config } from './Config'
 import { LogError } from '../utils/LogError'
 
@@ -24,12 +20,9 @@ export interface CreateOptions {
   name: string
   path: string
   mode: InstanceType
-  yes: boolean
-  shouldBuild?: boolean
 }
 
-export interface LeonInstanceOptions
-  extends Omit<CreateOptions, 'shouldBuild' | 'yes'> {
+export interface LeonInstanceOptions extends CreateOptions {
   birthDate: string
 }
 
@@ -126,21 +119,6 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
-  public async getPrerequisites(yes: boolean): Promise<void> {
-    const hasPython = await requirements.checkPython()
-    if (!hasPython) {
-      if (yes || (await prompt.shouldInstall('Python'))) {
-        await pyenv.install()
-      }
-    }
-    const hasPipenv = await requirements.checkPipenv()
-    if (!hasPipenv) {
-      if (yes || (await prompt.shouldInstall('Pipenv'))) {
-        await pipenv.install()
-      }
-    }
-  }
-
   public async build(): Promise<void> {
     await this.runScript({
       command: 'npm run build',
@@ -190,7 +168,6 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   static async create(options: CreateOptions): Promise<void> {
-    const { shouldBuild = true, yes } = options
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
     if (leonInstance != null) {
@@ -206,11 +183,9 @@ export class LeonInstance implements LeonInstanceOptions {
     })
     config.data.instances.push(leonInstance)
     await config.save()
-    if (shouldBuild) {
-      if (leonInstance.mode === 'docker') {
-        return await leonInstance.buildDockerImage()
-      }
-      await leonInstance.getPrerequisites(yes)
+    if (leonInstance.mode === 'docker') {
+      await leonInstance.buildDockerImage()
+    } else {
       await leonInstance.install()
       await leonInstance.build()
     }

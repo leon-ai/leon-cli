@@ -15,6 +15,7 @@ import { isExistingFile } from '../utils/isExistingFile'
 import { LeonInstance } from './LeonInstance'
 import { LogError } from '../utils/LogError'
 import { copyDirectory } from '../utils/copyDirectory'
+import { requirements } from './Requirements'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
@@ -118,6 +119,10 @@ export class Leon implements LeonOptions {
         message: `${this.birthPath} already exists, please provide another path.`
       })
     }
+    const mode = this.useDocker ? 'docker' : 'classic'
+    if (mode === 'classic') {
+      await requirements.install(this.yes)
+    }
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
     const extractedPath = path.join(
@@ -131,9 +136,8 @@ export class Leon implements LeonOptions {
     await copyDirectory(extractedPath, this.birthPath)
     await LeonInstance.create({
       name: this.name,
-      mode: this.useDocker ? 'docker' : 'classic',
       path: this.birthPath,
-      yes: this.yes
+      mode
     })
   }
 }

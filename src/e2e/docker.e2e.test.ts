@@ -9,8 +9,9 @@ describe('Docker End To End (e2e)', () => {
     const PORT = 1340
     let startSubprocess: execa.ExecaChildProcess<string> | null = null
     execa('leon', ['create', 'birth', '--docker', '--yes'])
-      .then(async ({ stdout }) => {
+      .then(async ({ stdout, stderr }) => {
         console.log(stdout)
+        console.log(stderr)
         startSubprocess = execa('leon', ['start', `--port=${PORT}`])
         return await waitOn({
           resources: [`http-get://localhost:${PORT}/`],
@@ -19,15 +20,17 @@ describe('Docker End To End (e2e)', () => {
         })
       })
       .then(() => {
-        done()
-      })
-      .catch((error) => {
-        done(error)
-      })
-      .finally(() => {
+        console.log(`Success: Leon is running on http://localhost:${PORT}/`)
         if (startSubprocess != null) {
           startSubprocess.kill('SIGINT')
         }
+        done()
+      })
+      .catch((error) => {
+        if (startSubprocess != null) {
+          startSubprocess.kill('SIGINT')
+        }
+        done(error)
       })
   })
 })

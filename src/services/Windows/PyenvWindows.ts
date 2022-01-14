@@ -6,17 +6,16 @@ import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
 
-import { requirements } from './Requirements'
-import { LogError } from '../utils/LogError'
+import { requirements } from '../Requirements'
+import { LogError } from '../../utils/LogError'
 
-class Pyenv {
-  static WINDOWS_URL =
-    'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
+class PyenvWindows {
+  static URL = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
-  public async downloadWindowsZip(): Promise<AdmZip | undefined> {
+  public async downloadWindowsZip(): Promise<AdmZip> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
     try {
-      const body = await axios.get(Pyenv.WINDOWS_URL, {
+      const body = await axios.get(PyenvWindows.URL, {
         responseType: 'arraybuffer'
       })
       downloadLoader.succeed()
@@ -24,7 +23,7 @@ class Pyenv {
     } catch (error: any) {
       downloadLoader.fail()
       throw new LogError({
-        message: `Could not download Pyenv Windows zip located at ${Pyenv.WINDOWS_URL}`,
+        message: `Could not download Pyenv Windows zip located at ${PyenvWindows.URL}`,
         logFileMessage: error.toString()
       })
     }
@@ -144,22 +143,13 @@ class Pyenv {
     }
   }
 
-  public async installOnWindows(): Promise<void> {
+  public async install(): Promise<void> {
     const destination = path.join(os.homedir(), '.pyenv')
     const zip = await this.downloadWindowsZip()
-    if (zip != null) {
-      await this.extractWindowsZip(zip, destination)
-      await this.registerInPathWindows(destination)
-    }
+    await this.extractWindowsZip(zip, destination)
+    await this.registerInPathWindows(destination)
     await this.installPython()
-  }
-
-  public async install(): Promise<void> {
-    const isWindows = process.platform === 'win32'
-    if (isWindows) {
-      return await this.installOnWindows()
-    }
   }
 }
 
-export const pyenv = new Pyenv()
+export const pyenvWindows = new PyenvWindows()

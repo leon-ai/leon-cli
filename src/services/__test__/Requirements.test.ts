@@ -46,13 +46,6 @@ describe('services/Requirements - checkPython', () => {
   })
 })
 
-describe('services/Requirements - checkPyenv', () => {
-  it('should return a boolean', async () => {
-    const result = await requirements.checkPyenv()
-    expect(typeof result === 'boolean').toBeTruthy()
-  })
-})
-
 describe('services/Requirements - checkEnvironmentVariable', () => {
   it('should return false because the environment variable is not set', async () => {
     const restore = mockedEnv({

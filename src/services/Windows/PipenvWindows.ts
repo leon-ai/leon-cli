@@ -1,16 +1,16 @@
 import execa from 'execa'
 import ora from 'ora'
 
-import { requirements } from './Requirements'
-import { LogError } from '../utils/LogError'
+import { requirements } from '../Requirements'
+import { LogError } from '../../utils/LogError'
 
-class Pipenv {
+class PipenvWindows {
   public async install(): Promise<void> {
-    const pipenvLoader = ora('Installing pipenv').start()
+    const pipenvLoader = ora('Installing Pipenv').start()
     try {
       await execa('pip install pipenv')
+      await this.setPath()
       pipenvLoader.succeed()
-      await pipenv.setPath()
     } catch (error: any) {
       pipenvLoader.fail()
       throw new LogError({
@@ -64,4 +64,4 @@ class Pipenv {
   }
 }
 
-export const pipenv = new Pipenv()
+export const pipenvWindows = new PipenvWindows()
