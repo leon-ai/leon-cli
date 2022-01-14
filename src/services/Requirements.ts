@@ -79,10 +79,15 @@ class Requirements {
     const scriptsPath = path.join(__dirname, '..', '..', 'scripts')
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
+      let stdout = ''
       if (sudo) {
-        await sudoExec(commandPath)
+        stdout = await sudoExec(commandPath)
       } else {
-        await execa.command(commandPath)
+        const result = await execa.command(commandPath)
+        stdout = result.stdout
+      }
+      if (process.env.NODE_ENV === 'test') {
+        console.log(stdout)
       }
       scriptLoader.succeed()
     } catch (error: any) {
