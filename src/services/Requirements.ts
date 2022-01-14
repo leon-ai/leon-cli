@@ -79,15 +79,10 @@ class Requirements {
     const scriptsPath = path.join(__dirname, '..', '..', 'scripts')
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
-      let stdout = ''
       if (sudo) {
-        stdout = await sudoExec(commandPath)
+        await sudoExec(commandPath)
       } else {
-        const result = await execa.command(commandPath)
-        stdout = result.stdout
-      }
-      if (process.env.NODE_ENV === 'test') {
-        console.log(stdout)
+        await execa.command(commandPath)
       }
       scriptLoader.succeed()
     } catch (error: any) {
@@ -154,6 +149,7 @@ class Requirements {
           await this.installPythonOnUnix()
         } else if (isWindows) {
           await pyenvWindows.install()
+          await pipenvWindows.install()
         } else {
           throw new LogError({
             message: UNSUPPORTED_OS_MESSAGE,
