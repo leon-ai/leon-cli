@@ -1,12 +1,23 @@
 #!/bin/bash
 
-# Usage: ./install_pyenv.sh
-# Install Pyenv to install Python
-
 curl https://pyenv.run | bash
 export PYENV_ROOT="${HOME}/.pyenv"
 export PATH="${PYENV_ROOT}/bin:${PATH}"
 eval "$(pyenv init --path)"
-pyenv install 3.10.0
+
+pyenv install 3.10.0 --force
 pyenv global 3.10.0
-pyenv exec pip install --user pipenv
+pyenv exec pip install --user --force-reinstall pipenv
+
+SCRIPTS_DIRECTORY=$(dirname "$0")
+pyenv_variables_file="${SCRIPTS_DIRECTORY}/pyenv_variables.sh"
+
+if [ -n "$ZSH_VERSION" ]; then
+  cat "${pyenv_variables_file}" >>"${HOME}/.zshrc"
+  source "${HOME}/.zshrc"
+fi
+
+if [ -n "$BASH_VERSION" ]; then
+  cat "${pyenv_variables_file}" >>"${HOME}/.bashrc"
+  source "${HOME}/.bashrc"
+fi
