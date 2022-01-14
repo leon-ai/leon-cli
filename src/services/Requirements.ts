@@ -127,7 +127,7 @@ class Requirements {
   }
 
   public async installPythonOnUnix(): Promise<void> {
-    await this.installPackages()
+    // await this.installPackages()
     await this.executeScript({
       scriptCommand: ['install_pyenv.sh'],
       loader: {
