@@ -14,6 +14,7 @@ export interface RunNpmScriptOptions {
     stderr: string
   }
   command: string
+  verbose?: boolean
 }
 
 export interface CreateOptions {
@@ -82,12 +83,15 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async runScript(options: RunNpmScriptOptions): Promise<void> {
-    const { command, loader, workingDirectory } = options
+    const { command, loader, workingDirectory, verbose = false } = options
     process.chdir(workingDirectory)
     const runLoader = ora(loader.message).start()
     try {
-      await execa.command(command)
+      const { stdout } = await execa.command(command)
       runLoader.succeed()
+      if (verbose) {
+        console.log(stdout)
+      }
     } catch (error: any) {
       runLoader.fail()
       throw new LogError({
@@ -100,6 +104,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public async check(): Promise<void> {
     await this.runScript({
       command: 'npm run ' + (this.mode === 'docker' ? 'docker:check' : 'check'),
+      verbose: true,
       loader: {
         message: 'Checking that the setup went well',
         stderr: 'Could not check the setup'
