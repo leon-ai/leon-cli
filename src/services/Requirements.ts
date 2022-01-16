@@ -145,38 +145,40 @@ class Requirements {
   public async install(yes: boolean): Promise<void> {
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
-    if (!hasPython) {
-      if (yes || (await prompt.shouldInstall('Python'))) {
-        if (isLinux || isMacOS) {
-          await this.installPythonOnUnix()
-        } else if (isWindows) {
-          await pyenvWindows.install()
-          await pipenvWindows.install()
-        } else {
-          throw new LogError({
-            message: UNSUPPORTED_OS_MESSAGE,
-            logFileMessage: UNSUPPORTED_OS_MESSAGE
-          })
+    if (!hasPipenv) {
+      if (!hasPython) {
+        if (yes || (await prompt.shouldInstall('Python'))) {
+          if (isLinux || isMacOS) {
+            await this.installPythonOnUnix()
+          } else if (isWindows) {
+            await pyenvWindows.install()
+            await pipenvWindows.install()
+          } else {
+            throw new LogError({
+              message: UNSUPPORTED_OS_MESSAGE,
+              logFileMessage: UNSUPPORTED_OS_MESSAGE
+            })
+          }
         }
-      }
-    } else if (!hasPipenv) {
-      if (yes || (await prompt.shouldInstall('Pipenv'))) {
-        const loader = {
-          message: 'Installing Pipenv',
-          stderr: 'Failed to install Pipenv'
-        }
-        if (isLinux || isMacOS) {
-          await this.executeScript({
-            scriptCommand: ['install_pipenv.sh'],
-            loader
-          })
-        } else if (isWindows) {
-          await pipenvWindows.install()
-        } else {
-          throw new LogError({
-            message: UNSUPPORTED_OS_MESSAGE,
-            logFileMessage: UNSUPPORTED_OS_MESSAGE
-          })
+      } else {
+        if (yes || (await prompt.shouldInstall('Pipenv'))) {
+          const loader = {
+            message: 'Installing Pipenv',
+            stderr: 'Failed to install Pipenv'
+          }
+          if (isLinux || isMacOS) {
+            await this.executeScript({
+              scriptCommand: ['install_pipenv.sh'],
+              loader
+            })
+          } else if (isWindows) {
+            await pipenvWindows.install()
+          } else {
+            throw new LogError({
+              message: UNSUPPORTED_OS_MESSAGE,
+              logFileMessage: UNSUPPORTED_OS_MESSAGE
+            })
+          }
         }
       }
     }
