@@ -68,7 +68,6 @@ export class LeonInstance implements LeonInstanceOptions {
       return
     }
     npmStartStream.pipe(process.stdout)
-    npmStartStream.pipe(process.stderr)
     const value = await getStream(npmStartStream)
     console.log(value)
   }
