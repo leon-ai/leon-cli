@@ -1,5 +1,10 @@
 #!/bin/sh
 
+add-apt-repository --yes main
+add-apt-repository --yes universe
+add-apt-repository --yes restricted
+add-apt-repository --yes multiverse
+
 apt-get update --yes
 
 apt-get install --yes make build-essential git bash libssl-dev zlib1g-dev \

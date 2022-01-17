@@ -23,6 +23,7 @@ export class StartCommand extends Command {
   async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
+      await leonInstance.incrementStartCount()
       await leonInstance.start(this.port)
       return 0
     } catch (error) {

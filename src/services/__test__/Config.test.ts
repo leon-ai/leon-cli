@@ -8,7 +8,8 @@ const leonInstance = new LeonInstance({
   name: 'random-name',
   birthDate: 'birthDate',
   mode: 'classic',
-  path: '/path'
+  path: '/path',
+  startCount: 0
 })
 const configData: ConfigData = {
   instances: [leonInstance]

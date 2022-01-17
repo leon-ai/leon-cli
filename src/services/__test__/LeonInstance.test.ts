@@ -7,7 +7,8 @@ const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
   birthDate: 'birthDate',
   mode: 'docker',
-  path: '/path'
+  path: '/path',
+  startCount: 0
 }
 
 const leonInstance = new LeonInstance(leonInstanceOptions)

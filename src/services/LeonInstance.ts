@@ -1,9 +1,13 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
 import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
 import { Config } from './Config'
 import { LogError } from '../utils/LogError'
+import { isExistingFile } from '../utils/isExistingFile'
 
 export type InstanceType = 'classic' | 'docker'
 
@@ -25,6 +29,7 @@ export interface CreateOptions {
 
 export interface LeonInstanceOptions extends CreateOptions {
   birthDate: string
+  startCount: number
 }
 
 export class LeonInstance implements LeonInstanceOptions {
@@ -32,13 +37,15 @@ export class LeonInstance implements LeonInstanceOptions {
   public path: string
   public mode: InstanceType
   public birthDate: string
+  public startCount: number
 
   public constructor(options: LeonInstanceOptions) {
-    const { name, path, mode, birthDate } = options
+    const { name, path, mode, birthDate, startCount } = options
     this.name = name
     this.path = path
     this.mode = mode
     this.birthDate = birthDate
+    this.startCount = startCount
   }
 
   public async startDocker(LEON_PORT: string): Promise<void> {
@@ -59,6 +66,13 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
+    if (this.startCount === 0) {
+      const dotenvPath = path.join(this.path, '.env')
+      if (await isExistingFile(dotenvPath)) {
+        await fs.promises.rm(dotenvPath)
+      }
+      await this.install()
+    }
     const npmStartStream = execa.command('npm start', {
       env: {
         LEON_PORT
@@ -171,6 +185,18 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
+  public async incrementStartCount(): Promise<void> {
+    const config = await Config.get()
+    const leonInstance = LeonInstance.find(config, this.name)
+    if (leonInstance == null) {
+      throw new LogError({
+        message: "This instance doesn't exists, please provider another name."
+      })
+    }
+    leonInstance.startCount += 1
+    await config.save()
+  }
+
   static async create(options: CreateOptions): Promise<void> {
     const config = await Config.get()
     let leonInstance = LeonInstance.find(config, options.name)
@@ -183,7 +209,8 @@ export class LeonInstance implements LeonInstanceOptions {
       name: options.name,
       path: options.path,
       mode: options.mode,
-      birthDate: new Date().toISOString()
+      birthDate: new Date().toISOString(),
+      startCount: 0
     })
     config.data.instances.push(leonInstance)
     await config.save()

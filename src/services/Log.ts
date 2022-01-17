@@ -31,7 +31,7 @@ class Log {
         console.log(data)
       } else {
         console.error(
-          `For further informations, look at the log file located at ${this.ERROR_LOG_PATH}`
+          `For further information, look at the log file located at ${this.ERROR_LOG_PATH}`
         )
         if (await isExistingFile(this.ERROR_LOG_PATH)) {
           await fs.promises.appendFile(this.ERROR_LOG_PATH, data)
