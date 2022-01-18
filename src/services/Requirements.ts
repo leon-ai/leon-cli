@@ -80,7 +80,7 @@ class Requirements {
     const scriptsPath = path.join(__dirname, '..', '..', 'scripts')
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
-      if (sudo) {
+      if (sudo && !isMacOS) {
         await sudoExec(commandPath)
       } else {
         await execa.command(commandPath)
@@ -128,18 +128,22 @@ class Requirements {
   }
 
   public async installPythonOnUnix(): Promise<void> {
-    const isTest =
-      process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'test-e2e'
-    if (!isTest) {
-      await this.installPackages()
+    const loader = {
+      message: 'Installing Python',
+      stderr: 'Failed to install Python'
     }
-    await this.executeScript({
-      scriptCommand: ['install_pyenv.sh'],
-      loader: {
-        message: 'Installing Python',
-        stderr: 'Failed to install Python'
-      }
-    })
+    await this.installPackages()
+    if (isMacOS) {
+      await this.executeScript({
+        scriptCommand: ['install_pyenv_macos.sh'],
+        loader
+      })
+    } else {
+      await this.executeScript({
+        scriptCommand: ['install_pyenv.sh'],
+        loader
+      })
+    }
   }
 
   public async install(yes: boolean): Promise<void> {
