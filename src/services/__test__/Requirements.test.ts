@@ -29,20 +29,20 @@ describe('services/Requirements - checkVersion', () => {
   it('should return true when the version is higher or equal than the requirement', async () => {
     const requirement = '3.0.0'
     const commandAnswer = '3.7.2'
-    expect(
-      await requirements.checkVersion(commandAnswer, requirement)
-    ).toBeTruthy()
+    expect(await requirements.checkVersion(commandAnswer, requirement)).toBe(
+      true
+    )
     const requirement2 = '3.7.2'
-    expect(
-      await requirements.checkVersion(commandAnswer, requirement2)
-    ).toBeTruthy()
+    expect(await requirements.checkVersion(commandAnswer, requirement2)).toBe(
+      true
+    )
   })
 })
 
 describe('services/Requirements - checkPython', () => {
   it('should return a boolean', async () => {
     const result = await requirements.checkPython()
-    expect(typeof result === 'boolean').toBeTruthy()
+    expect(typeof result === 'boolean').toBe(true)
   })
 })
 
@@ -52,7 +52,7 @@ describe('services/Requirements - checkEnvironmentVariable', () => {
       PYENV: undefined
     })
     expect(
-      await requirements.checkEnvironmentVariable(
+      await requirements.checkIfEnvironmentVariableContains(
         'PYENV',
         path.join('.pyenv', 'pyenv-win')
       )
@@ -65,7 +65,7 @@ describe('services/Requirements - checkEnvironmentVariable', () => {
       PYENV: path.join('some', 'value', 'here')
     })
     expect(
-      await requirements.checkEnvironmentVariable(
+      await requirements.checkIfEnvironmentVariableContains(
         'PYENV',
         path.join('.pyenv', 'pyenv-win')
       )
@@ -79,7 +79,7 @@ describe('services/Requirements - checkEnvironmentVariable', () => {
       PYENV: pyenvValue
     })
     expect(
-      await requirements.checkEnvironmentVariable(
+      await requirements.checkIfEnvironmentVariableContains(
         'PYENV',
         path.join('.pyenv', 'pyenv-win')
       )
