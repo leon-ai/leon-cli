@@ -23,7 +23,7 @@ export interface ExecuteScriptOptions {
 }
 
 class Requirements {
-  public async checkEnvironmentVariable(
+  public async checkIfEnvironmentVariableContains(
     variable: string,
     content: string
   ): Promise<boolean> {
@@ -153,6 +153,7 @@ class Requirements {
           } else if (isWindows) {
             await pyenvWindows.install()
             await pipenvWindows.install()
+            await pipenvWindows.addToPath()
           } else {
             throw new LogError({
               message: UNSUPPORTED_OS_MESSAGE,
@@ -173,6 +174,7 @@ class Requirements {
             })
           } else if (isWindows) {
             await pipenvWindows.install()
+            await pipenvWindows.addToPath()
           } else {
             throw new LogError({
               message: UNSUPPORTED_OS_MESSAGE,

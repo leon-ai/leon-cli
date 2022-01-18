@@ -1,15 +1,21 @@
 import execa from 'execa'
 import ora from 'ora'
+import path from 'node:path'
 
-import { requirements } from '../Requirements'
 import { LogError } from '../../utils/LogError'
+import {
+  extractVersionForPath,
+  getPythonSiteString,
+  getPythonVersionString
+} from '../../utils/pythonUtils'
+import { addToPath } from '../../utils/pathUtils'
+import { requirements } from '../Requirements'
 
 class PipenvWindows {
   public async install(): Promise<void> {
-    const pipenvLoader = ora('Installing Pipenv').start()
+    const pipenvLoader = ora('Installing pipenv').start()
     try {
-      await execa('pip install pipenv')
-      await this.setPath()
+      await execa('pip install --user pipenv')
       pipenvLoader.succeed()
     } catch (error: any) {
       pipenvLoader.fail()
@@ -20,42 +26,35 @@ class PipenvWindows {
     }
   }
 
-  public async setPath(): Promise<void> {
-    const appdataDir =
-      process.env.APPDATA ??
-      (process.platform === 'darwin'
-        ? process.env.HOME ?? '' + '/Library/Preferences'
-        : process.env.HOME ?? '' + '/.local/share')
-    const sitePackageEnv = `${appdataDir}\\Python\\Python310\\site-packages`
-    const scriptEnv = `${appdataDir}\\Python\\Python310\\Scripts`
+  private async addToWindowsPath(): Promise<void> {
+    const pythonSitePath = await getPythonSiteString()
+    const formattedPythonVersion = extractVersionForPath(
+      await getPythonVersionString()
+    )
+    const fullPathToPythonSite = path.join(
+      pythonSitePath,
+      `Python${formattedPythonVersion}`,
+      'Scripts'
+    )
+    if (
+      !(await requirements.checkIfEnvironmentVariableContains(
+        'PATH',
+        fullPathToPythonSite
+      ))
+    ) {
+      await addToPath(fullPathToPythonSite)
+    }
+  }
 
+  public async addToPath(): Promise<void> {
+    const registeringPipenvLoader = ora('Registering pipenv to path').start()
     try {
-      if (
-        !(await requirements.checkEnvironmentVariable('PATH', sitePackageEnv))
-      ) {
-        if (process.platform === 'win32') {
-          await execa(
-            `[Environment]::SetEnvironmentVariable('PATH', "${sitePackageEnv};${
-              process.env.PATH ?? ''
-            }",'User')`,
-            [],
-            { shell: 'powershell.exe' }
-          )
-        }
+      if (process.platform === 'win32') {
+        await this.addToWindowsPath()
       }
-
-      if (!(await requirements.checkEnvironmentVariable('PATH', scriptEnv))) {
-        if (process.platform === 'win32') {
-          await execa(
-            `[Environment]::SetEnvironmentVariable('PATH', "${scriptEnv};${
-              process.env.PATH ?? ''
-            }",'User')`,
-            [],
-            { shell: 'powershell.exe' }
-          )
-        }
-      }
+      registeringPipenvLoader.succeed()
     } catch (error: any) {
+      registeringPipenvLoader.fail()
       throw new LogError({
         message: 'Impossible to register Pipenv environment variables',
         logFileMessage: error.toString()
