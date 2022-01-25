@@ -3,7 +3,7 @@
   Leon CLI
 </h1>
 
-*<p align="center">Your companion for your Leon journey.</p>*
+*<p align="center">The companion for your Leon journey.</p>*
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue.svg?label=License&style=flat" alt="Licence MIT"/></a>
@@ -19,7 +19,7 @@
 
 ## 👋 Introduction
 
-Meet the Leon CLI, **your new companion for your [Leon](https://getleon.ai/) journey**!
+Meet the Leon CLI, **the new companion for your [Leon](https://getleon.ai/) journey**!
 
 With this CLI, you can **get Leon running within 3 commands**.
 
