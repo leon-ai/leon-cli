@@ -25,3 +25,4 @@ jobs:
       - run: 'npm run lint:editorconfig'
       - run: 'npm run lint:markdown'
       - run: 'npm run lint:typescript'
+      - run: 'npm run lint:prettier'

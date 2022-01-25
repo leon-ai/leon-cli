@@ -1,8 +1,8 @@
 import fsMock from 'mock-fs'
 
-import { Config, ConfigData } from '../Config'
-import { LeonInstance } from '../LeonInstance'
-import { isExistingFile } from '../../utils/isExistingFile'
+import { Config, ConfigData } from '../Config.js'
+import { LeonInstance } from '../LeonInstance.js'
+import { isExistingFile } from '../../utils/isExistingFile.js'
 
 const leonInstance = new LeonInstance({
   name: 'random-name',

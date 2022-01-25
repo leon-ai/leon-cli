@@ -1,6 +1,6 @@
 import sudoPrompt from 'sudo-prompt'
 
-import { Leon } from '../services/Leon'
+import { Leon } from '../services/Leon.js'
 
 export const sudoExec = async (command: string): Promise<string> => {
   return await new Promise((resolve, reject) => {

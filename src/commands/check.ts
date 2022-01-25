@@ -1,7 +1,7 @@
 import { Command, Option } from 'clipanion'
 
-import { LeonInstance } from '../services/LeonInstance'
-import { log } from '../services/Log'
+import { LeonInstance } from '../services/LeonInstance.js'
+import { log } from '../services/Log.js'
 
 export class CheckCommand extends Command {
   static paths = [['check']]

@@ -3,9 +3,9 @@ import path from 'node:path'
 
 import chalk from 'chalk'
 
-import { isExistingFile } from '../utils/isExistingFile'
-import { Leon } from './Leon'
-import { LogError } from '../utils/LogError'
+import { isExistingFile } from '../utils/isExistingFile.js'
+import { Leon } from './Leon.js'
+import { LogError } from '../utils/LogError.js'
 
 interface LogErrorOptions {
   commandPath?: string

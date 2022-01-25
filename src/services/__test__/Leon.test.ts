@@ -1,4 +1,4 @@
-import { Leon } from '../Leon'
+import { Leon } from '../Leon.js'
 
 describe('services/Leon - getSourceCodeInformation', () => {
   it('should return the master version', () => {

@@ -1,5 +1,5 @@
-import { cli } from '../../cli'
-import { StartCommand } from '../start'
+import { cli } from '../../cli.js'
+import { StartCommand } from '../start.js'
 
 describe('leon start', () => {
   it('should be instance of the command', async () => {

@@ -1,7 +1,8 @@
-import fsMock from 'mock-fs'
 import fs from 'node:fs'
 
-import { copyDirectory } from '../copyDirectory'
+import fsMock from 'mock-fs'
+
+import { copyDirectory } from '../copyDirectory.js'
 
 describe('utils/copyDirectory', () => {
   afterEach(async () => {

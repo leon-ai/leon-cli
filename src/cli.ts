@@ -3,10 +3,10 @@ import path from 'node:path'
 import { Builtins, Cli } from 'clipanion'
 import readPackage from 'read-pkg'
 
-import { CreateBirthCommand } from './commands/create/birth'
-import { StartCommand } from './commands/start'
-import { CheckCommand } from './commands/check'
-import { Leon } from './services/Leon'
+import { CreateBirthCommand } from './commands/create/birth.js'
+import { StartCommand } from './commands/start.js'
+import { CheckCommand } from './commands/check.js'
+import { Leon } from './services/Leon.js'
 
 export const cli = new Cli({
   binaryLabel: Leon.NAME,

@@ -1,4 +1,4 @@
-import { extractVersionForPath } from '../pythonUtils'
+import { extractVersionForPath } from '../pythonUtils.js'
 
 describe('utils/pythonUtils', () => {
   it('should return 310 if given "Python 3.10.0b3"', async () => {

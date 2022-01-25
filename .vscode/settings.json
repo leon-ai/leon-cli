@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifierEnding": "js",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": ".prettierrc.json",
   "editor.formatOnSave": true,

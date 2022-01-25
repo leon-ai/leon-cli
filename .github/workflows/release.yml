@@ -13,13 +13,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: 'Import GPG key'
-        uses: 'crazy-max/ghaction-import-gpg@v4'
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
       - name: 'Use Node.js'
         uses: 'actions/setup-node@v2.5.1'
         with:
@@ -35,6 +28,5 @@ jobs:
       - name: 'Release'
         run: 'npm run release'
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GIT_COMMITTER_NAME: ${{ secrets.GIT_NAME }}
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

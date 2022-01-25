@@ -5,9 +5,9 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
-import { Config } from './Config'
-import { LogError } from '../utils/LogError'
-import { isExistingFile } from '../utils/isExistingFile'
+import { Config } from './Config.js'
+import { LogError } from '../utils/LogError.js'
+import { isExistingFile } from '../utils/isExistingFile.js'
 
 export type InstanceType = 'classic' | 'docker'
 

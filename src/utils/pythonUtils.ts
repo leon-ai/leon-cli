@@ -1,5 +1,6 @@
 import execa from 'execa'
-import { LogError } from './LogError'
+
+import { LogError } from './LogError.js'
 
 function extractVersionForPath(str: string): string {
   const match = str.match(/\d\.\d{1,3}/g)

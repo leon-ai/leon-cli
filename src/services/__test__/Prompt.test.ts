@@ -1,4 +1,4 @@
-import { acceptedAnswers } from '../Prompt'
+import { acceptedAnswers } from '../Prompt.js'
 
 describe('services/Prompt', () => {
   it('should accept yes, y, no, n as answers', () => {

@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 
-import { isExistingFile } from '../utils/isExistingFile'
+import { isExistingFile } from '../utils/isExistingFile.js'
 
 export const TEMPORARY_PATH = path.join(__dirname, '..', '..', 'temp')
 

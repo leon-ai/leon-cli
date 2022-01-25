@@ -1,9 +1,9 @@
 import { Command, Option } from 'clipanion'
 import chalk from 'chalk'
 
-import { Leon } from '../../services/Leon'
-import { log } from '../../services/Log'
-import { isLinux, isMacOS } from '../../utils/operatingSystem'
+import { Leon } from '../../services/Leon.js'
+import { log } from '../../services/Log.js'
+import { isLinux, isMacOS } from '../../utils/operatingSystem.js'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]

@@ -1,8 +1,8 @@
 import * as typanion from 'typanion'
 import { Command, Option } from 'clipanion'
 
-import { LeonInstance } from '../services/LeonInstance'
-import { log } from '../services/Log'
+import { LeonInstance } from '../services/LeonInstance.js'
+import { log } from '../services/Log.js'
 
 export class StartCommand extends Command {
   static paths = [['start']]

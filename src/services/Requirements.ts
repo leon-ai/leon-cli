@@ -4,12 +4,12 @@ import execa from 'execa'
 import semver from 'semver'
 import ora from 'ora'
 
-import { LogError } from '../utils/LogError'
-import { sudoExec } from '../utils/sudoExec'
-import { prompt } from './Prompt'
-import { pyenvWindows } from './Windows/PyenvWindows'
-import { pipenvWindows } from './Windows/PipenvWindows'
-import { isLinux, isMacOS, isWindows } from '../utils/operatingSystem'
+import { LogError } from '../utils/LogError.js'
+import { sudoExec } from '../utils/sudoExec.js'
+import { prompt } from './Prompt.js'
+import { pyenvWindows } from './Windows/PyenvWindows.js'
+import { pipenvWindows } from './Windows/PipenvWindows.js'
+import { isLinux, isMacOS, isWindows } from '../utils/operatingSystem.js'
 
 const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
 

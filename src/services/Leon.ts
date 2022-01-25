@@ -10,12 +10,12 @@ import extractZip from 'extract-zip'
 import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
-} from '../utils/createTemporaryEmptyFolder'
-import { isExistingFile } from '../utils/isExistingFile'
-import { LeonInstance } from './LeonInstance'
-import { LogError } from '../utils/LogError'
-import { copyDirectory } from '../utils/copyDirectory'
-import { requirements } from './Requirements'
+} from '../utils/createTemporaryEmptyFolder.js'
+import { isExistingFile } from '../utils/isExistingFile.js'
+import { LeonInstance } from './LeonInstance.js'
+import { LogError } from '../utils/LogError.js'
+import { copyDirectory } from '../utils/copyDirectory.js'
+import { requirements } from './Requirements.js'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean

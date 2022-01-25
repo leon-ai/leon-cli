@@ -2,7 +2,7 @@
 import chalk from 'chalk'
 import { Cli } from 'clipanion'
 
-import { cli } from './cli'
+import { cli } from './cli.js'
 
 const [, , ...args] = process.argv
 

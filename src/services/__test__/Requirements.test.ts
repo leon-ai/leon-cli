@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import mockedEnv from 'mocked-env'
 
-import { requirements } from '../Requirements'
+import { requirements } from '../Requirements.js'
 
 describe('services/Requirements - checkVersion', () => {
   it('should return false when there is no match', async () => {

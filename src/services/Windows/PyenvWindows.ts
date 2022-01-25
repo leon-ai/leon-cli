@@ -6,9 +6,9 @@ import axios from 'axios'
 import execa from 'execa'
 import ora from 'ora'
 
-import { requirements } from '../Requirements'
-import { LogError } from '../../utils/LogError'
-import { addToPath, saveEnvironmentVariable } from '../../utils/pathUtils'
+import { requirements } from '../Requirements.js'
+import { LogError } from '../../utils/LogError.js'
+import { addToPath, saveEnvironmentVariable } from '../../utils/pathUtils.js'
 
 class PyenvWindows {
   static URL = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'

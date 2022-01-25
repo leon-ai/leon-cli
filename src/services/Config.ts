@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { isExistingFile } from '../utils/isExistingFile'
-import { LeonInstance } from './LeonInstance'
+import { isExistingFile } from '../utils/isExistingFile.js'
+import { LeonInstance } from './LeonInstance.js'
 
 export interface ConfigOptions {
   data: ConfigData

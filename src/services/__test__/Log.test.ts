@@ -1,8 +1,9 @@
 import fs from 'node:fs'
 
 import fsMock from 'mock-fs'
-import { LogError } from '../../utils/LogError'
-import { log } from '../Log'
+
+import { LogError } from '../../utils/LogError.js'
+import { log } from '../Log.js'
 
 describe('services/Log', () => {
   const message = 'Error occured'

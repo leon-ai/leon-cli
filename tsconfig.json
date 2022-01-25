@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "outDir": "./build",
     "rootDir": "./src",
+    "noEmit": true,
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true

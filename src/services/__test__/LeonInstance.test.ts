@@ -1,7 +1,7 @@
 import fsMock from 'mock-fs'
 
-import { Config, ConfigData } from '../Config'
-import { LeonInstance, LeonInstanceOptions } from '../LeonInstance'
+import { Config, ConfigData } from '../Config.js'
+import { LeonInstance, LeonInstanceOptions } from '../LeonInstance.js'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',

@@ -1,5 +1,6 @@
 import execa from 'execa'
-import { LogError } from './LogError'
+
+import { LogError } from './LogError.js'
 
 async function getWindowsUserPath(): Promise<string> {
   const errorMessage = 'Could not retrieve user path from windows'

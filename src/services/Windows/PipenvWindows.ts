@@ -1,15 +1,16 @@
-import execa from 'execa'
-import ora from 'ora'
 import path from 'node:path'
 
-import { LogError } from '../../utils/LogError'
+import execa from 'execa'
+import ora from 'ora'
+
+import { LogError } from '../../utils/LogError.js'
 import {
   extractVersionForPath,
   getPythonSiteString,
   getPythonVersionString
-} from '../../utils/pythonUtils'
-import { addToPath } from '../../utils/pathUtils'
-import { requirements } from '../Requirements'
+} from '../../utils/pythonUtils.js'
+import { addToPath } from '../../utils/pathUtils.js'
+import { requirements } from '../Requirements.js'
 
 class PipenvWindows {
   public async install(): Promise<void> {

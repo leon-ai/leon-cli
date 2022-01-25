@@ -3,7 +3,7 @@
   Leon CLI
 </h1>
 
-*<p align="center">The companion for your Leon journey.</p>*
+_<p align="center">The companion for your Leon journey.</p>_
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue.svg?label=License&style=flat" alt="Licence MIT"/></a>
