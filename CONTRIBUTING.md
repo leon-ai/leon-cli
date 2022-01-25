@@ -17,6 +17,27 @@ All work on **Leon** happens directly on [GitHub](https://github.com/leon-ai). B
 - Correct spelling errors, improvements or additions to documentation files (README, CONTRIBUTING...).
 - Improve structure/format/performance/refactor/tests of the code.
 
+## Development Setup
+
+```sh
+# Download the source code
+git clone https://github.com/leon-ai/leon-cli.git
+
+# Install npm dependencies
+npm install
+
+# Add your awesome changes...
+
+# Build
+npm run build
+
+# Install the local folder as a global npm package
+npm install --global
+
+# Run
+leon
+```
+
 ## Pull Requests
 
 - **Please first discuss** the change you wish to make via [issue](https://github.com/leon-ai/leon-cli/issues) before making a change. It might avoid a waste of your time.
