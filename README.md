@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://getleon.ai"><img width="64" src="https://getleon.ai/img/leon-cli.svg" alt="Leon"></a><br>
+  <a href="https://getleon.ai"><img width="96" src="https://getleon.ai/img/leon-cli.svg" alt="Leon"></a><br>
   Leon CLI
 </h1>
 
