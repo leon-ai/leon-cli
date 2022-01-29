@@ -12,12 +12,12 @@ export class StartCommand extends Command {
   }
 
   public port = Option.String('--port', {
-    description: 'Specify listening server port.',
+    description: 'Run a Leon instance with a specific port.',
     validator: typanion.isNumber()
   })
 
   public name = Option.String('--name', {
-    description: 'Specify the instance name to start.'
+    description: 'Run a Leon instance with a specific name.'
   })
 
   async execute(): Promise<number> {

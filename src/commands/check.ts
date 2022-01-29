@@ -7,11 +7,11 @@ export class CheckCommand extends Command {
   static paths = [['check']]
 
   static usage = {
-    description: 'Check the setup went well for a Leon instance.'
+    description: 'Check how the setup went.'
   }
 
   public name = Option.String('--name', {
-    description: 'Specify the instance name to check.'
+    description: 'Name of the Leon instance.'
   })
 
   async execute(): Promise<number> {

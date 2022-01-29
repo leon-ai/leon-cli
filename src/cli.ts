@@ -4,8 +4,9 @@ import { Builtins, Cli } from 'clipanion'
 import readPackage from 'read-pkg'
 
 import { CreateBirthCommand } from './commands/create/birth.js'
-import { StartCommand } from './commands/start.js'
 import { CheckCommand } from './commands/check.js'
+import { HelpCommand } from './commands/help.js'
+import { StartCommand } from './commands/start.js'
 import { Leon } from './services/Leon.js'
 
 export const cli = new Cli({
@@ -16,5 +17,6 @@ export const cli = new Cli({
 cli.register(Builtins.HelpCommand)
 cli.register(Builtins.VersionCommand)
 cli.register(CreateBirthCommand)
-cli.register(StartCommand)
 cli.register(CheckCommand)
+cli.register(HelpCommand)
+cli.register(StartCommand)

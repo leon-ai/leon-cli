@@ -10,19 +10,19 @@ export class CreateBirthCommand extends Command {
 
   static usage = {
     description:
-      'Brings Leon to life by checking all requirements and install them with permissions from user.'
+      'Brings Leon to life by checking all the requirements and install them with your approval.'
   }
 
   public useDevelopGitBranch = Option.Boolean('--develop', false, {
-    description: 'Download Leon source code from the "develop" git branch.'
+    description: 'Install Leon from the `develop` Git branch.'
   })
 
   public useDocker = Option.Boolean('--docker', false, {
-    description: 'Build and install Leon with the Docker image.'
+    description: 'Install Leon with Docker.'
   })
 
   public birthPath = Option.String('--path', {
-    description: 'Choose the specific location to brings Leon to life.'
+    description: 'Location of your Leon instance.'
   })
 
   public version = Option.String('--version', {
@@ -30,11 +30,11 @@ export class CreateBirthCommand extends Command {
   })
 
   public name = Option.String('--name', {
-    description: 'Give a name to the new Leon instance.'
+    description: 'Give a name to your Leon instance.'
   })
 
   public yes = Option.Boolean('--yes', {
-    description: 'Accept to install all requirements without being prompted.'
+    description: 'Skip all questions with a "yes" answer.'
   })
 
   async execute(): Promise<number> {
