@@ -35,8 +35,6 @@
   },
   "files": [
     "build",
-    "config",
-    "logs",
     "scripts"
   ],
   "main": "build/index.js",
@@ -56,10 +54,12 @@
     "release": "semantic-release"
   },
   "dependencies": {
+    "@sinclair/typebox": "0.23.3",
     "adm-zip": "0.5.9",
     "axios": "0.25.0",
     "chalk": "4.1.2",
     "clipanion": "3.1.0",
+    "conf": "10.1.1",
     "execa": "5.1.1",
     "extract-zip": "2.0.1",
     "get-stream": "6.0.1",
