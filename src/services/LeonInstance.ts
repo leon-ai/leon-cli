@@ -5,7 +5,7 @@ import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 
-import { Config } from './Config.js'
+import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
 import { isExistingFile } from '../utils/isExistingFile.js'
 
@@ -159,24 +159,29 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
-  static find(config: Config, name: string): LeonInstance | undefined {
-    return config.data.instances.find((instance) => {
+  static find(name: string): LeonInstance | null {
+    const instances = config.get('instances', [])
+    const instance = instances.find((instance) => {
       return instance.name === name
     })
+    if (instance != null) {
+      return new LeonInstance(instance)
+    }
+    return null
   }
 
   static async get(name?: string): Promise<LeonInstance> {
-    const config = await Config.get()
-    const isEmptyInstances = config.data.instances.length === 0
-    if (isEmptyInstances) {
-      throw new LogError({
-        message: 'You should have at least one instance.'
-      })
-    }
     if (name == null) {
-      return config.data.instances[0]
+      const instances = config.get('instances', [])
+      const isEmptyInstances = instances.length === 0
+      if (isEmptyInstances) {
+        throw new LogError({
+          message: 'You should have at least one instance.'
+        })
+      }
+      return new LeonInstance(instances[0])
     }
-    const leonInstance = LeonInstance.find(config, name)
+    const leonInstance = LeonInstance.find(name)
     if (leonInstance == null) {
       throw new LogError({
         message: "This instance doesn't exists, please provider another name."
@@ -186,34 +191,39 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async incrementStartCount(): Promise<void> {
-    const config = await Config.get()
-    const leonInstance = LeonInstance.find(config, this.name)
+    const leonInstance = LeonInstance.find(this.name)
     if (leonInstance == null) {
       throw new LogError({
         message: "This instance doesn't exists, please provider another name."
       })
     }
     leonInstance.startCount += 1
-    await config.save()
+    const instances = config.get('instances', [])
+    const instance = instances.find((instance) => {
+      return instance.name === this.name
+    })
+    if (instance != null) {
+      instance.startCount = leonInstance.startCount
+      config.set('instances', instances)
+    }
   }
 
   static async create(options: CreateOptions): Promise<void> {
-    const config = await Config.get()
-    let leonInstance = LeonInstance.find(config, options.name)
+    let leonInstance = LeonInstance.find(options.name)
     if (leonInstance != null) {
       throw new LogError({
         message: 'This instance name already exists, please choose another name'
       })
     }
-    leonInstance = new LeonInstance({
+    const instance = {
       name: options.name,
       path: options.path,
       mode: options.mode,
       birthDate: new Date().toISOString(),
       startCount: 0
-    })
-    config.data.instances.push(leonInstance)
-    await config.save()
+    }
+    leonInstance = new LeonInstance(instance)
+    config.set('instances', [...config.get('instances', []), instance])
     if (leonInstance.mode === 'docker') {
       await leonInstance.buildDockerImage()
     } else {

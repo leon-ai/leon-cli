@@ -1,20 +1,26 @@
-import fs from 'node:fs'
-import path from 'node:path'
-
+import Conf from 'conf'
 import chalk from 'chalk'
 
-import { isExistingFile } from '../utils/isExistingFile.js'
-import { Leon } from './Leon.js'
 import { LogError } from '../utils/LogError.js'
+import { Leon } from './Leon.js'
 
 interface LogErrorOptions {
   commandPath?: string
   error: unknown
 }
 
-class Log {
-  public path = path.join(__dirname, '..', '..', 'logs')
-  public ERROR_LOG_PATH = path.join(this.path, 'errors.log')
+export class Log {
+  static errorsConfig = new Conf({
+    configName: 'log-errors',
+    projectSuffix: '',
+    fileExtension: 'txt',
+    serialize: (value) => {
+      return value.errors as string
+    },
+    deserialize: (value) => {
+      return { errors: value }
+    }
+  })
 
   public async error(options: LogErrorOptions): Promise<void> {
     const { commandPath, error } = options
@@ -31,13 +37,9 @@ class Log {
         console.log(data)
       } else {
         console.error(
-          `For further information, look at the log file located at ${this.ERROR_LOG_PATH}`
+          `For further information, look at the log file located at ${Log.errorsConfig.path}`
         )
-        if (await isExistingFile(this.ERROR_LOG_PATH)) {
-          await fs.promises.appendFile(this.ERROR_LOG_PATH, data)
-        } else {
-          await fs.promises.writeFile(this.ERROR_LOG_PATH, data, { flag: 'w' })
-        }
+        Log.errorsConfig.set('errors', data)
       }
     }
   }

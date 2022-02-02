@@ -32,5 +32,3 @@ npm-debug.log*
 .DS_Store
 tmp
 temp
-logs/errors.log
-config/config.json
