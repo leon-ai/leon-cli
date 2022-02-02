@@ -1,61 +1,38 @@
-import fs from 'node:fs'
-import path from 'node:path'
+import Conf, { Schema } from 'conf'
+import { Static, Type } from '@sinclair/typebox'
 
-import { isExistingFile } from '../utils/isExistingFile.js'
-import { LeonInstance } from './LeonInstance.js'
+export const instanceModes = [Type.Literal('classic'), Type.Literal('docker')]
 
-export interface ConfigOptions {
-  data: ConfigData
+const instanceMode = Type.Union(instanceModes)
+
+export type InstanceMode = Static<typeof instanceMode>
+
+export const configSchema = {
+  instances: Type.Array(
+    Type.Object({
+      name: Type.String({ examples: ['Office'] }),
+      path: Type.String({ examples: ['/home/user/.leon'] }),
+      mode: instanceMode,
+      birthDate: Type.String({ examples: ['2021-04-26T13:47:41.319Z'] }),
+      startCount: Type.Integer({ examples: [1] })
+    }),
+    { default: [] }
+  )
 }
 
-export interface ConfigData {
-  instances: LeonInstance[]
-}
-
-export class Config implements ConfigOptions {
-  static FOLDER_PATH = path.join(__dirname, '..', '..', 'config')
-  static PATH = path.join(Config.FOLDER_PATH, 'config.json')
-
-  public data: ConfigData
-
-  private constructor(options: ConfigOptions) {
-    const { data } = options
-    this.data = data
-  }
-
-  static async get(): Promise<Config> {
-    if (await isExistingFile(Config.PATH)) {
-      const rawConfigData = await fs.promises.readFile(Config.PATH, {
-        encoding: 'utf8'
-      })
-      const data: ConfigData = JSON.parse(rawConfigData)
-      data.instances = data.instances.map((instance) => {
-        return new LeonInstance(instance)
-      })
-      return new Config({ data })
+export const configSchemaObject = Type.Strict(
+  Type.Object(configSchema, {
+    additionalProperties: false,
+    default: {
+      instances: []
     }
-    const configOptions: ConfigOptions = {
-      data: {
-        instances: []
-      }
-    }
-    await fs.promises.writeFile(
-      Config.PATH,
-      JSON.stringify(configOptions.data, null, 2),
-      {
-        flag: 'w'
-      }
-    )
-    return new Config(configOptions)
-  }
+  })
+)
 
-  public async save(): Promise<void> {
-    await fs.promises.writeFile(
-      Config.PATH,
-      JSON.stringify(this.data, null, 2),
-      {
-        flag: 'w'
-      }
-    )
-  }
-}
+export type ConfigData = Static<typeof configSchemaObject>
+
+export const config = new Conf({
+  schema: configSchemaObject.properties as Schema<ConfigData>,
+  configName: 'leon-ai',
+  projectSuffix: ''
+})
