@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion'
-import { table } from 'table'
 import chalk from 'chalk'
-import date from 'date-and-time'
-import readPackage from 'read-pkg'
 
 import { config } from '../services/Config.js'
 import { LeonInstance } from '../services/LeonInstance.js'
@@ -21,23 +18,18 @@ export class InfoCommand extends Command {
 
   async execute(): Promise<number> {
     try {
-      console.log(chalk.cyan('\nLeon instances:\n'))
-      const instances = config.get('instances', [])
-      for (const instance of instances) {
-        const leonInstance = new LeonInstance(instance)
-        const birthDay = new Date(leonInstance.birthDate)
-        const birthDayString = date.format(birthDay, 'DD/MM/YYYY - HH:mm:ss')
-        const packageJSON = readPackage.sync({ cwd: leonInstance.path })
-        console.log(
-          table([
-            [chalk.bold('Name'), leonInstance.name],
-            [chalk.bold('Path'), leonInstance.path],
-            [chalk.bold('Mode'), leonInstance.mode],
-            [chalk.bold('Birthday'), birthDayString],
-            [chalk.bold('Version'), packageJSON.version]
-          ])
-        )
-        console.log('------------------------------\n')
+      if (this.name != null) {
+        console.log()
+        const leonInstance = await LeonInstance.get(this.name)
+        leonInstance.logInfo()
+      } else {
+        console.log(chalk.cyan('\nLeon instances:\n'))
+        const instances = config.get('instances', [])
+        for (const instance of instances) {
+          const leonInstance = new LeonInstance(instance)
+          leonInstance.logInfo()
+          console.log('------------------------------\n')
+        }
       }
       return 0
     } catch (error) {
