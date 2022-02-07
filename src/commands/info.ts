@@ -23,12 +23,18 @@ export class InfoCommand extends Command {
         const leonInstance = await LeonInstance.get(this.name)
         leonInstance.logInfo()
       } else {
-        console.log(chalk.cyan('\nLeon instances:\n'))
         const instances = config.get('instances', [])
-        for (const instance of instances) {
-          const leonInstance = new LeonInstance(instance)
-          leonInstance.logInfo()
-          console.log('------------------------------\n')
+        if (instances.length === 0) {
+          console.log(chalk.bold('No Leon instances found.'))
+          console.log('You can give birth to a Leon instance using:')
+          console.log(chalk.cyan('leon create birth'))
+        } else {
+          console.log(chalk.cyan('\nLeon instances:\n'))
+          for (const instance of instances) {
+            const leonInstance = new LeonInstance(instance)
+            leonInstance.logInfo()
+            console.log('------------------------------\n')
+          }
         }
       }
       return 0
