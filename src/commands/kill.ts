@@ -21,9 +21,9 @@ export class KillCommand extends Command {
       console.log(`Leon instance "${leonInstance.name}" killed.`)
       return 0
     } catch (error) {
-      await log.error({
+      log.error({
         error,
-        commandPath: 'start'
+        commandPath: 'kill'
       })
       return 1
     }
