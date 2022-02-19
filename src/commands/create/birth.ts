@@ -56,7 +56,7 @@ export class CreateBirthCommand extends Command {
       console.log(`${chalk.cyan('leon start')}`)
       return 0
     } catch (error) {
-      await log.error({
+      log.error({
         error,
         commandPath: 'create birth'
       })

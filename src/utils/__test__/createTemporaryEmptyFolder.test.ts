@@ -9,7 +9,7 @@ import {
 import { isExistingFile } from '../isExistingFile.js'
 
 describe('utils/createTemporaryEmptyFolder', () => {
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
   })
 

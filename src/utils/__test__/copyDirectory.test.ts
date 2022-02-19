@@ -5,7 +5,7 @@ import fsMock from 'mock-fs'
 import { copyDirectory } from '../copyDirectory.js'
 
 describe('utils/copyDirectory', () => {
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
   })
 

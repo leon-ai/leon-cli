@@ -8,6 +8,7 @@ export class LogError extends Error implements LogErrorOptions {
 
   constructor(options: LogErrorOptions) {
     super(options.message)
+    this.name = 'LogError'
     this.logFileMessage = options.logFileMessage
     Object.setPrototypeOf(this, LogError.prototype)
   }

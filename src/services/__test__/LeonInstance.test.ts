@@ -17,60 +17,64 @@ const configData: ConfigData = {
 }
 
 describe('services/LeonInstance - find', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     fsMock({
       [config.path]: JSON.stringify(configData)
     })
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
   })
 
-  it('should find the instance with its name', async () => {
+  it('should find the instance with its name', () => {
     const instance = LeonInstance.find(leonInstance.name)
     expect(instance).toBeDefined()
     expect(instance?.name).toEqual(leonInstance.name)
   })
 
-  it('should not find the instance with wrong name', async () => {
+  it('should not find the instance with wrong name', () => {
     const instance = LeonInstance.find('wrong name')
     expect(instance).toBeNull()
   })
 })
 
 describe('services/LeonInstance - get', () => {
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
   })
 
-  it('should throw if there is no instance', async () => {
+  it('should throw if there is no instance', () => {
     fsMock({
       [config.path]: ''
     })
-    await expect(LeonInstance.get()).rejects.toThrowError()
+    expect(() => {
+      LeonInstance.get()
+    }).toThrowError()
   })
 
-  it('should return the first instance if name is undefined', async () => {
+  it('should return the first instance if name is undefined', () => {
     fsMock({
       [config.path]: JSON.stringify(configData)
     })
-    const instance = await LeonInstance.get()
+    const instance = LeonInstance.get()
     expect(instance.name).toEqual(leonInstance.name)
   })
 
-  it('should throw if there is no instance with the name specified', async () => {
+  it('should throw if there is no instance with the name specified', () => {
     fsMock({
       [config.path]: JSON.stringify(configData)
     })
-    await expect(LeonInstance.get('wrong name')).rejects.toThrowError()
+    expect(() => {
+      LeonInstance.get('wrong name')
+    }).toThrowError()
   })
 
-  it('should return the instance with the name specified', async () => {
+  it('should return the instance with the name specified', () => {
     fsMock({
       [config.path]: JSON.stringify(configData)
     })
-    const instance = await LeonInstance.get(leonInstance.name)
+    const instance = LeonInstance.get(leonInstance.name)
     expect(instance.name).toEqual(leonInstance.name)
   })
 })

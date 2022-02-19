@@ -16,11 +16,11 @@ export class CheckCommand extends Command {
 
   async execute(): Promise<number> {
     try {
-      const leonInstance = await LeonInstance.get(this.name)
+      const leonInstance = LeonInstance.get(this.name)
       await leonInstance.check()
       return 0
     } catch (error) {
-      await log.error({
+      log.error({
         error,
         commandPath: 'check'
       })
