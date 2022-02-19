@@ -208,6 +208,18 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
+  public async kill(): Promise<void> {
+    const instances = config.get('instances', [])
+    const instanceIndex = instances.findIndex((instance) => {
+      return instance.name === this.name
+    })
+    if (instanceIndex != null) {
+      instances.splice(instanceIndex, 1)
+      config.set('instances', instances)
+      await fs.promises.rm(this.path, { force: true, recursive: true })
+    }
+  }
+
   static async create(options: CreateOptions): Promise<void> {
     let leonInstance = LeonInstance.find(options.name)
     if (leonInstance != null) {
