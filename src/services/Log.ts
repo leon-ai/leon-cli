@@ -22,7 +22,7 @@ export class Log {
     }
   })
 
-  public async error(options: LogErrorOptions): Promise<void> {
+  public error(options: LogErrorOptions): void {
     const { commandPath, error } = options
     const message = error instanceof Error ? error.message : 'Fatal'
     console.error(`${chalk.red('Error')}: ${message}`)

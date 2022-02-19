@@ -3,7 +3,7 @@ import fsMock from 'mock-fs'
 import { isExistingFile } from '../isExistingFile.js'
 
 describe('utils/isExistingFile', () => {
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
   })
 

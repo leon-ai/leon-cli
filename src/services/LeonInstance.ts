@@ -170,7 +170,7 @@ export class LeonInstance implements LeonInstanceOptions {
     return null
   }
 
-  static async get(name?: string): Promise<LeonInstance> {
+  static get(name?: string): LeonInstance {
     if (name == null) {
       const instances = config.get('instances', [])
       const isEmptyInstances = instances.length === 0
@@ -190,7 +190,7 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
-  public async incrementStartCount(): Promise<void> {
+  public incrementStartCount(): void {
     const leonInstance = LeonInstance.find(this.name)
     if (leonInstance == null) {
       throw new LogError({

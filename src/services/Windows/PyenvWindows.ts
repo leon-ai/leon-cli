@@ -32,10 +32,7 @@ class PyenvWindows {
     }
   }
 
-  public async extractWindowsZip(
-    zip: AdmZip,
-    destination: string
-  ): Promise<void> {
+  public extractWindowsZip(zip: AdmZip, destination: string): void {
     const extractLoader = ora('Extracting Pyenv zip').start()
     try {
       zip.getEntries().forEach((entry) => {
@@ -148,7 +145,7 @@ class PyenvWindows {
   public async install(): Promise<void> {
     const destination = path.join(os.homedir(), '.pyenv')
     const zip = await this.downloadWindowsZip()
-    await this.extractWindowsZip(zip, destination)
+    this.extractWindowsZip(zip, destination)
     await this.registerInPathWindows(destination)
     await this.installPython()
   }

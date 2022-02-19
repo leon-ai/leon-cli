@@ -8,12 +8,12 @@ import { Log, log } from '../Log.js'
 describe('services/Log', () => {
   const message = 'Error occured'
 
-  beforeEach(async () => {
+  beforeEach(() => {
     console.error = jest.fn()
     process.exit = jest.fn() as never
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     fsMock.restore()
     jest.clearAllMocks()
   })

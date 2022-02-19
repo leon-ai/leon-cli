@@ -13,7 +13,7 @@ function extractVersionForPath(str: string): string {
 }
 
 function extractPythonVersionForSemver(str: string): string {
-  const match = str.match(/\d\.\d{1,3}\.\d{1,3}/g)
+  const match = str.match(/\d(?:\.\d{1,3}){2}/g)
   if (match?.length !== 1) {
     throw new LogError({
       message: 'Could not extract python version : no relevant match'

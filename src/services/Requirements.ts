@@ -23,10 +23,10 @@ export interface ExecuteScriptOptions {
 }
 
 class Requirements {
-  public async checkIfEnvironmentVariableContains(
+  public checkIfEnvironmentVariableContains(
     variable: string,
     content: string
-  ): Promise<boolean> {
+  ): boolean {
     const environmentVariable = process.env[variable]
     if (environmentVariable === undefined || environmentVariable === '') {
       return false
@@ -34,10 +34,7 @@ class Requirements {
     return environmentVariable.includes(content)
   }
 
-  public async checkVersion(
-    version: string,
-    requirement: string
-  ): Promise<boolean> {
+  public checkVersion(version: string, requirement: string): boolean {
     try {
       return semver.gte(version, requirement)
     } catch {
@@ -49,7 +46,7 @@ class Requirements {
     try {
       const { stdout } = await execa.command('python --version')
       const [, actualVersion] = stdout.split(' ')
-      return await this.checkVersion(actualVersion, '3.0.0')
+      return this.checkVersion(actualVersion, '3.0.0')
     } catch {
       return false
     }
@@ -59,7 +56,7 @@ class Requirements {
     try {
       const { stdout } = await execa.command('pipenv --version')
       const [, , actualVersion] = stdout.split(' ')
-      return await this.checkVersion(actualVersion, '2020.11.15')
+      return this.checkVersion(actualVersion, '2020.11.15')
     } catch {
       return false
     }
