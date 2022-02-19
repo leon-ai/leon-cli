@@ -16,7 +16,7 @@ export class KillCommand extends Command {
 
   async execute(): Promise<number> {
     try {
-      const leonInstance = await LeonInstance.get(this.name)
+      const leonInstance = LeonInstance.get(this.name)
       await leonInstance.kill()
       console.log(`Leon instance "${leonInstance.name}" killed.`)
       return 0

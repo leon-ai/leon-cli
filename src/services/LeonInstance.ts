@@ -4,6 +4,10 @@ import path from 'node:path'
 import execa from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
+import date from 'date-and-time'
+import readPackage from 'read-pkg'
+import { table } from 'table'
+import chalk from 'chalk'
 
 import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
@@ -242,5 +246,20 @@ export class LeonInstance implements LeonInstanceOptions {
       await leonInstance.install()
       await leonInstance.build()
     }
+  }
+
+  public async logInfo(): Promise<void> {
+    const birthDay = new Date(this.birthDate)
+    const birthDayString = date.format(birthDay, 'DD/MM/YYYY - HH:mm:ss')
+    const packageJSON = await readPackage({ cwd: this.path })
+    console.log(
+      table([
+        [chalk.bold('Name'), this.name],
+        [chalk.bold('Path'), this.path],
+        [chalk.bold('Mode'), this.mode],
+        [chalk.bold('Birthday'), birthDayString],
+        [chalk.bold('Version'), packageJSON.version]
+      ])
+    )
   }
 }
