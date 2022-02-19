@@ -26,7 +26,7 @@ describe('services/Log', () => {
       encoding: 'utf-8'
     })
     expect(fileContent.length).toEqual(0)
-    await log.error({ error: new LogError({ message }) })
+    log.error({ error: new LogError({ message }) })
     expect(console.error).toHaveBeenCalled()
     fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
       encoding: 'utf-8'

@@ -20,8 +20,8 @@ export class InfoCommand extends Command {
     try {
       if (this.name != null) {
         console.log()
-        const leonInstance = await LeonInstance.get(this.name)
-        leonInstance.logInfo()
+        const leonInstance = LeonInstance.get(this.name)
+        await leonInstance.logInfo()
       } else {
         const instances = config.get('instances', [])
         if (instances.length === 0) {
@@ -32,14 +32,14 @@ export class InfoCommand extends Command {
           console.log(chalk.cyan('\nLeon instances:\n'))
           for (const instance of instances) {
             const leonInstance = new LeonInstance(instance)
-            leonInstance.logInfo()
+            await leonInstance.logInfo()
             console.log('------------------------------\n')
           }
         }
       }
       return 0
     } catch (error) {
-      await log.error({
+      log.error({
         error,
         commandPath: 'info'
       })

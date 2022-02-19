@@ -38,10 +38,10 @@ class PipenvWindows {
       'Scripts'
     )
     if (
-      !(await requirements.checkIfEnvironmentVariableContains(
+      !requirements.checkIfEnvironmentVariableContains(
         'PATH',
         fullPathToPythonSite
-      ))
+      )
     ) {
       await addToPath(fullPathToPythonSite)
     }

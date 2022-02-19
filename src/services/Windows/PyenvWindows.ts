@@ -93,20 +93,12 @@ class PyenvWindows {
     const varEnvLoader = ora('Registering environment variables').start()
     const pyenvWin = 'pyenv-win'
     try {
-      if (
-        !(await requirements.checkIfEnvironmentVariableContains(
-          'PYENV',
-          pyenvWin
-        ))
-      ) {
+      if (!requirements.checkIfEnvironmentVariableContains('PYENV', pyenvWin)) {
         process.env.PYENV = `${pyenvPath}\\${pyenvWin}\\`
         await saveEnvironmentVariable('PYENV', `${pyenvPath}\\${pyenvWin}\\`)
       }
       if (
-        !(await requirements.checkIfEnvironmentVariableContains(
-          'PYENV_HOME',
-          pyenvWin
-        ))
+        !requirements.checkIfEnvironmentVariableContains('PYENV_HOME', pyenvWin)
       ) {
         process.env.PYENV_HOME = `${pyenvPath}\\${pyenvWin}\\`
         await saveEnvironmentVariable(
@@ -115,19 +107,19 @@ class PyenvWindows {
         )
       }
       if (
-        !(await requirements.checkIfEnvironmentVariableContains(
+        !requirements.checkIfEnvironmentVariableContains(
           'PATH',
           `${pyenvWin}\\bin`
-        ))
+        )
       ) {
         const binPath = `${pyenvPath}\\${pyenvWin}\\bin`
         await addToPath(binPath)
       }
       if (
-        !(await requirements.checkIfEnvironmentVariableContains(
+        !requirements.checkIfEnvironmentVariableContains(
           'PATH',
           `${pyenvWin}\\shims`
-        ))
+        )
       ) {
         const shimsPath = `${pyenvPath}\\${pyenvWin}\\shims`
         await addToPath(shimsPath)

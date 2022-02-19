@@ -5,6 +5,7 @@ import { packageJSON } from './packageJSON.js'
 import { CreateBirthCommand } from './commands/create/birth.js'
 import { CheckCommand } from './commands/check.js'
 import { HelpCommand } from './commands/help.js'
+import { KillCommand } from './commands/kill.js'
 import { StartCommand } from './commands/start.js'
 import { InfoCommand } from './commands/info.js'
 
@@ -19,4 +20,5 @@ cli.register(CreateBirthCommand)
 cli.register(CheckCommand)
 cli.register(HelpCommand)
 cli.register(InfoCommand)
+cli.register(KillCommand)
 cli.register(StartCommand)
