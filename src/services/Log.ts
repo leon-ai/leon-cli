@@ -25,7 +25,7 @@ export class Log {
   public error(options: LogErrorOptions): void {
     const { commandPath, error } = options
     const message = error instanceof Error ? error.message : 'Fatal'
-    console.error(`${chalk.red('Error')}: ${message}`)
+    console.error(`${chalk.red('Error:')} ${message}`)
     if (error instanceof LogError) {
       const logFileMessage = error.logFileMessage ?? ''
       const dateString = `[${new Date().toString()}]`

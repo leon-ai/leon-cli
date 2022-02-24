@@ -16,6 +16,7 @@ import { LeonInstance } from './LeonInstance.js'
 import { LogError } from '../utils/LogError.js'
 import { copyDirectory } from '../utils/copyDirectory.js'
 import { requirements } from './Requirements.js'
+import { config } from './Config.js'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
@@ -117,6 +118,16 @@ export class Leon implements LeonOptions {
     if (await isExistingFile(this.birthPath)) {
       throw new LogError({
         message: `${this.birthPath} already exists, please provide another path.`
+      })
+    }
+    const instances = config.get('instances', [])
+    const instance = instances.find((instance) => {
+      return instance.name === this.name
+    })
+    const isExistingInstance = instance != null
+    if (isExistingInstance) {
+      throw new LogError({
+        message: `${this.name} already exists, please provide another instance name.`
       })
     }
     const mode = this.useDocker ? 'docker' : 'classic'
