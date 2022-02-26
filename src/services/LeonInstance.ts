@@ -12,6 +12,7 @@ import chalk from 'chalk'
 import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
 import { isExistingFile } from '../utils/isExistingFile.js'
+import { Leon } from './Leon.js'
 
 export type InstanceType = 'classic' | 'docker'
 
@@ -252,17 +253,28 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
+  public async update(leon: Leon): Promise<void> {
+    await fs.promises.rm(this.path, { force: true, recursive: true })
+    await leon.download()
+    await this.configure()
+  }
+
+  public async getVersion(): Promise<string> {
+    const packageJSON = await readPackage({ cwd: this.path, normalize: false })
+    return packageJSON.version ?? '0.0.0'
+  }
+
   public async logInfo(): Promise<void> {
     const birthDay = new Date(this.birthDate)
     const birthDayString = date.format(birthDay, 'DD/MM/YYYY - HH:mm:ss')
-    const packageJSON = await readPackage({ cwd: this.path })
+    const version = await this.getVersion()
     console.log(
       table([
         [chalk.bold('Name'), this.name],
         [chalk.bold('Path'), this.path],
         [chalk.bold('Mode'), this.mode],
         [chalk.bold('Birthday'), birthDayString],
-        [chalk.bold('Version'), packageJSON.version]
+        [chalk.bold('Version'), version]
       ])
     )
   }
