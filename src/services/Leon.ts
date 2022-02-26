@@ -114,6 +114,20 @@ export class Leon implements LeonOptions {
     }
   }
 
+  public async download(): Promise<void> {
+    const sourceCodeInformation = this.getSourceCodeInformation()
+    const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
+    const extractedPath = path.join(
+      TEMPORARY_PATH,
+      sourceCodeInformation.folderName
+    )
+    await createTemporaryEmptyFolder()
+    await this.downloadSourceCode(sourceCodeInformation.url, destination)
+    await this.extractZip(destination, TEMPORARY_PATH)
+    await fs.promises.mkdir(this.birthPath, { recursive: true })
+    await copyDirectory(extractedPath, this.birthPath)
+  }
+
   public async createBirth(): Promise<void> {
     if (await isExistingFile(this.birthPath)) {
       throw new LogError({
@@ -134,21 +148,12 @@ export class Leon implements LeonOptions {
     if (mode === 'classic') {
       await requirements.install(this.yes)
     }
-    const sourceCodeInformation = this.getSourceCodeInformation()
-    const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
-    const extractedPath = path.join(
-      TEMPORARY_PATH,
-      sourceCodeInformation.folderName
-    )
-    await createTemporaryEmptyFolder()
-    await this.downloadSourceCode(sourceCodeInformation.url, destination)
-    await this.extractZip(destination, TEMPORARY_PATH)
-    await fs.promises.mkdir(this.birthPath, { recursive: true })
-    await copyDirectory(extractedPath, this.birthPath)
-    await LeonInstance.create({
+    await this.download()
+    const leonInstance = LeonInstance.create({
       name: this.name,
       path: this.birthPath,
       mode
     })
+    await leonInstance.configure()
   }
 }

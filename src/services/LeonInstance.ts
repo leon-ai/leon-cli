@@ -224,7 +224,7 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  static async create(options: CreateOptions): Promise<void> {
+  static create(options: CreateOptions): LeonInstance {
     let leonInstance = LeonInstance.find(options.name)
     if (leonInstance != null) {
       throw new LogError({
@@ -240,11 +240,15 @@ export class LeonInstance implements LeonInstanceOptions {
     }
     leonInstance = new LeonInstance(instance)
     config.set('instances', [...config.get('instances', []), instance])
-    if (leonInstance.mode === 'docker') {
-      await leonInstance.buildDockerImage()
+    return leonInstance
+  }
+
+  public async configure(): Promise<void> {
+    if (this.mode === 'docker') {
+      await this.buildDockerImage()
     } else {
-      await leonInstance.install()
-      await leonInstance.build()
+      await this.install()
+      await this.build()
     }
   }
 
