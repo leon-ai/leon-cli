@@ -24,6 +24,10 @@ describe('Classic End To End (e2e)', () => {
         if (startSubprocess != null) {
           startSubprocess.kill('SIGINT')
         }
+        return execa.command('leon run train')
+      })
+      .then((result) => {
+        expect(result.exitCode).toEqual(0)
         done()
       })
       .catch((error) => {
