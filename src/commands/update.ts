@@ -21,7 +21,11 @@ export class UpdateCommand extends Command {
   })
 
   public useDevelopGitBranch = Option.Boolean('--develop', false, {
-    description: 'Update Leon from the `develop` Git branch.'
+    description: 'Update Leon to latest `develop` Git branch.'
+  })
+
+  public useGit = Option.Boolean('--git', true, {
+    description: 'Update Leon with Git (if possible).'
   })
 
   public yes = Option.Boolean('--yes', {
@@ -36,6 +40,7 @@ export class UpdateCommand extends Command {
         birthPath: leonInstance.path,
         version: this.version,
         useDocker: leonInstance.mode === 'docker',
+        useGit: this.useGit,
         name: leonInstance.name,
         yes: this.yes
       })

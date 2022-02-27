@@ -24,6 +24,7 @@ export interface LeonOptions {
   birthPath?: string
   version?: string
   useDocker?: boolean
+  useGit?: boolean
   name?: string
   yes?: boolean
 }
@@ -38,6 +39,7 @@ export class Leon implements LeonOptions {
   public birthPath: string
   public version?: string
   public useDocker: boolean
+  public useGit: boolean
   public name: string
   public yes: boolean
 
@@ -47,6 +49,7 @@ export class Leon implements LeonOptions {
       birthPath,
       version,
       useDocker = false,
+      useGit = true,
       name = crypto.randomUUID(),
       yes = false
     } = options
@@ -55,34 +58,9 @@ export class Leon implements LeonOptions {
       birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
     this.version = version
     this.useDocker = useDocker
+    this.useGit = useGit
     this.name = name
     this.yes = yes
-  }
-
-  public async downloadSourceCode(
-    source: string,
-    destination: string
-  ): Promise<void> {
-    const body = await axios.get(source, {
-      responseType: 'arraybuffer'
-    })
-    await fs.promises.writeFile(destination, Buffer.from(body.data), {
-      encoding: 'binary'
-    })
-  }
-
-  public async extractZip(source: string, target: string): Promise<void> {
-    const extractLoader = ora('Extracting Leon').start()
-    try {
-      await extractZip(source, { dir: target })
-      extractLoader.succeed()
-    } catch (error: any) {
-      extractLoader.fail()
-      throw new LogError({
-        message: `Could not extract Leon source code located at ${source}`,
-        logFileMessage: error.toString()
-      })
-    }
   }
 
   public getSourceCodeInformation(): {
@@ -106,10 +84,10 @@ export class Leon implements LeonOptions {
   }
 
   public async getSourceCode(): Promise<void> {
-    const loader = ora(`Downloading Leon`).start()
+    const loader = ora(`Downloading Leon source code`).start()
     try {
       const hasGitInstalled = await requirements.checkGit()
-      if (hasGitInstalled) {
+      if (hasGitInstalled && this.useGit) {
         await simpleGit().clone(Leon.GITHUB_URL, this.birthPath)
         const git = simpleGit({ baseDir: this.birthPath })
         if (this.useDevelopGitBranch) {
@@ -140,8 +118,13 @@ export class Leon implements LeonOptions {
       sourceCodeInformation.folderName
     )
     await createTemporaryEmptyFolder()
-    await this.downloadSourceCode(sourceCodeInformation.url, destination)
-    await this.extractZip(destination, TEMPORARY_PATH)
+    const { data } = await axios.get(sourceCodeInformation.url, {
+      responseType: 'arraybuffer'
+    })
+    await fs.promises.writeFile(destination, Buffer.from(data), {
+      encoding: 'binary'
+    })
+    await extractZip(destination, { dir: TEMPORARY_PATH })
     await fs.promises.mkdir(this.birthPath, { recursive: true })
     await copyDirectory(extractedPath, this.birthPath)
   }
