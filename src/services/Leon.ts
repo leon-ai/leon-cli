@@ -28,10 +28,10 @@ export interface LeonOptions {
 }
 
 export class Leon implements LeonOptions {
-  static NAME = 'leon'
-  static ORGANIZATION_NAME = 'leon-ai'
-  static GITHUB_URL = `https://github.com/${Leon.ORGANIZATION_NAME}/${Leon.NAME}`
-  static DEFAULT_BIRTH_PATH = path.join(os.homedir(), '.leon')
+  static readonly NAME = 'leon'
+  static readonly ORGANIZATION_NAME = 'leon-ai'
+  static readonly GITHUB_URL = `https://github.com/${Leon.ORGANIZATION_NAME}/${Leon.NAME}`
+  static readonly DEFAULT_BIRTH_PATH = path.join(os.homedir(), '.leon')
 
   public useDevelopGitBranch: boolean
   public birthPath: string

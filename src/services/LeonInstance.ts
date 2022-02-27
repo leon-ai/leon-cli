@@ -221,7 +221,10 @@ export class LeonInstance implements LeonInstanceOptions {
     if (instanceIndex != null) {
       instances.splice(instanceIndex, 1)
       config.set('instances', instances)
-      await fs.promises.rm(this.path, { force: true, recursive: true })
+      await fs.promises.rm(this.path, {
+        force: true,
+        recursive: true
+      })
     }
   }
 
@@ -254,7 +257,10 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async update(leon: Leon): Promise<void> {
-    await fs.promises.rm(this.path, { force: true, recursive: true })
+    await fs.promises.rm(this.path, {
+      force: true,
+      recursive: true
+    })
     await leon.download()
     await this.configure()
   }
