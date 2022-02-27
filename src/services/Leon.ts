@@ -110,9 +110,8 @@ export class Leon implements LeonOptions {
     try {
       const hasGitInstalled = await requirements.checkGit()
       if (hasGitInstalled) {
-        const git = simpleGit()
-        await git.clone(Leon.GITHUB_URL, this.birthPath)
-        process.chdir(this.birthPath)
+        await simpleGit().clone(Leon.GITHUB_URL, this.birthPath)
+        const git = simpleGit({ baseDir: this.birthPath })
         if (this.useDevelopGitBranch) {
           await git.checkout('develop')
         } else if (this.version != null) {
