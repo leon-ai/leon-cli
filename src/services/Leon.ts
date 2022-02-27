@@ -6,6 +6,7 @@ import crypto from 'node:crypto'
 import axios from 'axios'
 import ora from 'ora'
 import extractZip from 'extract-zip'
+import simpleGit from 'simple-git'
 
 import {
   createTemporaryEmptyFolder,
@@ -62,22 +63,12 @@ export class Leon implements LeonOptions {
     source: string,
     destination: string
   ): Promise<void> {
-    const downloadLoader = ora(`Downloading Leon from ${source}`).start()
-    try {
-      const body = await axios.get(source, {
-        responseType: 'arraybuffer'
-      })
-      await fs.promises.writeFile(destination, Buffer.from(body.data), {
-        encoding: 'binary'
-      })
-      downloadLoader.succeed()
-    } catch (error: any) {
-      downloadLoader.fail()
-      throw new LogError({
-        message: `Could not download Leon source code located at ${source}`,
-        logFileMessage: error.toString()
-      })
-    }
+    const body = await axios.get(source, {
+      responseType: 'arraybuffer'
+    })
+    await fs.promises.writeFile(destination, Buffer.from(body.data), {
+      encoding: 'binary'
+    })
   }
 
   public async extractZip(source: string, target: string): Promise<void> {
@@ -111,6 +102,34 @@ export class Leon implements LeonOptions {
       url: `${url}/${zipName}`,
       zipName,
       folderName
+    }
+  }
+
+  public async getSourceCode(): Promise<void> {
+    const loader = ora(`Downloading Leon`).start()
+    try {
+      const hasGitInstalled = await requirements.checkGit()
+      if (hasGitInstalled) {
+        const git = simpleGit()
+        await git.clone(Leon.GITHUB_URL, this.birthPath)
+        process.chdir(this.birthPath)
+        if (this.useDevelopGitBranch) {
+          await git.checkout('develop')
+        } else if (this.version != null) {
+          await git.checkout(this.version)
+        } else {
+          await git.checkout('master')
+        }
+      } else {
+        await this.download()
+      }
+      loader.succeed()
+    } catch (error: any) {
+      loader.fail()
+      throw new LogError({
+        message: `Could not download Leon source code`,
+        logFileMessage: error.toString()
+      })
     }
   }
 
@@ -148,7 +167,7 @@ export class Leon implements LeonOptions {
     if (mode === 'classic') {
       await requirements.install(this.yes)
     }
-    await this.download()
+    await this.getSourceCode()
     const leonInstance = LeonInstance.create({
       name: this.name,
       path: this.birthPath,

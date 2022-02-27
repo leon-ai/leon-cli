@@ -261,7 +261,7 @@ export class LeonInstance implements LeonInstanceOptions {
       force: true,
       recursive: true
     })
-    await leon.download()
+    await leon.getSourceCode()
     await this.configure()
   }
 

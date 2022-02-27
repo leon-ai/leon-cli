@@ -67,6 +67,7 @@
     "ora": "5.4.1",
     "read-pkg": "5.2.0",
     "semver": "7.3.5",
+    "simple-git": "3.2.6",
     "sudo-prompt": "9.2.1",
     "table": "6.8.0",
     "typanion": "3.7.1",
