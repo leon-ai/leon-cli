@@ -9,12 +9,12 @@ interface Options {
   useDocker?: boolean
 }
 
-export const test1 = (options: Options = {}): void => {
+export const test1CreateBirth = (options: Options = {}): void => {
   const { useDocker = false } = options
 
   it('leon create birth', async () => {
     const commandOptions = useDocker ? ['--docker'] : []
-    expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBeFalsy()
+    expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBe(false)
     const result = await execa(
       'leon',
       ['create', 'birth', '--yes', ...commandOptions],
@@ -23,19 +23,19 @@ export const test1 = (options: Options = {}): void => {
       }
     )
     expect(result.exitCode).toEqual(0)
-    expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBeTruthy()
+    expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBe(true)
     expect(
       await isExistingFile(path.join(Leon.DEFAULT_BIRTH_PATH, 'package.json'))
-    ).toBeTruthy()
+    ).toBe(true)
     if (!useDocker) {
       expect(
         await isExistingFile(path.join(Leon.DEFAULT_BIRTH_PATH, 'node_modules'))
-      ).toBeTruthy()
+      ).toBe(true)
       expect(
         await isExistingFile(
           path.join(Leon.DEFAULT_BIRTH_PATH, 'server', 'dist')
         )
-      ).toBeTruthy()
+      ).toBe(true)
     } else {
       const dockerResult = await execa('docker', [
         'image',

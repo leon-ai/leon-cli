@@ -11,13 +11,13 @@ describe('utils/isExistingFile', () => {
     fsMock({
       '/file.txt': ''
     })
-    expect(await isExistingFile('/file.txt')).toBeTruthy()
+    expect(await isExistingFile('/file.txt')).toBe(true)
   })
 
   it("should return false if the file doesn't exists", async () => {
     fsMock({
       '/file.txt': ''
     })
-    expect(await isExistingFile('/randomfile.txt')).toBeFalsy()
+    expect(await isExistingFile('/randomfile.txt')).toBe(false)
   })
 })

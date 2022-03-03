@@ -1,7 +1,7 @@
 import waitOn from 'wait-on'
 import execa from 'execa'
 
-export const test3 = (): void => {
+export const test3Start = (): void => {
   const PORT = 1340
 
   it('leon start', (done) => {
@@ -14,11 +14,11 @@ export const test3 = (): void => {
     })
       .then(() => {
         console.log(`Success: Leon is running on http://localhost:${PORT}/`)
-        expect(startSubprocess?.kill('SIGINT')).toBeTruthy()
+        expect(startSubprocess?.kill('SIGINT')).toBe(true)
         done()
       })
       .catch((error) => {
-        expect(startSubprocess?.kill('SIGINT')).toBeTruthy()
+        expect(startSubprocess?.kill('SIGINT')).toBe(true)
         done(error)
       })
   })

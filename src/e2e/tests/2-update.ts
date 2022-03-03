@@ -2,7 +2,7 @@ import execa from 'execa'
 
 import { LeonInstance } from '../../services/LeonInstance.js'
 
-export const test2 = (): void => {
+export const test2Update = (): void => {
   it('leon update', async () => {
     const leonInstance = LeonInstance.get()
     const oldVersion = await leonInstance.getVersion()
@@ -15,7 +15,7 @@ export const test2 = (): void => {
     expect(result.stdout).toContain(
       `Leon instance "${leonInstance.name}" has now been updated to version ${newVersion}.`
     )
-    expect(newVersion.endsWith('+dev')).toBeTruthy()
-    expect(newVersion !== oldVersion).toBeTruthy()
+    expect(newVersion.endsWith('+dev')).toBe(true)
+    expect(newVersion !== oldVersion).toBe(true)
   })
 }

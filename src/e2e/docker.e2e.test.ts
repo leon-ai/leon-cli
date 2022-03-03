@@ -1,9 +1,9 @@
-import { test1 } from './tests/1-create-birth.js'
-import { test2 } from './tests/2-update.js'
-import { test3 } from './tests/3-start.js'
-import { test4 } from './tests/4-check.js'
+import { test1CreateBirth } from './tests/1-create-birth.js'
+import { test2Update } from './tests/2-update.js'
+import { test3Start } from './tests/3-start.js'
+import { test4Check } from './tests/4-check.js'
 
-test1({ useDocker: true })
-test2()
-test3()
-test4()
+test1CreateBirth({ useDocker: true })
+test2Update()
+test3Start()
+test4Check()
