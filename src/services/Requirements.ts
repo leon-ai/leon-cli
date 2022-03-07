@@ -62,13 +62,17 @@ class Requirements {
     }
   }
 
-  public async checkPackageManager(packageManager: string): Promise<boolean> {
+  public async checkSoftware(packageManager: string): Promise<boolean> {
     try {
       const { exitCode } = await execa.command(`${packageManager} --version`)
       return exitCode === 0
     } catch {
       return false
     }
+  }
+
+  public async checkGit(): Promise<boolean> {
+    return await this.checkSoftware('git')
   }
 
   public async executeScript(options: ExecuteScriptOptions): Promise<void> {
@@ -96,7 +100,7 @@ class Requirements {
     let packageManager: string | null = null
     const packageManagers = ['apk', 'apt', 'brew', 'pacman', 'yum']
     for (const manager of packageManagers) {
-      if (await this.checkPackageManager(manager)) {
+      if (await this.checkSoftware(manager)) {
         packageManager = manager
         break
       }

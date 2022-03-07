@@ -9,15 +9,15 @@ describe('services/Requirements - checkVersion', () => {
   it('should return false when there is no match', () => {
     const requirement = '3.7.2'
     const commandAnswer = 'this command does not exist'
-    expect(requirements.checkVersion(commandAnswer, requirement)).toBeFalsy()
+    expect(requirements.checkVersion(commandAnswer, requirement)).toBe(false)
     const commandAnswer2 = 'python version is 3.2.0'
-    expect(requirements.checkVersion(commandAnswer2, requirement)).toBeFalsy()
+    expect(requirements.checkVersion(commandAnswer2, requirement)).toBe(false)
   })
 
   it('should return false when requirement is wrongly typed', () => {
     const requirement = 'wrong requirement'
     const commandAnswer = '3.7.2'
-    expect(requirements.checkVersion(commandAnswer, requirement)).toBeFalsy()
+    expect(requirements.checkVersion(commandAnswer, requirement)).toBe(false)
   })
 
   it('should return true when the version is higher or equal than the requirement', () => {

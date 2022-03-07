@@ -21,6 +21,10 @@ export class CreateBirthCommand extends Command {
     description: 'Install Leon with Docker.'
   })
 
+  public useGit = Option.Boolean('--git', true, {
+    description: 'Install Leon with Git (if possible).'
+  })
+
   public birthPath = Option.String('--path', {
     description: 'Location of your Leon instance.'
   })
@@ -44,6 +48,7 @@ export class CreateBirthCommand extends Command {
         birthPath: this.birthPath,
         version: this.version,
         useDocker: this.useDocker,
+        useGit: this.useGit,
         name: this.name,
         yes: this.yes
       })
