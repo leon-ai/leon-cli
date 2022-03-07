@@ -7,7 +7,7 @@ import { CheckCommand } from './check.js'
 import { StartCommand } from './start.js'
 
 interface Builtin {
-  [key: string]: (leonInstance: LeonInstance, options?: any) => Promise<void>
+  [key: string]: (leonInstance: LeonInstance) => Promise<void>
 }
 
 const BUILTIN_COMMANDS: Builtin = {

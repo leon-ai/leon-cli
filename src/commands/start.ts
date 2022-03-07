@@ -20,20 +20,14 @@ export class StartCommand extends Command {
     description: 'Run a Leon instance with a specific name.'
   })
 
-  static async run(
-    leonInstance: LeonInstance,
-    options: { port?: number } = {}
-  ): Promise<void> {
-    leonInstance.incrementStartCount()
-    await leonInstance.start(options.port)
+  static async run(leonInstance: LeonInstance): Promise<void> {
+    await leonInstance.start()
   }
 
   async execute(): Promise<number> {
     try {
       const leonInstance = LeonInstance.get(this.name)
-      await StartCommand.run(leonInstance, {
-        port: this.port
-      })
+      await leonInstance.start(this.port)
       return 0
     } catch (error) {
       log.error({

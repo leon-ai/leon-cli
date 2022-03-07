@@ -21,7 +21,7 @@ export class CheckCommand extends Command {
   async execute(): Promise<number> {
     try {
       const leonInstance = LeonInstance.get(this.name)
-      await CheckCommand.run(leonInstance)
+      await leonInstance.check()
       return 0
     } catch (error) {
       log.error({

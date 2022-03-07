@@ -31,6 +31,6 @@ describe('services/Log', () => {
     fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
       encoding: 'utf-8'
     })
-    expect(fileContent.includes(message)).toBeTruthy()
+    expect(fileContent.includes(message)).toBe(true)
   })
 })

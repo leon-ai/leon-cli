@@ -49,8 +49,8 @@
     "lint:typescript": "eslint \"**/*.{js,jsx,ts,tsx}\" --ignore-path \".gitignore\"",
     "lint:prettier": "prettier \".\" --check --ignore-path \".gitignore\"",
     "test:unit": "jest",
-    "test:e2e-docker": "jest --testNamePattern=\"Docker\" --config=\"jest.e2e.config.json\" --forceExit",
-    "test:e2e-classic": "jest --testNamePattern=\"Classic\" --config=\"jest.e2e.config.json\" --forceExit",
+    "test:e2e-docker": "jest \"docker.e2e.test.ts\" --config=\"jest.e2e.config.json\" --forceExit",
+    "test:e2e-classic": "jest \"classic.e2e.test.ts\" --config=\"jest.e2e.config.json\" --forceExit",
     "release": "semantic-release"
   },
   "dependencies": {
@@ -67,6 +67,7 @@
     "ora": "5.4.1",
     "read-pkg": "5.2.0",
     "semver": "7.3.5",
+    "simple-git": "3.2.6",
     "sudo-prompt": "9.2.1",
     "table": "6.8.0",
     "typanion": "3.7.1",

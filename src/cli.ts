@@ -9,6 +9,7 @@ import { InfoCommand } from './commands/info.js'
 import { KillCommand } from './commands/kill.js'
 import { RunCommand } from './commands/run.js'
 import { StartCommand } from './commands/start.js'
+import { UpdateCommand } from './commands/update.js'
 
 export const cli = new Cli({
   binaryLabel: Leon.NAME,
@@ -24,3 +25,4 @@ cli.register(InfoCommand)
 cli.register(KillCommand)
 cli.register(RunCommand)
 cli.register(StartCommand)
+cli.register(UpdateCommand)

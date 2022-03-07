@@ -12,6 +12,7 @@ import chalk from 'chalk'
 import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
 import { isExistingFile } from '../utils/isExistingFile.js'
+import { Leon } from './Leon.js'
 
 export type InstanceType = 'classic' | 'docker'
 
@@ -70,7 +71,7 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
-    if (this.startCount === 0) {
+    if (this.startCount === 1) {
       const dotenvPath = path.join(this.path, '.env')
       if (await isExistingFile(dotenvPath)) {
         await fs.promises.rm(dotenvPath)
@@ -93,6 +94,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public async start(port?: number): Promise<void> {
     process.chdir(this.path)
     const LEON_PORT = port?.toString() ?? '1337'
+    this.incrementStartCount()
     if (this.mode === 'docker') {
       return await this.startDocker(LEON_PORT)
     }
@@ -194,20 +196,14 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
-  public incrementStartCount(): void {
-    const leonInstance = LeonInstance.find(this.name)
-    if (leonInstance == null) {
-      throw new LogError({
-        message: "This instance doesn't exists, please provider another name."
-      })
-    }
-    leonInstance.startCount += 1
+  private incrementStartCount(): void {
+    this.startCount += 1
     const instances = config.get('instances', [])
     const instance = instances.find((instance) => {
       return instance.name === this.name
     })
     if (instance != null) {
-      instance.startCount = leonInstance.startCount
+      instance.startCount = this.startCount
       config.set('instances', instances)
     }
   }
@@ -220,11 +216,14 @@ export class LeonInstance implements LeonInstanceOptions {
     if (instanceIndex != null) {
       instances.splice(instanceIndex, 1)
       config.set('instances', instances)
-      await fs.promises.rm(this.path, { force: true, recursive: true })
+      await fs.promises.rm(this.path, {
+        force: true,
+        recursive: true
+      })
     }
   }
 
-  static async create(options: CreateOptions): Promise<void> {
+  static create(options: CreateOptions): LeonInstance {
     let leonInstance = LeonInstance.find(options.name)
     if (leonInstance != null) {
       throw new LogError({
@@ -240,25 +239,43 @@ export class LeonInstance implements LeonInstanceOptions {
     }
     leonInstance = new LeonInstance(instance)
     config.set('instances', [...config.get('instances', []), instance])
-    if (leonInstance.mode === 'docker') {
-      await leonInstance.buildDockerImage()
+    return leonInstance
+  }
+
+  public async configure(): Promise<void> {
+    if (this.mode === 'docker') {
+      await this.buildDockerImage()
     } else {
-      await leonInstance.install()
-      await leonInstance.build()
+      await this.install()
+      await this.build()
     }
+  }
+
+  public async update(leon: Leon): Promise<void> {
+    await fs.promises.rm(this.path, {
+      force: true,
+      recursive: true
+    })
+    await leon.getSourceCode()
+    await this.configure()
+  }
+
+  public async getVersion(): Promise<string> {
+    const packageJSON = await readPackage({ cwd: this.path, normalize: false })
+    return packageJSON.version ?? '0.0.0'
   }
 
   public async logInfo(): Promise<void> {
     const birthDay = new Date(this.birthDate)
     const birthDayString = date.format(birthDay, 'DD/MM/YYYY - HH:mm:ss')
-    const packageJSON = await readPackage({ cwd: this.path })
+    const version = await this.getVersion()
     console.log(
       table([
         [chalk.bold('Name'), this.name],
         [chalk.bold('Path'), this.path],
         [chalk.bold('Mode'), this.mode],
         [chalk.bold('Birthday'), birthDayString],
-        [chalk.bold('Version'), packageJSON.version]
+        [chalk.bold('Version'), version]
       ])
     )
   }
