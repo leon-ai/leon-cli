@@ -15,13 +15,14 @@ export const test1CreateBirth = (options: Options = {}): void => {
   test('leon create birth', async () => {
     const commandOptions = useDocker ? ['--docker'] : []
     expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBe(false)
-    const result = await execa(
-      'leon',
-      ['create', 'birth', '--yes', ...commandOptions],
-      {
-        stdio: 'inherit'
-      }
-    )
+    const result = await execa('leon', [
+      'create',
+      'birth',
+      '--yes',
+      ...commandOptions
+    ])
+    console.log(result.stdout)
+    console.log(result.stderr)
     expect(result.exitCode).toEqual(0)
     expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBe(true)
     expect(
