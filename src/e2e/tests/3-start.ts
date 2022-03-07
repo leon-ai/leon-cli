@@ -4,7 +4,7 @@ import execa from 'execa'
 export const test3Start = (): void => {
   const PORT = 1340
 
-  it('leon start', (done) => {
+  test('leon start', (done) => {
     let startSubprocess: execa.ExecaChildProcess<string> | null = null
     startSubprocess = execa('leon', ['start', `--port=${PORT}`])
     waitOn({

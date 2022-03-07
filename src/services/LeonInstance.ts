@@ -71,7 +71,7 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
-    if (this.startCount === 0) {
+    if (this.startCount === 1) {
       const dotenvPath = path.join(this.path, '.env')
       if (await isExistingFile(dotenvPath)) {
         await fs.promises.rm(dotenvPath)
@@ -94,6 +94,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public async start(port?: number): Promise<void> {
     process.chdir(this.path)
     const LEON_PORT = port?.toString() ?? '1337'
+    this.incrementStartCount()
     if (this.mode === 'docker') {
       return await this.startDocker(LEON_PORT)
     }
@@ -195,20 +196,14 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
-  public incrementStartCount(): void {
-    const leonInstance = LeonInstance.find(this.name)
-    if (leonInstance == null) {
-      throw new LogError({
-        message: "This instance doesn't exists, please provider another name."
-      })
-    }
-    leonInstance.startCount += 1
+  private incrementStartCount(): void {
+    this.startCount += 1
     const instances = config.get('instances', [])
     const instance = instances.find((instance) => {
       return instance.name === this.name
     })
     if (instance != null) {
-      instance.startCount = leonInstance.startCount
+      instance.startCount = this.startCount
       config.set('instances', instances)
     }
   }

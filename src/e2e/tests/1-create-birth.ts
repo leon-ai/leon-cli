@@ -12,7 +12,7 @@ interface Options {
 export const test1CreateBirth = (options: Options = {}): void => {
   const { useDocker = false } = options
 
-  it('leon create birth', async () => {
+  test('leon create birth', async () => {
     const commandOptions = useDocker ? ['--docker'] : []
     expect(await isExistingFile(Leon.DEFAULT_BIRTH_PATH)).toBe(false)
     const result = await execa(

@@ -3,7 +3,7 @@ import execa from 'execa'
 import { LeonInstance } from '../../services/LeonInstance.js'
 
 export const test2Update = (): void => {
-  it('leon update', async () => {
+  test('leon update', async () => {
     const leonInstance = LeonInstance.get()
     const oldVersion = await leonInstance.getVersion()
     const result = await execa('leon', ['update', '--develop'])

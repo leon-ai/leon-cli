@@ -14,6 +14,10 @@ export class CheckCommand extends Command {
     description: 'Name of the Leon instance.'
   })
 
+  static async run(leonInstance: LeonInstance): Promise<void> {
+    await leonInstance.check()
+  }
+
   async execute(): Promise<number> {
     try {
       const leonInstance = LeonInstance.get(this.name)
