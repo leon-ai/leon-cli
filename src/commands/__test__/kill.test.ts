@@ -40,7 +40,7 @@ describe('leon kill', () => {
       [leonInstance.path]: {}
     })
     expect(await isExistingFile(leonInstance.path)).toBe(true)
-    const command = cli.process(['kill'])
+    const command = cli.process(['kill', '--yes'])
     const exitCode = await command.execute()
     const instances = config.get('instances', [])
     expect(exitCode).toEqual(0)
@@ -57,7 +57,7 @@ describe('leon kill', () => {
       [config.path]: JSON.stringify({ instances: [] }),
       [Log.errorsConfig.path]: ''
     })
-    const command = cli.process(['kill'])
+    const command = cli.process(['kill', '--yes'])
     const exitCode = await command.execute()
     expect(exitCode).toEqual(1)
     expect(console.error).toHaveBeenNthCalledWith(

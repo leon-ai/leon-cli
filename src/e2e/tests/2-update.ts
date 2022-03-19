@@ -5,17 +5,29 @@ import { LeonInstance } from '../../services/LeonInstance.js'
 export const test2Update = (): void => {
   test('leon update', async () => {
     const leonInstance = LeonInstance.get()
-    const oldVersion = await leonInstance.getVersion()
-    const result = await execa('leon', ['update', '--develop'])
-    const newVersion = await leonInstance.getVersion()
-    expect(result.exitCode).toEqual(0)
-    expect(result.stdout).toContain(
+    let oldVersion = await leonInstance.getVersion()
+    const leonUpdateWithSameVersion = await execa('leon', ['update'])
+    let newVersion = await leonInstance.getVersion()
+    expect(leonUpdateWithSameVersion.exitCode).toEqual(0)
+    expect(leonUpdateWithSameVersion.stdout).toContain(
       `Leon instance "${leonInstance.name}" is currently at version ${oldVersion}.`
     )
-    expect(result.stdout).toContain(
+    expect(leonUpdateWithSameVersion.stdout).toContain(
+      `Leon instance "${leonInstance.name}" is already using the latest version.`
+    )
+    expect(newVersion).toBe(oldVersion)
+
+    oldVersion = await leonInstance.getVersion()
+    const leonUpdate = await execa('leon', ['update', '--develop'])
+    newVersion = await leonInstance.getVersion()
+    expect(leonUpdate.exitCode).toEqual(0)
+    expect(leonUpdate.stdout).toContain(
+      `Leon instance "${leonInstance.name}" is currently at version ${oldVersion}.`
+    )
+    expect(leonUpdate.stdout).toContain(
       `Leon instance "${leonInstance.name}" has now been updated to version ${newVersion}.`
     )
     expect(newVersion.endsWith('+dev')).toBe(true)
-    expect(newVersion !== oldVersion).toBe(true)
+    expect(newVersion).not.toBe(oldVersion)
   })
 }

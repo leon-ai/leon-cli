@@ -252,17 +252,29 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async update(leon: Leon): Promise<void> {
-    await fs.promises.rm(this.path, {
-      force: true,
-      recursive: true
+    const currentVersion = await this.getVersion()
+    const sourceCodePath = await leon.getSourceCode()
+    const sourceCodeVersion = await LeonInstance.getVersion(sourceCodePath)
+    if (currentVersion !== sourceCodeVersion) {
+      await fs.promises.rm(this.path, {
+        force: true,
+        recursive: true
+      })
+      await leon.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
+      await this.configure()
+    }
+  }
+
+  public static async getVersion(sourceCodePath: string): Promise<string> {
+    const packageJSON = await readPackage({
+      cwd: sourceCodePath,
+      normalize: false
     })
-    await leon.getSourceCode()
-    await this.configure()
+    return packageJSON.version ?? '0.0.0'
   }
 
   public async getVersion(): Promise<string> {
-    const packageJSON = await readPackage({ cwd: this.path, normalize: false })
-    return packageJSON.version ?? '0.0.0'
+    return await LeonInstance.getVersion(this.path)
   }
 
   public async logInfo(): Promise<void> {
@@ -274,7 +286,7 @@ export class LeonInstance implements LeonInstanceOptions {
         [chalk.bold('Name'), this.name],
         [chalk.bold('Path'), this.path],
         [chalk.bold('Mode'), this.mode],
-        [chalk.bold('Birthday'), birthDayString],
+        [chalk.bold('Birth date'), birthDayString],
         [chalk.bold('Version'), version]
       ])
     )

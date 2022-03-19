@@ -44,19 +44,27 @@ export class UpdateCommand extends Command {
         name: leonInstance.name,
         yes: this.yes
       })
-      let version = await leonInstance.getVersion()
+      const oldVersion = await leonInstance.getVersion()
       console.log(
         chalk.cyan(
-          `\nLeon instance "${leonInstance.name}" is currently at version ${version}.\n`
+          `\nLeon instance "${leonInstance.name}" is currently at version ${oldVersion}.\n`
         )
       )
       await leonInstance.update(leon)
-      version = await leonInstance.getVersion()
-      console.log(
-        chalk.cyan(
-          `\nLeon instance "${leonInstance.name}" has now been updated to version ${version}.\n`
+      const newVersion = await leonInstance.getVersion()
+      if (oldVersion === newVersion) {
+        console.log(
+          chalk.cyan(
+            `\nLeon instance "${leonInstance.name}" is already using the latest version.\n`
+          )
         )
-      )
+      } else {
+        console.log(
+          chalk.cyan(
+            `\nLeon instance "${leonInstance.name}" has now been updated to version ${newVersion}.\n`
+          )
+        )
+      }
       return 0
     } catch (error) {
       log.error({

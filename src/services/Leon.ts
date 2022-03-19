@@ -83,13 +83,15 @@ export class Leon implements LeonOptions {
     }
   }
 
-  public async getSourceCode(): Promise<void> {
+  public async getSourceCode(): Promise<string> {
     const loader = ora(`Downloading Leon source code`).start()
     try {
+      let sourceCodePath = await this.download()
       const hasGitInstalled = await requirements.checkGit()
       if (hasGitInstalled && this.useGit) {
-        await simpleGit().clone(Leon.GITHUB_URL, this.birthPath)
-        const git = simpleGit({ baseDir: this.birthPath })
+        sourceCodePath = path.join(TEMPORARY_PATH, 'leon-ai-git')
+        await simpleGit().clone(Leon.GITHUB_URL, sourceCodePath)
+        const git = simpleGit({ baseDir: sourceCodePath })
         if (this.useDevelopGitBranch) {
           await git.checkout('develop')
         } else if (this.version != null) {
@@ -97,10 +99,9 @@ export class Leon implements LeonOptions {
         } else {
           await git.checkout('master')
         }
-      } else {
-        await this.download()
       }
       loader.succeed()
+      return sourceCodePath
     } catch (error: any) {
       loader.fail()
       throw new LogError({
@@ -110,7 +111,7 @@ export class Leon implements LeonOptions {
     }
   }
 
-  public async download(): Promise<void> {
+  public async download(): Promise<string> {
     const sourceCodeInformation = this.getSourceCodeInformation()
     const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
     const extractedPath = path.join(
@@ -125,8 +126,14 @@ export class Leon implements LeonOptions {
       encoding: 'binary'
     })
     await extractZip(destination, { dir: TEMPORARY_PATH })
+    return extractedPath
+  }
+
+  public async transferSourceCodeFromTemporaryToBirthPath(
+    sourceCodePath: string
+  ): Promise<void> {
     await fs.promises.mkdir(this.birthPath, { recursive: true })
-    await copyDirectory(extractedPath, this.birthPath)
+    await copyDirectory(sourceCodePath, this.birthPath)
   }
 
   public async createBirth(): Promise<void> {
@@ -149,7 +156,8 @@ export class Leon implements LeonOptions {
     if (mode === 'classic') {
       await requirements.install(this.yes)
     }
-    await this.getSourceCode()
+    const sourceCodePath = await this.getSourceCode()
+    await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
     const leonInstance = LeonInstance.create({
       name: this.name,
       path: this.birthPath,

@@ -60,7 +60,7 @@ describe('leon info', () => {
         [chalk.bold('Name'), leonInstance.name],
         [chalk.bold('Path'), leonInstance.path],
         [chalk.bold('Mode'), leonInstance.mode],
-        [chalk.bold('Birthday'), birthDayString],
+        [chalk.bold('Birth date'), birthDayString],
         [chalk.bold('Version'), version]
       ])
     )
