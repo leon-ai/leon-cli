@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { execaCommand } from 'execa'
 import semver from 'semver'
@@ -78,7 +79,8 @@ class Requirements {
   public async executeScript(options: ExecuteScriptOptions): Promise<void> {
     const { scriptCommand, loader, sudo = false } = options
     const scriptLoader = ora(loader.message).start()
-    const scriptsPath = path.join(__dirname, '..', '..', 'scripts')
+    const scriptsUrl = new URL('../../scripts', import.meta.url)
+    const scriptsPath = fileURLToPath(scriptsUrl)
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
       if (sudo && !isMacOS) {
