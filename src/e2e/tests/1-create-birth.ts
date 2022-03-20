@@ -18,14 +18,11 @@ export const test1CreateBirth = async (
   await tap.test('leon create birth', async (t) => {
     const commandOptions = useDocker ? ['--docker'] : []
     t.equal(await isExistingFile(Leon.DEFAULT_BIRTH_PATH), false)
-    const result = await execa('leon', [
-      'create',
-      'birth',
-      '--yes',
-      ...commandOptions
-    ])
-    console.log(result.stdout)
-    console.log(result.stderr)
+    const result = await execa(
+      'leon',
+      ['create', 'birth', '--yes', ...commandOptions],
+      { stdio: 'inherit' }
+    )
     t.equal(result.exitCode, 0)
     t.equal(await isExistingFile(Leon.DEFAULT_BIRTH_PATH), true)
     t.equal(
