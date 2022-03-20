@@ -1,15 +1,13 @@
 import tap from 'tap'
 import waitOn from 'wait-on'
 import { execa, ExecaChildProcess } from 'execa'
+import terminate from 'terminate'
 
 export const test3Start = async (): Promise<void> => {
   const PORT = 1340
   let startSubprocess: ExecaChildProcess<string> | null = null
 
   await tap.test('leon start', async (t) => {
-    t.teardown(() => {
-      startSubprocess?.kill('SIGINT')
-    })
     startSubprocess = execa('leon', ['start', `--port=${PORT}`], {
       windowsHide: false,
       shell: true
@@ -20,11 +18,15 @@ export const test3Start = async (): Promise<void> => {
         delay: 1000,
         timeout: 480_000
       })
+      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10000 }, () => {
+        terminate(startSubprocess?.pid ?? 0)
+      })
       t.pass(`Success: Leon is running on http://localhost:${PORT}/`)
-      t.end()
     } catch (error: any) {
+      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10000 }, () => {
+        terminate(startSubprocess?.pid ?? 0)
+      })
       t.fail(error)
-      t.end()
     }
   })
 }

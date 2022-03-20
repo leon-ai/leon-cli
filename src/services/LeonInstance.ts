@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import { execa, execaCommand } from 'execa'
-import getStream from 'get-stream'
 import ora from 'ora'
 import date from 'date-and-time'
 import { readPackage } from 'read-pkg'
@@ -54,20 +53,15 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startDocker(LEON_PORT: string): Promise<void> {
-    const dockerStartStream = execa('npm', ['run', 'docker:run'], {
+    await execa('npm', ['run', 'docker:run'], {
       env: {
         LEON_PORT
-      }
-    }).stdout
-    if (dockerStartStream == null) {
-      return
-    }
+      },
+      stdio: 'inherit'
+    })
     process.on('SIGINT', (async () => {
       await execa('docker-compose', ['down'])
     }) as unknown as () => void)
-    dockerStartStream.pipe(process.stdout)
-    const value = await getStream(dockerStartStream)
-    console.log(value)
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
@@ -78,17 +72,12 @@ export class LeonInstance implements LeonInstanceOptions {
       }
       await this.install()
     }
-    const npmStartStream = execaCommand('npm start', {
+    await execaCommand('npm start', {
       env: {
         LEON_PORT
-      }
-    }).stdout
-    if (npmStartStream == null) {
-      return
-    }
-    npmStartStream.pipe(process.stdout)
-    const value = await getStream(npmStartStream)
-    console.log(value)
+      },
+      stdio: 'inherit'
+    })
   }
 
   public async start(port?: number): Promise<void> {
