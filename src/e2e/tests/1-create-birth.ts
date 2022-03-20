@@ -20,7 +20,7 @@ export const test1CreateBirth = async (
     t.equal(await isExistingFile(Leon.DEFAULT_BIRTH_PATH), false)
     const result = await execa(
       'leon',
-      ['create', 'birth', '--yes', '--no-git', ...commandOptions],
+      ['create', 'birth', '--yes', ...commandOptions],
       { stdio: 'inherit' }
     )
     t.equal(result.exitCode, 0)

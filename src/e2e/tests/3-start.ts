@@ -7,7 +7,10 @@ export const test3Start = async (): Promise<void> => {
 
   await tap.test('leon start', async (t) => {
     let startSubprocess: ExecaChildProcess<string> | null = null
-    startSubprocess = execa('leon', ['start', `--port=${PORT}`])
+    startSubprocess = execa('leon', ['start', `--port=${PORT}`], {
+      stdio: 'inherit',
+      windowsHide: false
+    })
     try {
       await waitOn({
         resources: [`http-get://localhost:${PORT}/`],
