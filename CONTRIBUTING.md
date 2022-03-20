@@ -42,7 +42,7 @@ leon
 
 - **Please first discuss** the change you wish to make via [issue](https://github.com/leon-ai/leon-cli/issues) before making a change. It might avoid a waste of your time.
 
-- Ensure your code respect `eslint` and `prettier`.
+- Ensure your code respect linting.
 
 - Make sure your **code passes the tests**.
 

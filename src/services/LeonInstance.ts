@@ -1,11 +1,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import execa from 'execa'
+import { execa, execaCommand } from 'execa'
 import getStream from 'get-stream'
 import ora from 'ora'
 import date from 'date-and-time'
-import readPackage from 'read-pkg'
+import { readPackage } from 'read-pkg'
 import { table } from 'table'
 import chalk from 'chalk'
 
@@ -78,7 +78,7 @@ export class LeonInstance implements LeonInstanceOptions {
       }
       await this.install()
     }
-    const npmStartStream = execa.command('npm start', {
+    const npmStartStream = execaCommand('npm start', {
       env: {
         LEON_PORT
       }
@@ -106,7 +106,7 @@ export class LeonInstance implements LeonInstanceOptions {
     process.chdir(workingDirectory)
     const runLoader = ora(loader.message).start()
     try {
-      const { stdout } = await execa.command(command)
+      const { stdout } = await execaCommand(command)
       runLoader.succeed()
       if (verbose) {
         console.log(stdout)
@@ -124,7 +124,7 @@ export class LeonInstance implements LeonInstanceOptions {
     process.chdir(this.path)
     const command =
       'npm run ' + (this.mode === 'docker' ? 'docker:check' : 'check')
-    await execa.command(command, { stdio: 'inherit' })
+    await execaCommand(command, { stdio: 'inherit' })
   }
 
   public async buildDockerImage(): Promise<void> {
@@ -250,7 +250,7 @@ export class LeonInstance implements LeonInstanceOptions {
     const currentVersion = await this.getVersion()
     const sourceCodePath = await leon.getSourceCode()
     const sourceCodeVersion = await LeonInstance.getVersion(sourceCodePath)
-    if (currentVersion !== sourceCodeVersion) {
+    if (currentVersion !== sourceCodeVersion || leon.useDevelopGitBranch) {
       await fs.promises.rm(this.path, {
         force: true,
         recursive: true

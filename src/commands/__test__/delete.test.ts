@@ -1,3 +1,5 @@
+import tap from 'tap'
+import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
 
@@ -11,19 +13,20 @@ import {
 import { isExistingFile } from '../../utils/isExistingFile.js'
 import { Log } from '../../services/Log.js'
 
-describe('leon delete', () => {
-  afterEach(() => {
+await tap.test('leon delete', async (t) => {
+  t.afterEach(() => {
     fsMock.restore()
-    jest.clearAllMocks()
+    sinon.restore()
   })
 
-  it('should be instance of the command', () => {
+  await t.test('should be instance of the command', async (t) => {
     const command = cli.process(['delete'])
-    expect(command).toBeInstanceOf(DeleteCommand)
+    t.equal(command instanceof DeleteCommand, true)
   })
 
-  it('succeeds and delete the LeonInstance', async () => {
-    console.log = jest.fn()
+  await t.test('succeeds and delete the LeonInstance', async (t) => {
+    sinon.stub(console, 'log').value(() => {})
+    const consoleLogSpy = sinon.spy(console, 'log')
     const leonInstanceOptions: LeonInstanceOptions = {
       name: 'random-name',
       birthDate: 'birthDate',
@@ -39,34 +42,40 @@ describe('leon delete', () => {
       [config.path]: JSON.stringify(configData),
       [leonInstance.path]: {}
     })
-    expect(await isExistingFile(leonInstance.path)).toBe(true)
+    t.equal(await isExistingFile(leonInstance.path), true)
     const command = cli.process(['delete', '--yes'])
     const exitCode = await command.execute()
     const instances = config.get('instances', [])
-    expect(exitCode).toEqual(0)
-    expect(await isExistingFile(leonInstance.path)).toBe(false)
-    expect(instances).toEqual([])
-    expect(console.log).toHaveBeenCalledWith(
-      `Leon instance "${leonInstance.name}" deleted.`
+    t.equal(exitCode, 0)
+    t.equal(await isExistingFile(leonInstance.path), false)
+    t.strictSame(instances, [])
+    t.equal(
+      consoleLogSpy.calledWith(`Leon instance "${leonInstance.name}" deleted.`),
+      true
     )
   })
 
-  it('fails and show a error message', async () => {
-    console.error = jest.fn()
+  await t.test('fails and show a error message', async (t) => {
+    sinon.stub(console, 'error').value(() => {})
+    const consoleErrorSpy = sinon.spy(console, 'error')
     fsMock({
       [config.path]: JSON.stringify({ instances: [] }),
       [Log.errorsConfig.path]: ''
     })
     const command = cli.process(['delete', '--yes'])
     const exitCode = await command.execute()
-    expect(exitCode).toEqual(1)
-    expect(console.error).toHaveBeenNthCalledWith(
-      1,
-      `${chalk.red('Error:')} You should have at least one instance.`
+    t.equal(exitCode, 1)
+    t.equal(
+      consoleErrorSpy.calledWith(
+        `${chalk.red('Error:')} You should have at least one instance.`
+      ),
+      true
     )
-    expect(console.error).toHaveBeenNthCalledWith(
-      2,
-      `For further information, look at the log file located at ${Log.errorsConfig.path}`
+    t.equal(
+      consoleErrorSpy.calledWith(
+        `For further information, look at the log file located at ${Log.errorsConfig.path}`
+      ),
+      true
     )
   })
 })

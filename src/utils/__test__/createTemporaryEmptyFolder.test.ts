@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 
 import fsMock from 'mock-fs'
+import tap from 'tap'
 
 import {
   TEMPORARY_PATH,
@@ -8,27 +9,30 @@ import {
 } from '../createTemporaryEmptyFolder.js'
 import { isExistingFile } from '../isExistingFile.js'
 
-describe('utils/createTemporaryEmptyFolder', () => {
-  afterEach(() => {
+await tap.test('utils/createTemporaryEmptyFolder', async (t) => {
+  t.afterEach(() => {
     fsMock.restore()
   })
 
-  it('should create the temporary folder', async () => {
+  await t.test('should create the temporary folder', async (t) => {
     fsMock({})
-    expect(await isExistingFile(TEMPORARY_PATH)).toBe(false)
+    t.equal(await isExistingFile(TEMPORARY_PATH), false)
     await createTemporaryEmptyFolder()
-    expect(await isExistingFile(TEMPORARY_PATH)).toBe(true)
+    t.equal(await isExistingFile(TEMPORARY_PATH), true)
   })
 
-  it('should remove and create again the temporary folder', async () => {
-    fsMock({
-      [TEMPORARY_PATH]: {
-        'file.txt': ''
-      }
-    })
-    expect(await isExistingFile(TEMPORARY_PATH)).toBe(true)
-    expect((await fs.promises.readdir(TEMPORARY_PATH)).length).toEqual(1)
-    await createTemporaryEmptyFolder()
-    expect((await fs.promises.readdir(TEMPORARY_PATH)).length).toEqual(0)
-  })
+  await t.test(
+    'should remove and create again the temporary folder',
+    async (t) => {
+      fsMock({
+        [TEMPORARY_PATH]: {
+          'file.txt': ''
+        }
+      })
+      t.equal(await isExistingFile(TEMPORARY_PATH), true)
+      t.equal((await fs.promises.readdir(TEMPORARY_PATH)).length, 1)
+      await createTemporaryEmptyFolder()
+      t.equal((await fs.promises.readdir(TEMPORARY_PATH)).length, 0)
+    }
+  )
 })

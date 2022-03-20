@@ -1,9 +1,0 @@
-{
-  "testEnvironment": "node",
-  "resolver": "jest-ts-webcompat-resolver",
-  "transform": {
-    "^.+\\.(t|j)sx?$": ["@swc/jest"]
-  },
-  "rootDir": "./src",
-  "testPathIgnorePatterns": ["/e2e/"]
-}

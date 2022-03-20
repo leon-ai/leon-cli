@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import execa from 'execa'
+import { execaCommand } from 'execa'
 import semver from 'semver'
 import ora from 'ora'
 
@@ -44,7 +44,7 @@ class Requirements {
 
   public async checkPython(): Promise<boolean> {
     try {
-      const { stdout } = await execa.command('python --version')
+      const { stdout } = await execaCommand('python --version')
       const [, actualVersion] = stdout.split(' ')
       return this.checkVersion(actualVersion, '3.0.0')
     } catch {
@@ -54,7 +54,7 @@ class Requirements {
 
   public async checkPipenv(): Promise<boolean> {
     try {
-      const { stdout } = await execa.command('pipenv --version')
+      const { stdout } = await execaCommand('pipenv --version')
       const [, , actualVersion] = stdout.split(' ')
       return this.checkVersion(actualVersion, '2020.11.15')
     } catch {
@@ -64,7 +64,7 @@ class Requirements {
 
   public async checkSoftware(packageManager: string): Promise<boolean> {
     try {
-      const { exitCode } = await execa.command(`${packageManager} --version`)
+      const { exitCode } = await execaCommand(`${packageManager} --version`)
       return exitCode === 0
     } catch {
       return false
@@ -84,7 +84,7 @@ class Requirements {
       if (sudo && !isMacOS) {
         await sudoExec(commandPath)
       } else {
-        await execa.command(commandPath)
+        await execaCommand(commandPath)
       }
       scriptLoader.succeed()
     } catch (error: any) {

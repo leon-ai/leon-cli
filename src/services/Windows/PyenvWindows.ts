@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import AdmZip from 'adm-zip'
 import axios from 'axios'
-import execa from 'execa'
+import { execa } from 'execa'
 import ora from 'ora'
 
 import { requirements } from '../Requirements.js'

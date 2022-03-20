@@ -1,15 +1,15 @@
 {
   "extends": ["conventions", "prettier"],
-  "plugins": ["prettier", "import"],
+  "plugins": ["prettier", "import", "unicorn"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "env": {
-    "node": true,
-    "jest": true
+    "node": true
   },
   "rules": {
     "prettier/prettier": "error",
-    "import/extensions": ["error", "always"]
+    "import/extensions": ["error", "always"],
+    "unicorn/prefer-node-protocol": "error"
   }
 }

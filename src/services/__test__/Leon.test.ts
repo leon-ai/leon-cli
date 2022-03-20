@@ -1,30 +1,32 @@
+import tap from 'tap'
+
 import { Leon } from '../Leon.js'
 
-describe('services/Leon - getSourceCodeInformation', () => {
-  it('should return the master version', () => {
+await tap.test('services/Leon - getSourceCodeInformation', async (t) => {
+  await t.test('should return the master version', async (t) => {
     const leon = new Leon({
       useDevelopGitBranch: false
     })
     const sourceCodeInformation = leon.getSourceCodeInformation()
-    expect(sourceCodeInformation.folderName).toEqual(`${Leon.NAME}-master`)
-    expect(sourceCodeInformation.zipName).toEqual('master.zip')
+    t.equal(sourceCodeInformation.folderName, `${Leon.NAME}-master`)
+    t.equal(sourceCodeInformation.zipName, 'master.zip')
   })
 
-  it('should return the develop version', () => {
+  await t.test('should return the develop version', async (t) => {
     const leon = new Leon({
       useDevelopGitBranch: true
     })
     const sourceCodeInformation = leon.getSourceCodeInformation()
-    expect(sourceCodeInformation.folderName).toEqual(`${Leon.NAME}-develop`)
-    expect(sourceCodeInformation.zipName).toEqual('develop.zip')
+    t.equal(sourceCodeInformation.folderName, `${Leon.NAME}-develop`)
+    t.equal(sourceCodeInformation.zipName, 'develop.zip')
   })
 
-  it('should return the 1.0.0 version', () => {
+  await t.test('should return the 1.0.0 version', async (t) => {
     const leon = new Leon({
       version: '1.0.0'
     })
     const sourceCodeInformation = leon.getSourceCodeInformation()
-    expect(sourceCodeInformation.folderName).toEqual(`${Leon.NAME}-1.0.0`)
-    expect(sourceCodeInformation.zipName).toEqual('1.0.0.zip')
+    t.equal(sourceCodeInformation.folderName, `${Leon.NAME}-1.0.0`)
+    t.equal(sourceCodeInformation.zipName, '1.0.0.zip')
   })
 })

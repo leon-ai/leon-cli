@@ -8,6 +8,7 @@ build
 
 # testing
 coverage
+.nyc_output
 
 # debug
 npm-debug.log*
