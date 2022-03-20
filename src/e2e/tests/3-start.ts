@@ -4,11 +4,15 @@ import { execa, ExecaChildProcess } from 'execa'
 
 export const test3Start = async (): Promise<void> => {
   const PORT = 1340
+  let startSubprocess: ExecaChildProcess<string> | null = null
 
   await tap.test('leon start', async (t) => {
-    let startSubprocess: ExecaChildProcess<string> | null = null
+    t.teardown(() => {
+      startSubprocess?.kill('SIGINT')
+    })
     startSubprocess = execa('leon', ['start', `--port=${PORT}`], {
-      windowsHide: false
+      windowsHide: false,
+      shell: true
     })
     try {
       await waitOn({
@@ -16,11 +20,11 @@ export const test3Start = async (): Promise<void> => {
         delay: 1000,
         timeout: 480_000
       })
-      t.equal(startSubprocess?.kill('SIGINT'), true)
       t.pass(`Success: Leon is running on http://localhost:${PORT}/`)
+      t.end()
     } catch (error: any) {
-      t.equal(startSubprocess?.kill('SIGINT'), true)
       t.fail(error)
+      t.end()
     }
   })
 }
