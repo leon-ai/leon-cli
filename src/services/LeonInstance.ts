@@ -203,7 +203,7 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  public async kill(): Promise<void> {
+  public async delete(): Promise<void> {
     const instances = config.get('instances', [])
     const instanceIndex = instances.findIndex((instance) => {
       return instance.name === this.name

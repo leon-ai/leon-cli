@@ -4,11 +4,11 @@ import { LeonInstance } from '../services/LeonInstance.js'
 import { log } from '../services/Log.js'
 import { prompt } from '../services/Prompt.js'
 
-export class KillCommand extends Command {
-  static paths = [['kill']]
+export class DeleteCommand extends Command {
+  static paths = [['delete']]
 
   static usage = {
-    description: 'Kill a Leon instance.'
+    description: 'Delete a Leon instance.'
   }
 
   public name = Option.String('--name', {
@@ -23,16 +23,18 @@ export class KillCommand extends Command {
     try {
       const { yes = false } = this
       const leonInstance = LeonInstance.get(this.name)
-      console.log(`You are about to kill Leon instance "${leonInstance.name}".`)
-      if (yes || (await prompt.shouldExecute('Are you sure?'))) {
-        await leonInstance.kill()
-        console.log(`Leon instance "${leonInstance.name}" killed.`)
+      console.log(
+        `You are about to delete Leon instance "${leonInstance.name}".`
+      )
+      if (yes || (await prompt.shouldExecute('Are you sure?', 'no'))) {
+        await leonInstance.delete()
+        console.log(`Leon instance "${leonInstance.name}" deleted.`)
       }
       return 0
     } catch (error) {
       log.error({
         error,
-        commandPath: 'kill'
+        commandPath: 'delete'
       })
       return 1
     }
