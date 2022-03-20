@@ -1,5 +1,5 @@
 import { Command, Option } from 'clipanion'
-import execa from 'execa'
+import { execaCommand } from 'execa'
 
 import { LeonInstance } from '../services/LeonInstance.js'
 import { log } from '../services/Log.js'
@@ -43,7 +43,7 @@ export class RunCommand extends Command {
         return 0
       }
       process.chdir(leonInstance.path)
-      await execa.command(command, { stdio: 'inherit' })
+      await execaCommand(command, { stdio: 'inherit' })
       return 0
     } catch (error) {
       log.error({

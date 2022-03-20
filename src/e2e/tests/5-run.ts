@@ -1,8 +1,9 @@
-import execa from 'execa'
+import tap from 'tap'
+import { execa } from 'execa'
 
-export const test5Run = (): void => {
-  test('leon run', async () => {
+export const test5Run = async (): Promise<void> => {
+  await tap.test('leon run', async (t) => {
     const result = await execa('leon', ['run', 'train'])
-    expect(result.exitCode).toEqual(0)
+    t.equal(result.exitCode, 0)
   })
 }

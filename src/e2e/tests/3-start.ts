@@ -1,25 +1,24 @@
+import tap from 'tap'
 import waitOn from 'wait-on'
-import execa from 'execa'
+import { execa, ExecaChildProcess } from 'execa'
 
-export const test3Start = (): void => {
+export const test3Start = async (): Promise<void> => {
   const PORT = 1340
 
-  test('leon start', (done) => {
-    let startSubprocess: execa.ExecaChildProcess<string> | null = null
+  await tap.test('leon start', async (t) => {
+    let startSubprocess: ExecaChildProcess<string> | null = null
     startSubprocess = execa('leon', ['start', `--port=${PORT}`])
-    waitOn({
-      resources: [`http-get://localhost:${PORT}/`],
-      delay: 1000,
-      timeout: 480_000
-    })
-      .then(() => {
-        console.log(`Success: Leon is running on http://localhost:${PORT}/`)
-        expect(startSubprocess?.kill('SIGINT')).toBe(true)
-        done()
+    try {
+      await waitOn({
+        resources: [`http-get://localhost:${PORT}/`],
+        delay: 1000,
+        timeout: 480_000
       })
-      .catch((error) => {
-        expect(startSubprocess?.kill('SIGINT')).toBe(true)
-        done(error)
-      })
+      t.equal(startSubprocess?.kill('SIGINT'), true)
+      t.pass(`Success: Leon is running on http://localhost:${PORT}/`)
+    } catch (error: any) {
+      t.equal(startSubprocess?.kill('SIGINT'), true)
+      t.fail(error)
+    }
   })
 }

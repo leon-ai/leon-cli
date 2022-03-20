@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import execa from 'execa'
+import { execa } from 'execa'
 import ora from 'ora'
 
 import { LogError } from '../../utils/LogError.js'

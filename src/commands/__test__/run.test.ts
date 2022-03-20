@@ -1,9 +1,11 @@
-import { cli } from '../../cli.js'
-import { RunCommand } from '../run.js'
+import tap from 'tap'
 
-describe('leon run', () => {
-  it('should be instance of the command', () => {
+import { RunCommand } from '../run.js'
+import { cli } from '../../cli.js'
+
+await tap.test('leon run', async (t) => {
+  await t.test('should be instance of the command', async (t) => {
     const command = cli.process(['run'])
-    expect(command).toBeInstanceOf(RunCommand)
+    t.equal(command instanceof RunCommand, true)
   })
 })

@@ -1,23 +1,24 @@
 import fsMock from 'mock-fs'
+import tap from 'tap'
 
 import { isExistingFile } from '../isExistingFile.js'
 
-describe('utils/isExistingFile', () => {
-  afterEach(() => {
+await tap.test('utils/isExistingFile', async (t) => {
+  t.afterEach(() => {
     fsMock.restore()
   })
 
-  it('should return true if the file exists', async () => {
+  await t.test('should return true if the file exists', async () => {
     fsMock({
       '/file.txt': ''
     })
-    expect(await isExistingFile('/file.txt')).toBe(true)
+    t.equal(await isExistingFile('/file.txt'), true)
   })
 
-  it("should return false if the file doesn't exists", async () => {
+  await t.test("should return false if the file doesn't exists", async () => {
     fsMock({
       '/file.txt': ''
     })
-    expect(await isExistingFile('/randomfile.txt')).toBe(false)
+    t.equal(await isExistingFile('/randomfile.txt'), false)
   })
 })

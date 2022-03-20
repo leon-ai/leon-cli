@@ -1,36 +1,35 @@
 import fs from 'node:fs'
 
+import tap from 'tap'
+import sinon from 'sinon'
 import fsMock from 'mock-fs'
 
 import { LogError } from '../../utils/LogError.js'
 import { Log, log } from '../Log.js'
 
-describe('services/Log', () => {
+await tap.test('services/Log', async (t) => {
   const message = 'Error occured'
 
-  beforeEach(() => {
-    console.error = jest.fn()
-    process.exit = jest.fn() as never
-  })
-
-  afterEach(() => {
+  t.afterEach(() => {
     fsMock.restore()
-    jest.clearAllMocks()
+    sinon.restore()
   })
 
-  it('should write to file the error data', async () => {
+  await t.test('should write to file the error data', async (t) => {
     fsMock({
       [Log.errorsConfig.path]: ''
     })
+    sinon.stub(console, 'error').value(() => {})
+    const consoleErrorSpy = sinon.spy(console, 'error')
     let fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
       encoding: 'utf-8'
     })
-    expect(fileContent.length).toEqual(0)
+    t.equal(fileContent.length, 0)
     log.error({ error: new LogError({ message }) })
-    expect(console.error).toHaveBeenCalled()
+    t.equal(consoleErrorSpy.called, true)
     fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
       encoding: 'utf-8'
     })
-    expect(fileContent.includes(message)).toBe(true)
+    t.equal(fileContent.includes(message), true)
   })
 })
