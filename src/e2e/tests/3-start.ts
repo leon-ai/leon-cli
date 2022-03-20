@@ -8,7 +8,6 @@ export const test3Start = async (): Promise<void> => {
   await tap.test('leon start', async (t) => {
     let startSubprocess: ExecaChildProcess<string> | null = null
     startSubprocess = execa('leon', ['start', `--port=${PORT}`], {
-      stdio: 'inherit',
       windowsHide: false
     })
     try {

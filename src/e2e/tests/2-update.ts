@@ -7,9 +7,7 @@ export const test2Update = async (): Promise<void> => {
   await tap.test('leon update', async (t) => {
     const leonInstance = LeonInstance.get()
     let oldVersion = await leonInstance.getVersion()
-    const leonUpdateWithSameVersion = await execa('leon', ['update'], {
-      stdio: 'inherit'
-    })
+    const leonUpdateWithSameVersion = await execa('leon', ['update'])
     let newVersion = await leonInstance.getVersion()
     t.equal(leonUpdateWithSameVersion.exitCode, 0)
     t.equal(
@@ -27,9 +25,7 @@ export const test2Update = async (): Promise<void> => {
     t.equal(newVersion, oldVersion)
 
     oldVersion = await leonInstance.getVersion()
-    const leonUpdate = await execa('leon', ['update', '--develop'], {
-      stdio: 'inherit'
-    })
+    const leonUpdate = await execa('leon', ['update', '--develop'])
     newVersion = await leonInstance.getVersion()
     t.equal(leonUpdate.exitCode, 0)
     t.equal(
