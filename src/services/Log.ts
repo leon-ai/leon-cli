@@ -3,6 +3,7 @@ import chalk from 'chalk'
 
 import { LogError } from '../utils/LogError.js'
 import { Leon } from './Leon.js'
+import { packageJSON } from '../packageJSON.js'
 
 interface LogErrorOptions {
   commandPath?: string
@@ -14,6 +15,8 @@ export class Log {
     configName: 'log-errors',
     projectSuffix: '',
     fileExtension: 'txt',
+    projectName: packageJSON.name,
+    projectVersion: packageJSON.version,
     serialize: (value) => {
       return value.errors as string
     },

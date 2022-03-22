@@ -1,6 +1,8 @@
 import Conf, { Schema } from 'conf'
 import { Static, Type } from '@sinclair/typebox'
 
+import { packageJSON } from '../packageJSON.js'
+
 export const instanceModes = [Type.Literal('classic'), Type.Literal('docker')]
 
 const instanceMode = Type.Union(instanceModes)
@@ -34,5 +36,7 @@ export type ConfigData = Static<typeof configSchemaObject>
 export const config = new Conf({
   schema: configSchemaObject.properties as Schema<ConfigData>,
   configName: 'leon-ai',
-  projectSuffix: ''
+  projectSuffix: '',
+  projectName: packageJSON.name,
+  projectVersion: packageJSON.version
 })
