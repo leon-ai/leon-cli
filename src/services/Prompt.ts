@@ -41,7 +41,7 @@ export class Prompt {
 
   public async shouldInstall(requirement: string): Promise<boolean> {
     return await this.shouldExecute(
-      `Would you like to download ${requirement}? It is a necessary requirement.`,
+      `Would you like to install ${requirement}? If you don't, Leon may not work properly.`,
       'yes'
     )
   }

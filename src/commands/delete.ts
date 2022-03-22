@@ -29,6 +29,8 @@ export class DeleteCommand extends Command {
       if (yes || (await prompt.shouldExecute('Are you sure?', 'no'))) {
         await leonInstance.delete()
         console.log(`Leon instance "${leonInstance.name}" deleted.`)
+      } else {
+        console.log('Deletion canceled.')
       }
       return 0
     } catch (error) {
