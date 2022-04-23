@@ -1,0 +1,25 @@
+name: 'Build'
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: 'actions/checkout@v3.0.0'
+
+      - name: 'Use Node.js'
+        uses: 'actions/setup-node@v3.0.0'
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: 'Install'
+        run: 'npm install'
+
+      - name: 'Build'
+        run: 'npm run build'
