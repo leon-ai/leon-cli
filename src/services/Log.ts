@@ -39,6 +39,7 @@ export class Log {
         `For further information, look at the log file located at ${Log.errorsConfig.path}`
       )
       Log.errorsConfig.set('errors', data)
+      console.error(data)
     }
   }
 }
