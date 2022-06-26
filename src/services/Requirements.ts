@@ -47,7 +47,7 @@ class Requirements {
     try {
       const { stdout } = await execaCommand('python --version')
       const [, actualVersion] = stdout.split(' ')
-      return this.checkVersion(actualVersion, '3.0.0')
+      return this.checkVersion(actualVersion, '3.9.10')
     } catch {
       return false
     }
@@ -154,7 +154,7 @@ class Requirements {
     const hasPipenv = await this.checkPipenv()
     if (!hasPipenv) {
       if (!hasPython) {
-        if (yes || (await prompt.shouldInstall('Python'))) {
+        if (yes || (await prompt.shouldInstall('Python v3.9.10'))) {
           if (isLinux || isMacOS) {
             await this.installPythonOnUnix()
           } else if (isWindows) {

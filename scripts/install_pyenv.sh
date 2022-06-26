@@ -5,8 +5,8 @@ export PYENV_ROOT="${HOME}/.pyenv"
 export PATH="${PYENV_ROOT}/bin:${PATH}"
 eval "$(pyenv init --path)"
 
-pyenv install 3.10.0 --force
-pyenv global 3.10.0
+pyenv install 3.9.10 --force
+pyenv global 3.9.10
 pyenv exec pip install --user --force-reinstall pipenv
 
 SCRIPTS_DIRECTORY=$(dirname "$0")

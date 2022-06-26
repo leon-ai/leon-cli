@@ -13,7 +13,7 @@ import { addToPath, saveEnvironmentVariable } from '../../utils/pathUtils.js'
 class PyenvWindows {
   static URL = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
 
-  static PYTHON_VERSION = '3.10.0b3'
+  static PYTHON_VERSION = '3.9.10'
 
   public async downloadWindowsZip(): Promise<AdmZip> {
     const downloadLoader = ora('Downloading Pyenv for Windows').start()
