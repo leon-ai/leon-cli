@@ -92,10 +92,10 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async runScript(options: RunNpmScriptOptions): Promise<void> {
     const { command, loader, workingDirectory, verbose = false } = options
-    process.chdir(workingDirectory)
     if (process.env.NODE_ENV === 'test') {
       console.log(`Working directory: ${workingDirectory}`)
     }
+    process.chdir(workingDirectory)
     const runLoader = ora(loader.message).start()
     try {
       const { stdout } = await execaCommand(command)
