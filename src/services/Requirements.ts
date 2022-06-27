@@ -83,7 +83,7 @@ class Requirements {
     const scriptsPath = fileURLToPath(scriptsUrl)
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
-      if (sudo && !isMacOS) {
+      if (sudo && !isMacOS && process.env.NODE_ENV !== 'test') {
         await sudoExec(commandPath)
       } else {
         await execaCommand(commandPath)
