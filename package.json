@@ -50,9 +50,9 @@
     "lint:markdown": "markdownlint \"**/*.md\" --dot --ignore-path \".gitignore\"",
     "lint:typescript": "eslint \"**/*.{js,jsx,ts,tsx}\" --ignore-path \".gitignore\"",
     "lint:prettier": "prettier \".\" --check --ignore-path \".gitignore\"",
-    "test:unit": "tap",
-    "test:e2e-docker": "tap \"./build/e2e/docker.test.e2e.js\"",
-    "test:e2e-classic": "tap \"./build/e2e/classic.test.e2e.js\"",
+    "test:unit": "tap --test-env=NODE_ENV=test",
+    "test:e2e-docker": "tap \"./build/e2e/docker.test.e2e.js\" --test-env=NODE_ENV=test",
+    "test:e2e-classic": "tap \"./build/e2e/classic.test.e2e.js\" --test-env=NODE_ENV=test",
     "release": "semantic-release"
   },
   "dependencies": {
