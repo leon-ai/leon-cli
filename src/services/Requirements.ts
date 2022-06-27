@@ -84,7 +84,11 @@ class Requirements {
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
       if (sudo && !isMacOS) {
-        await sudoExec(commandPath)
+        if (process.env.NODE_ENV !== 'test') {
+          await sudoExec(commandPath)
+        } else {
+          await execaCommand(`sudo --non-interactive ${commandPath}`)
+        }
       } else {
         await execaCommand(commandPath)
       }

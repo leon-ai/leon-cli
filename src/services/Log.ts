@@ -38,6 +38,9 @@ export class Log {
       console.error(
         `For further information, look at the log file located at ${Log.errorsConfig.path}`
       )
+      if (process.env.NODE_ENV === 'test') {
+        console.error(data)
+      }
       Log.errorsConfig.set('errors', data)
     }
   }
