@@ -50,6 +50,7 @@ class PyenvWindows {
         }
       })
       extractLoader.succeed()
+      console.log(`Pyenv zip extracted path: ${destination}`)
     } catch (error: any) {
       extractLoader.fail()
       throw new LogError({
