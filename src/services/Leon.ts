@@ -86,6 +86,7 @@ export class Leon implements LeonOptions {
   public async getSourceCode(): Promise<string> {
     const loader = ora(`Downloading Leon source code`).start()
     try {
+      await createTemporaryEmptyFolder()
       let sourceCodePath = ''
       const hasGitInstalled = await requirements.checkGit()
       if (hasGitInstalled && this.useGit) {
@@ -120,7 +121,6 @@ export class Leon implements LeonOptions {
       TEMPORARY_PATH,
       sourceCodeInformation.folderName
     )
-    await createTemporaryEmptyFolder()
     const { data } = await axios.get(sourceCodeInformation.url, {
       responseType: 'arraybuffer'
     })
