@@ -86,7 +86,7 @@ export class Leon implements LeonOptions {
   public async getSourceCode(): Promise<string> {
     const loader = ora(`Downloading Leon source code`).start()
     try {
-      let sourceCodePath = await this.download()
+      let sourceCodePath = ''
       const hasGitInstalled = await requirements.checkGit()
       if (hasGitInstalled && this.useGit) {
         sourceCodePath = path.join(TEMPORARY_PATH, 'leon-ai-git')
@@ -99,6 +99,8 @@ export class Leon implements LeonOptions {
         } else {
           await git.checkout('master')
         }
+      } else {
+        sourceCodePath = await this.download()
       }
       loader.succeed()
       return sourceCodePath
