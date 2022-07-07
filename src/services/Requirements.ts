@@ -156,42 +156,41 @@ class Requirements {
   public async install(yes: boolean): Promise<void> {
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
-    if (!hasPipenv) {
-      if (!hasPython) {
-        if (yes || (await prompt.shouldInstall('Python v3.9.10'))) {
-          if (isLinux || isMacOS) {
-            await this.installPythonOnUnix()
-          } else if (isWindows) {
-            await pyenvWindows.install()
-            await pipenvWindows.install()
-            await pipenvWindows.addToPath()
-          } else {
-            throw new LogError({
-              message: UNSUPPORTED_OS_MESSAGE,
-              logFileMessage: UNSUPPORTED_OS_MESSAGE
-            })
-          }
+    let shouldInstallPipenvAfterPython = true
+    if (!hasPython) {
+      if (yes || (await prompt.shouldInstall('Python v3.9.10'))) {
+        if (isLinux || isMacOS) {
+          await this.installPythonOnUnix()
+          shouldInstallPipenvAfterPython = false
+        } else if (isWindows) {
+          await pyenvWindows.install()
+        } else {
+          throw new LogError({
+            message: UNSUPPORTED_OS_MESSAGE,
+            logFileMessage: UNSUPPORTED_OS_MESSAGE
+          })
         }
-      } else {
-        if (yes || (await prompt.shouldInstall('Pipenv'))) {
-          const loader = {
-            message: 'Installing Pipenv',
-            stderr: 'Failed to install Pipenv'
-          }
-          if (isLinux || isMacOS) {
-            await this.executeScript({
-              scriptCommand: ['install_pipenv.sh'],
-              loader
-            })
-          } else if (isWindows) {
-            await pipenvWindows.install()
-            await pipenvWindows.addToPath()
-          } else {
-            throw new LogError({
-              message: UNSUPPORTED_OS_MESSAGE,
-              logFileMessage: UNSUPPORTED_OS_MESSAGE
-            })
-          }
+      }
+    }
+    if (!hasPipenv && shouldInstallPipenvAfterPython) {
+      if (yes || (await prompt.shouldInstall('Pipenv'))) {
+        const loader = {
+          message: 'Installing Pipenv',
+          stderr: 'Failed to install Pipenv'
+        }
+        if (isLinux || isMacOS) {
+          await this.executeScript({
+            scriptCommand: ['install_pipenv.sh'],
+            loader
+          })
+        } else if (isWindows) {
+          await pipenvWindows.install()
+          await pipenvWindows.addToPath()
+        } else {
+          throw new LogError({
+            message: UNSUPPORTED_OS_MESSAGE,
+            logFileMessage: UNSUPPORTED_OS_MESSAGE
+          })
         }
       }
     }

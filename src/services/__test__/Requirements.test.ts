@@ -34,6 +34,15 @@ await tap.test('services/Requirements - checkVersion', async (t) => {
       t.equal(requirements.checkVersion(commandAnswer, requirement2), true)
     }
   )
+
+  await t.test(
+    'should return false when the version is less than the requirement',
+    async (t) => {
+      const requirement = '3.9.10'
+      const commandAnswer = '3.9.7'
+      t.equal(requirements.checkVersion(commandAnswer, requirement), false)
+    }
+  )
 })
 
 await tap.test('services/Requirements - checkPython', async (t) => {
