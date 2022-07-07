@@ -12,7 +12,7 @@ import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
 } from '../utils/createTemporaryEmptyFolder.js'
-import { isExistingFile } from '../utils/isExistingFile.js'
+import { isExistingPath } from '../utils/isExistingPath.js'
 import { LeonInstance } from './LeonInstance.js'
 import { LogError } from '../utils/LogError.js'
 import { copyDirectory } from '../utils/copyDirectory.js'
@@ -137,7 +137,7 @@ export class Leon implements LeonOptions {
   }
 
   public async createBirth(): Promise<void> {
-    if (await isExistingFile(this.birthPath)) {
+    if (await isExistingPath(this.birthPath)) {
       throw new LogError({
         message: `${this.birthPath} already exists, please provide another path.`
       })

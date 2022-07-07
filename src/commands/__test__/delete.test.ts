@@ -10,7 +10,7 @@ import {
   LeonInstance,
   LeonInstanceOptions
 } from '../../services/LeonInstance.js'
-import { isExistingFile } from '../../utils/isExistingFile.js'
+import { isExistingPath } from '../../utils/isExistingPath.js'
 import { Log } from '../../services/Log.js'
 
 await tap.test('leon delete', async (t) => {
@@ -42,12 +42,12 @@ await tap.test('leon delete', async (t) => {
       [config.path]: JSON.stringify(configData),
       [leonInstance.path]: {}
     })
-    t.equal(await isExistingFile(leonInstance.path), true)
+    t.equal(await isExistingPath(leonInstance.path), true)
     const command = cli.process(['delete', '--yes'])
     const exitCode = await command.execute()
     const instances = config.get('instances', [])
     t.equal(exitCode, 0)
-    t.equal(await isExistingFile(leonInstance.path), false)
+    t.equal(await isExistingPath(leonInstance.path), false)
     t.strictSame(instances, [])
     t.equal(
       consoleLogSpy.calledWith(`Leon instance "${leonInstance.name}" deleted.`),

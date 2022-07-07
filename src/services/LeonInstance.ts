@@ -10,7 +10,7 @@ import chalk from 'chalk'
 
 import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
-import { isExistingFile } from '../utils/isExistingFile.js'
+import { isExistingPath } from '../utils/isExistingPath.js'
 import { Leon } from './Leon.js'
 
 export type InstanceType = 'classic' | 'docker'
@@ -67,7 +67,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public async startClassic(LEON_PORT: string): Promise<void> {
     if (this.startCount === 1) {
       const dotenvPath = path.join(this.path, '.env')
-      if (await isExistingFile(dotenvPath)) {
+      if (await isExistingPath(dotenvPath)) {
         await fs.promises.rm(dotenvPath)
       }
       await this.install()
