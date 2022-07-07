@@ -36,10 +36,9 @@ class PyenvWindows {
       `Installing python ${PyenvWindows.PYTHON_VERSION}`
     ).start()
     try {
-      const pyenvCommand = `${PyenvWindows.PYENV_PATH}\\bin\\pyenv`
-      await execa(`${pyenvCommand} install ${PyenvWindows.PYTHON_VERSION}`)
-      await execa(`${pyenvCommand} rehash`)
-      await execa(`${pyenvCommand} global ${PyenvWindows.PYTHON_VERSION}`)
+      await execa(`pyenv install ${PyenvWindows.PYTHON_VERSION}`)
+      await execa(`pyenv rehash`)
+      await execa(`pyenv global ${PyenvWindows.PYTHON_VERSION}`)
       pythonLoader.succeed()
     } catch (error: any) {
       pythonLoader.fail()
