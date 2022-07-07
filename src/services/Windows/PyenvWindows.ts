@@ -1,69 +1,28 @@
 import os from 'node:os'
+import fs from 'node:fs'
 import path from 'node:path'
 
-import AdmZip from 'adm-zip'
+import extractZip from 'extract-zip'
 import axios from 'axios'
 import { execa } from 'execa'
 import ora from 'ora'
 
+import {
+  createTemporaryEmptyFolder,
+  TEMPORARY_PATH
+} from '../../utils/createTemporaryEmptyFolder.js'
 import { requirements } from '../Requirements.js'
 import { LogError } from '../../utils/LogError.js'
 import { addToPath, saveEnvironmentVariable } from '../../utils/pathUtils.js'
+import { copyDirectory } from '../../utils/copyDirectory.js'
 
 class PyenvWindows {
-  static URL = 'https://codeload.github.com/pyenv-win/pyenv-win/zip/master'
-
+  static NAME = 'pyenv-win'
+  static GITHUB_URL = `https://github.com/${PyenvWindows.NAME}/${PyenvWindows.NAME}`
+  static PYENV_PATH = path.join(os.homedir(), '.pyenv')
   static PYTHON_VERSION = '3.9.10'
 
-  public async downloadWindowsZip(): Promise<AdmZip> {
-    const downloadLoader = ora('Downloading Pyenv for Windows').start()
-    try {
-      const body = await axios.get(PyenvWindows.URL, {
-        responseType: 'arraybuffer'
-      })
-      downloadLoader.succeed()
-      return new AdmZip(body.data)
-    } catch (error: any) {
-      downloadLoader.fail()
-      throw new LogError({
-        message: `Could not download Pyenv Windows zip located at ${PyenvWindows.URL}`,
-        logFileMessage: error.toString()
-      })
-    }
-  }
-
-  public extractWindowsZip(zip: AdmZip, destination: string): void {
-    const extractLoader = ora('Extracting Pyenv zip').start()
-    try {
-      zip.getEntries().forEach((entry) => {
-        const filePath = path.join(
-          destination,
-          entry.entryName.replace('pyenv-win-master/', '')
-        )
-        if (!entry.isDirectory) {
-          zip.extractEntryTo(
-            entry.entryName,
-            path.dirname(filePath),
-            false,
-            true
-          )
-        }
-      })
-      extractLoader.succeed()
-      console.log(`Pyenv zip extracted path: ${destination}`)
-    } catch (error: any) {
-      extractLoader.fail()
-      throw new LogError({
-        message: `Could not extract Pyenv Windows zip`,
-        logFileMessage: error.toString()
-      })
-    }
-  }
-
-  public async getWindowsUserPath(): Promise<string> {
-    if (process.platform !== 'win32') {
-      return ''
-    }
+  private async getWindowsUserPath(): Promise<string> {
     const { stdout } = await execa(
       "[Environment]::GetEnvironmentVariable('PATH', 'User');",
       [],
@@ -72,12 +31,12 @@ class PyenvWindows {
     return stdout
   }
 
-  public async installPython(pyenvPath: string): Promise<void> {
+  private async installPython(): Promise<void> {
     const pythonLoader = ora(
       `Installing python ${PyenvWindows.PYTHON_VERSION}`
     ).start()
     try {
-      const pyenvCommand = `${pyenvPath}\\bin\\pyenv`
+      const pyenvCommand = `${PyenvWindows.PYENV_PATH}\\bin\\pyenv`
       await execa(`${pyenvCommand} install ${PyenvWindows.PYTHON_VERSION}`)
       await execa(`${pyenvCommand} rehash`)
       await execa(`${pyenvCommand} global ${PyenvWindows.PYTHON_VERSION}`)
@@ -91,39 +50,49 @@ class PyenvWindows {
     }
   }
 
-  public async registerInPathWindows(pyenvPath: string): Promise<void> {
+  private async registerInPath(): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
-    const pyenvWin = 'pyenv-win'
     try {
-      if (!requirements.checkIfEnvironmentVariableContains('PYENV', pyenvWin)) {
-        process.env.PYENV = `${pyenvPath}\\${pyenvWin}\\`
-        await saveEnvironmentVariable('PYENV', `${pyenvPath}\\${pyenvWin}\\`)
+      if (
+        !requirements.checkIfEnvironmentVariableContains(
+          'PYENV',
+          PyenvWindows.NAME
+        )
+      ) {
+        process.env.PYENV = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+        await saveEnvironmentVariable(
+          'PYENV',
+          `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+        )
       }
       if (
-        !requirements.checkIfEnvironmentVariableContains('PYENV_HOME', pyenvWin)
+        !requirements.checkIfEnvironmentVariableContains(
+          'PYENV_HOME',
+          PyenvWindows.NAME
+        )
       ) {
-        process.env.PYENV_HOME = `${pyenvPath}\\${pyenvWin}\\`
+        process.env.PYENV_HOME = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
         await saveEnvironmentVariable(
           'PYENV_HOME',
-          `${pyenvPath}\\${pyenvWin}\\`
+          `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
         )
       }
       if (
         !requirements.checkIfEnvironmentVariableContains(
           'PATH',
-          `${pyenvWin}\\bin`
+          `${PyenvWindows.NAME}\\bin`
         )
       ) {
-        const binPath = `${pyenvPath}\\${pyenvWin}\\bin`
+        const binPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\bin`
         await addToPath(binPath)
       }
       if (
         !requirements.checkIfEnvironmentVariableContains(
           'PATH',
-          `${pyenvWin}\\shims`
+          `${PyenvWindows.NAME}\\shims`
         )
       ) {
-        const shimsPath = `${pyenvPath}\\${pyenvWin}\\shims`
+        const shimsPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\shims`
         await addToPath(shimsPath)
       }
       varEnvLoader.succeed()
@@ -136,12 +105,45 @@ class PyenvWindows {
     }
   }
 
+  private async installPyenv(): Promise<void> {
+    const loader = ora('Installing Pyenv for Windows').start()
+    try {
+      const version = 'master'
+      const folderName = `${PyenvWindows.NAME}-${version}`
+      const zipName = `${folderName}.zip`
+      const url = `${PyenvWindows.GITHUB_URL}/archive/${version}.zip`
+      const pyenvZipPath = path.join(TEMPORARY_PATH, zipName)
+      const pyenvExtractedPath = path.join(
+        TEMPORARY_PATH,
+        folderName,
+        PyenvWindows.NAME
+      )
+      await createTemporaryEmptyFolder()
+      const { data } = await axios.get(url, {
+        responseType: 'arraybuffer'
+      })
+      await fs.promises.writeFile(pyenvZipPath, Buffer.from(data), {
+        encoding: 'binary'
+      })
+      await extractZip(pyenvZipPath, { dir: TEMPORARY_PATH })
+      await fs.promises.mkdir(PyenvWindows.PYENV_PATH, {
+        recursive: true
+      })
+      await copyDirectory(pyenvExtractedPath, PyenvWindows.PYENV_PATH)
+      loader.succeed()
+    } catch (error: any) {
+      loader.fail()
+      throw new LogError({
+        message: `Could not install Pyenv Windows`,
+        logFileMessage: error.toString()
+      })
+    }
+  }
+
   public async install(): Promise<void> {
-    const destination = path.join(os.homedir(), '.pyenv')
-    const zip = await this.downloadWindowsZip()
-    this.extractWindowsZip(zip, destination)
-    await this.registerInPathWindows(destination)
-    await this.installPython(destination)
+    await this.installPyenv()
+    await this.registerInPath()
+    await this.installPython()
   }
 }
 
