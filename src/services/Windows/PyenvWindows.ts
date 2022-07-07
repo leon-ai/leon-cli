@@ -71,14 +71,15 @@ class PyenvWindows {
     return stdout
   }
 
-  public async installPython(): Promise<void> {
+  public async installPython(pyenvPath: string): Promise<void> {
     const pythonLoader = ora(
       `Installing python ${PyenvWindows.PYTHON_VERSION}`
     ).start()
     try {
-      await execa(`pyenv install ${PyenvWindows.PYTHON_VERSION}`)
-      await execa('pyenv rehash')
-      await execa(`pyenv global ${PyenvWindows.PYTHON_VERSION}`)
+      const pyenvCommand = `${pyenvPath}\\bin\\pyenv`
+      await execa(`${pyenvCommand} install ${PyenvWindows.PYTHON_VERSION}`)
+      await execa(`${pyenvCommand} rehash`)
+      await execa(`${pyenvCommand} global ${PyenvWindows.PYTHON_VERSION}`)
       pythonLoader.succeed()
     } catch (error: any) {
       pythonLoader.fail()
@@ -139,7 +140,7 @@ class PyenvWindows {
     const zip = await this.downloadWindowsZip()
     this.extractWindowsZip(zip, destination)
     await this.registerInPathWindows(destination)
-    await this.installPython()
+    await this.installPython(destination)
   }
 }
 
