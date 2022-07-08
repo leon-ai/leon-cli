@@ -11,10 +11,12 @@ import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
 } from '../../utils/createTemporaryEmptyFolder.js'
-import { requirements } from '../Requirements.js'
 import { LogError } from '../../utils/LogError.js'
-import { addToPath, saveEnvironmentVariable } from '../../utils/pathUtils.js'
 import { copyDirectory } from '../../utils/copyDirectory.js'
+import {
+  addToPathOnWindows,
+  addEnvironmentVariableOnWindows
+} from '../../utils/pathUtils.js'
 
 class PyenvWindows {
   static NAME = 'pyenv-win'
@@ -52,36 +54,11 @@ class PyenvWindows {
   private async registerInPath(): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
-      if (
-        !requirements.checkIfEnvironmentVariableContains(
-          'PYENV_HOME',
-          PyenvWindows.NAME
-        )
-      ) {
-        process.env.PYENV_HOME = `${PyenvWindows.PYENV_PATH}\\`
-        await saveEnvironmentVariable(
-          'PYENV_HOME',
-          `${PyenvWindows.PYENV_PATH}\\`
-        )
-      }
-      if (
-        !requirements.checkIfEnvironmentVariableContains(
-          'PATH',
-          `${PyenvWindows.NAME}\\bin`
-        )
-      ) {
-        const binPath = `${PyenvWindows.PYENV_PATH}\\bin`
-        await addToPath(binPath)
-      }
-      if (
-        !requirements.checkIfEnvironmentVariableContains(
-          'PATH',
-          `${PyenvWindows.NAME}\\shims`
-        )
-      ) {
-        const shimsPath = `${PyenvWindows.PYENV_PATH}\\shims`
-        await addToPath(shimsPath)
-      }
+      const pyenvWinPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+      await addEnvironmentVariableOnWindows('PYENV', pyenvWinPath)
+      await addEnvironmentVariableOnWindows('PYENV_ROOT', pyenvWinPath)
+      await addEnvironmentVariableOnWindows('PYENV_HOME', pyenvWinPath)
+      await addToPathOnWindows(`${pyenvWinPath}\\bin;${pyenvWinPath}\\shims`)
       varEnvLoader.succeed()
     } catch (error: any) {
       varEnvLoader.fail()
@@ -100,11 +77,7 @@ class PyenvWindows {
       const zipName = `${folderName}.zip`
       const url = `${PyenvWindows.GITHUB_URL}/archive/${version}.zip`
       const pyenvZipPath = path.join(TEMPORARY_PATH, zipName)
-      const pyenvExtractedPath = path.join(
-        TEMPORARY_PATH,
-        folderName,
-        PyenvWindows.NAME
-      )
+      const pyenvExtractedPath = path.join(TEMPORARY_PATH, folderName)
       await createTemporaryEmptyFolder()
       const { data } = await axios.get(url, {
         responseType: 'arraybuffer'
@@ -121,7 +94,7 @@ class PyenvWindows {
     } catch (error: any) {
       loader.fail()
       throw new LogError({
-        message: `Could not install Pyenv Windows`,
+        message: `Could not install Pyenv`,
         logFileMessage: error.toString()
       })
     }

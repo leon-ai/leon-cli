@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { execa } from 'execa'
+import { execaCommand } from 'execa'
 import ora from 'ora'
 
 import { LogError } from '../../utils/LogError.js'
@@ -9,14 +9,16 @@ import {
   getPythonSiteString,
   getPythonVersionString
 } from '../../utils/pythonUtils.js'
-import { addToPath } from '../../utils/pathUtils.js'
-import { requirements } from '../Requirements.js'
+import { addToPathOnWindows } from '../../utils/pathUtils.js'
 
 class PipenvWindows {
   public async install(): Promise<void> {
     const pipenvLoader = ora('Installing pipenv').start()
     try {
-      await execa('pip install --user pipenv')
+      await execaCommand('pip install --user pipenv', {
+        shell: 'powershell.exe'
+      })
+      await this.addToPath()
       pipenvLoader.succeed()
     } catch (error: any) {
       pipenvLoader.fail()
@@ -27,35 +29,19 @@ class PipenvWindows {
     }
   }
 
-  private async addToWindowsPath(): Promise<void> {
-    const pythonSitePath = await getPythonSiteString()
-    const formattedPythonVersion = extractVersionForPath(
-      await getPythonVersionString()
-    )
-    const fullPathToPythonSite = path.join(
-      pythonSitePath,
-      `Python${formattedPythonVersion}`,
-      'Scripts'
-    )
-    if (
-      !requirements.checkIfEnvironmentVariableContains(
-        'PATH',
-        fullPathToPythonSite
-      )
-    ) {
-      await addToPath(fullPathToPythonSite)
-    }
-  }
-
   public async addToPath(): Promise<void> {
-    const registeringPipenvLoader = ora('Registering pipenv to path').start()
     try {
-      if (process.platform === 'win32') {
-        await this.addToWindowsPath()
-      }
-      registeringPipenvLoader.succeed()
+      const pythonSitePath = await getPythonSiteString()
+      const formattedPythonVersion = extractVersionForPath(
+        await getPythonVersionString()
+      )
+      const fullPathToPythonSite = path.join(
+        pythonSitePath,
+        `Python${formattedPythonVersion}`,
+        'Scripts'
+      )
+      await addToPathOnWindows(fullPathToPythonSite)
     } catch (error: any) {
-      registeringPipenvLoader.fail()
       throw new LogError({
         message: 'Impossible to register Pipenv environment variables',
         logFileMessage: error.toString()

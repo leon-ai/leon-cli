@@ -1,10 +1,11 @@
+import os from 'node:os'
+
 import { execa } from 'execa'
 
 import { LogError } from './LogError.js'
 
-async function getWindowsUserPath(): Promise<string> {
+export const getWindowsUserPath = async (): Promise<string> => {
   const errorMessage = 'Could not retrieve user path from windows'
-
   try {
     const { stdout: userPath, failed } = await execa(
       `[Environment]::GetEnvironmentVariable('PATH', 'User')`,
@@ -25,39 +26,34 @@ async function getWindowsUserPath(): Promise<string> {
   }
 }
 
-async function addToPathOnWindows(pathToAdd: string): Promise<void> {
-  const path = await getWindowsUserPath()
+export const addToPathOnWindows = async (pathToAdd: string): Promise<void> => {
+  let path = await getWindowsUserPath()
   if (path === '') {
     return
   }
 
+  // Windows 10 1905 or newer => We need to disable the built-in Python launcher (Microsoft Store) Execution Alias
+  // Deleting "C:\Users\Username\AppData\Local\Microsoft\WindowsApps\" in the PATH, prevent the Microsoft Store application from launching (see: <https://superuser.com/a/1442909>)
+  const pathToReplace = `${os.homedir()}\\AppData\\Local\\Microsoft\\WindowsApps;`
+  path = path.replace(pathToReplace, '')
+
   const separator =
     path.length > 0 && path.charAt(path.length - 1) !== ';' ? ';' : ''
   await execa(
-    `[Environment]::SetEnvironmentVariable('PATH', "${path}${separator}${pathToAdd};",'User')`,
+    `[Environment]::SetEnvironmentVariable('PATH', "${path}${separator}${pathToAdd};", 'User')`,
     [],
     { shell: 'powershell.exe' }
   )
   process.env.PATH = `${process.env.PATH ?? ''}${separator}${pathToAdd};`
 }
 
-async function addToPath(pathToAdd: string): Promise<void> {
-  if (process.platform === 'win32') {
-    await addToPathOnWindows(pathToAdd)
-  } else {
-    throw new LogError({
-      message: 'OS not supported : ' + process.platform
-    })
-  }
-}
-
-async function saveEnvironmentVariable(
+export const addEnvironmentVariableOnWindows = async (
   variable: string,
   value: string
-): Promise<void> {
+): Promise<void> => {
   try {
     await execa(
-      `[Environment]::SetEnvironmentVariable('${variable}', '${value}','User')`,
+      `[Environment]::SetEnvironmentVariable('${variable}', '${value}', 'User')`,
       [],
       { shell: 'powershell.exe' }
     )
@@ -68,5 +64,3 @@ async function saveEnvironmentVariable(
     })
   }
 }
-
-export { addToPath, saveEnvironmentVariable }
