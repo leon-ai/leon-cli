@@ -86,5 +86,4 @@ jobs:
 
       - name: 'End To End (e2e) Test'
         run: 'npm run test:e2e-classic'
-        if: matrix.os == 'windows-2019'
         shell: 'bash'
