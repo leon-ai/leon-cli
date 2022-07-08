@@ -54,26 +54,14 @@ class PyenvWindows {
     try {
       if (
         !requirements.checkIfEnvironmentVariableContains(
-          'PYENV',
-          PyenvWindows.NAME
-        )
-      ) {
-        process.env.PYENV = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
-        await saveEnvironmentVariable(
-          'PYENV',
-          `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
-        )
-      }
-      if (
-        !requirements.checkIfEnvironmentVariableContains(
           'PYENV_HOME',
           PyenvWindows.NAME
         )
       ) {
-        process.env.PYENV_HOME = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+        process.env.PYENV_HOME = `${PyenvWindows.PYENV_PATH}\\`
         await saveEnvironmentVariable(
           'PYENV_HOME',
-          `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+          `${PyenvWindows.PYENV_PATH}\\`
         )
       }
       if (
@@ -82,7 +70,7 @@ class PyenvWindows {
           `${PyenvWindows.NAME}\\bin`
         )
       ) {
-        const binPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\bin`
+        const binPath = `${PyenvWindows.PYENV_PATH}\\bin`
         await addToPath(binPath)
       }
       if (
@@ -91,7 +79,7 @@ class PyenvWindows {
           `${PyenvWindows.NAME}\\shims`
         )
       ) {
-        const shimsPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\shims`
+        const shimsPath = `${PyenvWindows.PYENV_PATH}\\shims`
         await addToPath(shimsPath)
       }
       varEnvLoader.succeed()
