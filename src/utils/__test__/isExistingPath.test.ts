@@ -1,9 +1,9 @@
 import fsMock from 'mock-fs'
 import tap from 'tap'
 
-import { isExistingFile } from '../isExistingFile.js'
+import { isExistingPath } from '../isExistingPath.js'
 
-await tap.test('utils/isExistingFile', async (t) => {
+await tap.test('utils/isExistingPath', async (t) => {
   t.afterEach(() => {
     fsMock.restore()
   })
@@ -12,13 +12,13 @@ await tap.test('utils/isExistingFile', async (t) => {
     fsMock({
       '/file.txt': ''
     })
-    t.equal(await isExistingFile('/file.txt'), true)
+    t.equal(await isExistingPath('/file.txt'), true)
   })
 
   await t.test("should return false if the file doesn't exists", async () => {
     fsMock({
       '/file.txt': ''
     })
-    t.equal(await isExistingFile('/randomfile.txt'), false)
+    t.equal(await isExistingPath('/randomfile.txt'), false)
   })
 })

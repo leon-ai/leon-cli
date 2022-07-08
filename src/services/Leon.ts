@@ -12,7 +12,7 @@ import {
   createTemporaryEmptyFolder,
   TEMPORARY_PATH
 } from '../utils/createTemporaryEmptyFolder.js'
-import { isExistingFile } from '../utils/isExistingFile.js'
+import { isExistingPath } from '../utils/isExistingPath.js'
 import { LeonInstance } from './LeonInstance.js'
 import { LogError } from '../utils/LogError.js'
 import { copyDirectory } from '../utils/copyDirectory.js'
@@ -86,7 +86,8 @@ export class Leon implements LeonOptions {
   public async getSourceCode(): Promise<string> {
     const loader = ora(`Downloading Leon source code`).start()
     try {
-      let sourceCodePath = await this.download()
+      await createTemporaryEmptyFolder()
+      let sourceCodePath = ''
       const hasGitInstalled = await requirements.checkGit()
       if (hasGitInstalled && this.useGit) {
         sourceCodePath = path.join(TEMPORARY_PATH, 'leon-ai-git')
@@ -99,6 +100,8 @@ export class Leon implements LeonOptions {
         } else {
           await git.checkout('master')
         }
+      } else {
+        sourceCodePath = await this.download()
       }
       loader.succeed()
       return sourceCodePath
@@ -118,7 +121,6 @@ export class Leon implements LeonOptions {
       TEMPORARY_PATH,
       sourceCodeInformation.folderName
     )
-    await createTemporaryEmptyFolder()
     const { data } = await axios.get(sourceCodeInformation.url, {
       responseType: 'arraybuffer'
     })
@@ -137,7 +139,7 @@ export class Leon implements LeonOptions {
   }
 
   public async createBirth(): Promise<void> {
-    if (await isExistingFile(this.birthPath)) {
+    if (await isExistingPath(this.birthPath)) {
       throw new LogError({
         message: `${this.birthPath} already exists, please provide another path.`
       })

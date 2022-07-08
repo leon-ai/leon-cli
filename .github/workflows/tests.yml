@@ -86,3 +86,4 @@ jobs:
 
       - name: 'End To End (e2e) Test'
         run: 'npm run test:e2e-classic'
+        shell: 'bash'

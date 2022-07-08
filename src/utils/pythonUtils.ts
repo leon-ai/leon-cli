@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { execaCommand } from 'execa'
 
 import { LogError } from './LogError.js'
 
@@ -23,11 +23,11 @@ function extractPythonVersionForSemver(str: string): string {
 }
 
 async function getPythonSiteString(): Promise<string> {
-  const errorMessage = 'Error while getting the path of python3 libraries'
-
+  const errorMessage = 'Error while getting the path of python libraries'
   try {
-    const { stdout: pythonSite, failed: pythonSiteFailed } = await execa(
-      'python3 -m site --user-base'
+    const { stdout: pythonSite, failed: pythonSiteFailed } = await execaCommand(
+      'python -m site --user-base',
+      { shell: 'powershell.exe' }
     )
     if (pythonSiteFailed) {
       throw new LogError({ message: errorMessage })
@@ -40,10 +40,9 @@ async function getPythonSiteString(): Promise<string> {
 
 async function getPythonVersionString(): Promise<string> {
   const errorMessage = 'Error while getting the version of python'
-
   try {
     const { stdout: pythonVersionString, failed: pythonVersionFailed } =
-      await execa('python --version')
+      await execaCommand('python --version', { shell: 'powershell.exe' })
     if (pythonVersionFailed) {
       throw new LogError({ message: errorMessage })
     }

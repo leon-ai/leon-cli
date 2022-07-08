@@ -4,7 +4,7 @@ import tap from 'tap'
 import { execa } from 'execa'
 
 import { Leon } from '../../services/Leon.js'
-import { isExistingFile } from '../../utils/isExistingFile.js'
+import { isExistingPath } from '../../utils/isExistingPath.js'
 
 interface Options {
   useDocker?: boolean
@@ -17,27 +17,27 @@ export const test1CreateBirth = async (
 
   await tap.test('leon create birth', async (t) => {
     const commandOptions = useDocker ? ['--docker'] : []
-    t.equal(await isExistingFile(Leon.DEFAULT_BIRTH_PATH), false)
+    t.equal(await isExistingPath(Leon.DEFAULT_BIRTH_PATH), false)
     const result = await execa(
       'leon',
       ['create', 'birth', '--yes', ...commandOptions],
       { stdio: 'inherit' }
     )
     t.equal(result.exitCode, 0)
-    t.equal(await isExistingFile(Leon.DEFAULT_BIRTH_PATH), true)
+    t.equal(await isExistingPath(Leon.DEFAULT_BIRTH_PATH), true)
     t.equal(
-      await isExistingFile(path.join(Leon.DEFAULT_BIRTH_PATH, 'package.json')),
+      await isExistingPath(path.join(Leon.DEFAULT_BIRTH_PATH, 'package.json')),
       true
     )
     if (!useDocker) {
       t.equal(
-        await isExistingFile(
+        await isExistingPath(
           path.join(Leon.DEFAULT_BIRTH_PATH, 'node_modules')
         ),
         true
       )
       t.equal(
-        await isExistingFile(
+        await isExistingPath(
           path.join(Leon.DEFAULT_BIRTH_PATH, 'server', 'dist')
         ),
         true

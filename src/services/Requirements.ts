@@ -84,9 +84,9 @@ class Requirements {
     const commandPath = path.join(scriptsPath, ...scriptCommand)
     try {
       if (sudo && !isMacOS) {
-        if (process.env.NODE_ENV !== 'test') {
+        try {
           await sudoExec(commandPath)
-        } else {
+        } catch {
           await execaCommand(`sudo --non-interactive ${commandPath}`)
         }
       } else {
@@ -185,7 +185,6 @@ class Requirements {
           })
         } else if (isWindows) {
           await pipenvWindows.install()
-          await pipenvWindows.addToPath()
         } else {
           throw new LogError({
             message: UNSUPPORTED_OS_MESSAGE,
