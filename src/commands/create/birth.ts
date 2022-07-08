@@ -54,9 +54,11 @@ export class CreateBirthCommand extends Command {
       })
       await leon.createBirth()
       console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)
-      console.log('You can start your leon instance using:')
+      console.log('You can start your leon instance:')
       if (isLinux || isMacOS) {
         console.log(`${chalk.cyan('exec $SHELL')}`)
+      } else {
+        console.log(`First, restart your command prompt.`)
       }
       console.log(`${chalk.cyan('leon start')}`)
       return 0

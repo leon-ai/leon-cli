@@ -15,23 +15,17 @@ import { LogError } from '../../utils/LogError.js'
 import { copyDirectory } from '../../utils/copyDirectory.js'
 import {
   addToPathOnWindows,
-  addEnvironmentVariableOnWindows
+  addEnvironmentVariableOnWindows,
+  getWindowsUserPath
 } from '../../utils/pathUtils.js'
 
 class PyenvWindows {
   static NAME = 'pyenv-win'
   static GITHUB_URL = `https://github.com/${PyenvWindows.NAME}/${PyenvWindows.NAME}`
   static PYENV_PATH = path.join(os.homedir(), '.pyenv')
+  static PYENV_WIN_PATH = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
+  static PYENV_WIN_PATH_VALUE = `${PyenvWindows.PYENV_WIN_PATH}\\bin;${PyenvWindows.PYENV_WIN_PATH}\\shims`
   static PYTHON_VERSION = '3.9.10'
-
-  private async getWindowsUserPath(): Promise<string> {
-    const { stdout } = await execa(
-      "[Environment]::GetEnvironmentVariable('PATH', 'User');",
-      [],
-      { shell: 'powershell.exe' }
-    )
-    return stdout
-  }
 
   private async installPython(): Promise<void> {
     const pythonLoader = ora(
@@ -41,6 +35,8 @@ class PyenvWindows {
       await execa(`pyenv install ${PyenvWindows.PYTHON_VERSION}`)
       await execa(`pyenv rehash`)
       await execa(`pyenv global ${PyenvWindows.PYTHON_VERSION}`)
+      const path = await getWindowsUserPath()
+      process.env.PATH = `${path};${process.env.PATH ?? ''};`
       pythonLoader.succeed()
     } catch (error: any) {
       pythonLoader.fail()
@@ -54,11 +50,19 @@ class PyenvWindows {
   private async registerInPath(): Promise<void> {
     const varEnvLoader = ora('Registering environment variables').start()
     try {
-      const pyenvWinPath = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
-      await addEnvironmentVariableOnWindows('PYENV', pyenvWinPath)
-      await addEnvironmentVariableOnWindows('PYENV_ROOT', pyenvWinPath)
-      await addEnvironmentVariableOnWindows('PYENV_HOME', pyenvWinPath)
-      await addToPathOnWindows(`${pyenvWinPath}\\bin;${pyenvWinPath}\\shims`)
+      await addEnvironmentVariableOnWindows(
+        'PYENV',
+        PyenvWindows.PYENV_WIN_PATH
+      )
+      await addEnvironmentVariableOnWindows(
+        'PYENV_ROOT',
+        PyenvWindows.PYENV_WIN_PATH
+      )
+      await addEnvironmentVariableOnWindows(
+        'PYENV_HOME',
+        PyenvWindows.PYENV_WIN_PATH
+      )
+      await addToPathOnWindows(PyenvWindows.PYENV_WIN_PATH_VALUE)
       varEnvLoader.succeed()
     } catch (error: any) {
       varEnvLoader.fail()
