@@ -47,7 +47,7 @@ class Requirements {
     try {
       const { stdout } = await execaCommand('python --version')
       const [, actualVersion] = stdout.split(' ')
-      return this.checkVersion(actualVersion, '3.9.10')
+      return semver.eq(actualVersion, '3.9.10')
     } catch {
       return false
     }
