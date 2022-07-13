@@ -18,6 +18,8 @@ import {
   addEnvironmentVariableOnWindows,
   getWindowsUserPath
 } from '../../utils/pathUtils.js'
+import { isExistingPath } from '../../utils/isExistingPath.js'
+import { requirements } from '../Requirements.js'
 
 class PyenvWindows {
   static NAME = 'pyenv-win'
@@ -105,8 +107,13 @@ class PyenvWindows {
   }
 
   public async install(): Promise<void> {
-    await this.installPyenv()
-    await this.registerInPath()
+    const hasPyenv =
+      (await isExistingPath(PyenvWindows.PYENV_PATH)) ||
+      (await requirements.checkSoftware('pyenv'))
+    if (!hasPyenv) {
+      await this.installPyenv()
+      await this.registerInPath()
+    }
     await this.installPython()
   }
 }

@@ -63,9 +63,9 @@ class Requirements {
     }
   }
 
-  public async checkSoftware(packageManager: string): Promise<boolean> {
+  public async checkSoftware(software: string): Promise<boolean> {
     try {
-      const { exitCode } = await execaCommand(`${packageManager} --version`)
+      const { exitCode } = await execaCommand(`${software} --version`)
       return exitCode === 0
     } catch {
       return false
@@ -134,28 +134,22 @@ class Requirements {
     }
   }
 
-  public async installPythonOnUnix(): Promise<void> {
+  public async installPythonOnUnix(scriptToExecute: string): Promise<void> {
     const loader = {
       message: 'Installing Python',
       stderr: 'Failed to install Python'
     }
     await this.installPackages()
-    if (isMacOS) {
-      await this.executeScript({
-        scriptCommand: ['install_pyenv_macos.sh'],
-        loader
-      })
-    } else {
-      await this.executeScript({
-        scriptCommand: ['install_pyenv.sh'],
-        loader
-      })
-    }
+    await this.executeScript({
+      scriptCommand: [scriptToExecute],
+      loader
+    })
   }
 
   public async install(interactive: boolean): Promise<void> {
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
+    const hasPyenv = await requirements.checkSoftware('pyenv')
     let shouldInstallPipenvAfterPython = true
     if (!hasPython) {
       if (
@@ -163,8 +157,16 @@ class Requirements {
         !interactive
       ) {
         if (isLinux || isMacOS) {
-          await this.installPythonOnUnix()
-          shouldInstallPipenvAfterPython = false
+          if (hasPyenv) {
+            await this.installPythonOnUnix(
+              'install_python_pipenv_with_pyenv.sh'
+            )
+          } else {
+            await this.installPythonOnUnix(
+              isMacOS ? 'install_pyenv_macos.sh' : 'install_pyenv.sh'
+            )
+            shouldInstallPipenvAfterPython = false
+          }
         } else if (isWindows) {
           await pyenvWindows.install()
         } else {
