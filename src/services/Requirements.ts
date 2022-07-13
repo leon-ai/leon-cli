@@ -153,12 +153,15 @@ class Requirements {
     }
   }
 
-  public async install(yes: boolean): Promise<void> {
+  public async install(interactive: boolean): Promise<void> {
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
     let shouldInstallPipenvAfterPython = true
     if (!hasPython) {
-      if (yes || (await prompt.shouldInstall('Python v3.9.10'))) {
+      if (
+        (interactive && (await prompt.shouldInstall('Python v3.9.10'))) ||
+        !interactive
+      ) {
         if (isLinux || isMacOS) {
           await this.installPythonOnUnix()
           shouldInstallPipenvAfterPython = false
@@ -173,7 +176,10 @@ class Requirements {
       }
     }
     if (!hasPipenv && shouldInstallPipenvAfterPython) {
-      if (yes || (await prompt.shouldInstall('Pipenv'))) {
+      if (
+        (interactive && (await prompt.shouldInstall('Pipenv'))) ||
+        !interactive
+      ) {
         const loader = {
           message: 'Installing Pipenv',
           stderr: 'Failed to install Pipenv'

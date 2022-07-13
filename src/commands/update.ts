@@ -28,10 +28,6 @@ export class UpdateCommand extends Command {
     description: 'Update Leon with Git (if possible).'
   })
 
-  public yes = Option.Boolean('--yes', {
-    description: 'Skip all questions with a "yes" answer.'
-  })
-
   async execute(): Promise<number> {
     try {
       const leonInstance = LeonInstance.get(this.name)
@@ -42,7 +38,7 @@ export class UpdateCommand extends Command {
         useDocker: leonInstance.mode === 'docker',
         useGit: this.useGit,
         name: leonInstance.name,
-        yes: this.yes
+        interactive: false
       })
       const oldVersion = await leonInstance.getVersion()
       console.log(

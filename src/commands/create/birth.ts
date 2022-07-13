@@ -37,8 +37,8 @@ export class CreateBirthCommand extends Command {
     description: 'Give a name to your Leon instance.'
   })
 
-  public yes = Option.Boolean('--yes', {
-    description: 'Skip all questions with a "yes" answer.'
+  public interactive = Option.Boolean('--interactive', {
+    description: 'Interactive mode (ask questions).'
   })
 
   async execute(): Promise<number> {
@@ -50,7 +50,7 @@ export class CreateBirthCommand extends Command {
         useDocker: this.useDocker,
         useGit: this.useGit,
         name: this.name,
-        yes: this.yes
+        interactive: this.interactive
       })
       await leon.createBirth()
       console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)

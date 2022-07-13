@@ -26,7 +26,7 @@ export interface LeonOptions {
   useDocker?: boolean
   useGit?: boolean
   name?: string
-  yes?: boolean
+  interactive?: boolean
 }
 
 export class Leon implements LeonOptions {
@@ -41,7 +41,7 @@ export class Leon implements LeonOptions {
   public useDocker: boolean
   public useGit: boolean
   public name: string
-  public yes: boolean
+  public interactive: boolean
 
   constructor(options: LeonOptions) {
     const {
@@ -51,7 +51,7 @@ export class Leon implements LeonOptions {
       useDocker = false,
       useGit = true,
       name = crypto.randomUUID(),
-      yes = false
+      interactive = false
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
@@ -60,7 +60,7 @@ export class Leon implements LeonOptions {
     this.useDocker = useDocker
     this.useGit = useGit
     this.name = name
-    this.yes = yes
+    this.interactive = interactive
   }
 
   public getSourceCodeInformation(): {
@@ -156,7 +156,7 @@ export class Leon implements LeonOptions {
     }
     const mode = this.useDocker ? 'docker' : 'classic'
     if (mode === 'classic') {
-      await requirements.install(this.yes)
+      await requirements.install(this.interactive)
     }
     const sourceCodePath = await this.getSourceCode()
     await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
