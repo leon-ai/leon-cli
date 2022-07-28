@@ -7,6 +7,7 @@ import axios from 'axios'
 import ora from 'ora'
 import extractZip from 'extract-zip'
 import simpleGit from 'simple-git'
+import { readPackage } from 'read-pkg'
 
 import {
   createTemporaryEmptyFolder,
@@ -139,7 +140,26 @@ export class Leon implements LeonOptions {
   }
 
   public async createBirth(): Promise<void> {
-    if (await isExistingPath(this.birthPath)) {
+    let cwdIsLeonCore = false
+    const cwdPath = process.cwd()
+    const cwdPackageJSONPath = path.join(cwdPath, 'package.json')
+    if (
+      this.birthPath === Leon.DEFAULT_BIRTH_PATH &&
+      this.version == null &&
+      !this.useDevelopGitBranch &&
+      (await isExistingPath(cwdPackageJSONPath))
+    ) {
+      const cwdPackageJSON = await readPackage({
+        cwd: cwdPath,
+        normalize: false
+      })
+      cwdIsLeonCore =
+        cwdPackageJSON?.name === 'leon' &&
+        cwdPackageJSON?.homepage === 'https://getleon.ai'
+      if (cwdIsLeonCore) {
+        this.birthPath = cwdPath
+      }
+    } else if (await isExistingPath(this.birthPath)) {
       throw new LogError({
         message: `${this.birthPath} already exists, please provide another path.`
       })
@@ -158,8 +178,10 @@ export class Leon implements LeonOptions {
     if (mode === 'classic') {
       await requirements.install(this.interactive)
     }
-    const sourceCodePath = await this.getSourceCode()
-    await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
+    if (!cwdIsLeonCore) {
+      const sourceCodePath = await this.getSourceCode()
+      await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
+    }
     const leonInstance = LeonInstance.create({
       name: this.name,
       path: this.birthPath,
