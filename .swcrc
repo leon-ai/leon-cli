@@ -2,21 +2,11 @@
   "jsc": {
     "parser": {
       "syntax": "typescript",
-      "decorators": true,
       "dynamicImport": true
     },
-    "transform": {
-      "legacyDecorator": true,
-      "decoratorMetadata": true
-    },
-    "target": "es2022",
-    "loose": true
+    "target": "es2022"
   },
   "module": {
-    "type": "es6",
-    "strict": false,
-    "strictMode": true,
-    "lazy": false,
-    "noInterop": false
+    "type": "es6"
   }
 }
