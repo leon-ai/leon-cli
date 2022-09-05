@@ -11,7 +11,7 @@ import chalk from 'chalk'
 import { config } from './Config.js'
 import { LogError } from '../utils/LogError.js'
 import { isExistingPath } from '../utils/isExistingPath.js'
-import { Leon } from './Leon.js'
+import type { Leon } from './Leon.js'
 
 export type InstanceType = 'classic' | 'docker'
 

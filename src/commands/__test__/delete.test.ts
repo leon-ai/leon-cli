@@ -5,11 +5,10 @@ import chalk from 'chalk'
 
 import { cli } from '../../cli.js'
 import { DeleteCommand } from '../delete.js'
-import { config, ConfigData } from '../../services/Config.js'
-import {
-  LeonInstance,
-  LeonInstanceOptions
-} from '../../services/LeonInstance.js'
+import type { ConfigData } from '../../services/Config.js'
+import { config } from '../../services/Config.js'
+import type { LeonInstanceOptions } from '../../services/LeonInstance.js'
+import { LeonInstance } from '../../services/LeonInstance.js'
 import { isExistingPath } from '../../utils/isExistingPath.js'
 import { Log } from '../../services/Log.js'
 

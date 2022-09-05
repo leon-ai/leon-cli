@@ -13,7 +13,9 @@ await tap.test('utils/pythonUtils', async (t) => {
     "should return an error if it doesn't exactly have one match",
     async (t) => {
       const str1 = 'Python 3.10.0 lorem ipsum 3.7.2'
-      t.throws(() => extractVersionForPath(str1))
+      t.throws(() => {
+        return extractVersionForPath(str1)
+      })
     }
   )
 })

@@ -1,5 +1,7 @@
-import Conf, { Schema } from 'conf'
-import { Static, Type } from '@sinclair/typebox'
+import type { Schema } from 'conf'
+import Conf from 'conf'
+import type { Static } from '@sinclair/typebox'
+import { Type } from '@sinclair/typebox'
 
 import { packageJSON } from '../packageJSON.js'
 

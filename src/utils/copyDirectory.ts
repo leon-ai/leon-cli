@@ -1,10 +1,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-export async function copyDirectory(
+export const copyDirectory = async (
   source: string,
   destination: string
-): Promise<void> {
+): Promise<void> => {
   const filesToCreate = await fs.promises.readdir(source)
   for (const file of filesToCreate) {
     const originalFilePath = path.join(source, file)

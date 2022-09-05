@@ -7,11 +7,10 @@ import date from 'date-and-time'
 
 import { cli } from '../../cli.js'
 import { InfoCommand } from '../info.js'
-import { config, ConfigData } from '../../services/Config.js'
-import {
-  LeonInstance,
-  LeonInstanceOptions
-} from '../../services/LeonInstance.js'
+import type { ConfigData } from '../../services/Config.js'
+import { config } from '../../services/Config.js'
+import type { LeonInstanceOptions } from '../../services/LeonInstance.js'
+import { LeonInstance } from '../../services/LeonInstance.js'
 import { Log } from '../../services/Log.js'
 
 await tap.test('leon info', async (t) => {

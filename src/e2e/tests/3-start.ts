@@ -1,6 +1,7 @@
 import tap from 'tap'
 import waitOn from 'wait-on'
-import { execa, ExecaChildProcess } from 'execa'
+import type { ExecaChildProcess } from 'execa'
+import { execa } from 'execa'
 import terminate from 'terminate'
 
 export const test3Start = async (): Promise<void> => {

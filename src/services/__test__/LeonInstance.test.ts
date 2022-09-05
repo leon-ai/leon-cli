@@ -1,8 +1,10 @@
 import tap from 'tap'
 import fsMock from 'mock-fs'
 
-import { ConfigData, config } from '../Config.js'
-import { LeonInstance, LeonInstanceOptions } from '../LeonInstance.js'
+import type { ConfigData } from '../Config.js'
+import { config } from '../Config.js'
+import type { LeonInstanceOptions } from '../LeonInstance.js'
+import { LeonInstance } from '../LeonInstance.js'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
@@ -49,7 +51,9 @@ await tap.test('services/LeonInstance - get', async (t) => {
     fsMock({
       [config.path]: ''
     })
-    t.throws(() => LeonInstance.get())
+    t.throws(() => {
+      return LeonInstance.get()
+    })
   })
 
   await t.test(
@@ -69,7 +73,9 @@ await tap.test('services/LeonInstance - get', async (t) => {
       fsMock({
         [config.path]: JSON.stringify(configData)
       })
-      t.throws(() => LeonInstance.get('wrong name'))
+      t.throws(() => {
+        return LeonInstance.get('wrong name')
+      })
     }
   )
 

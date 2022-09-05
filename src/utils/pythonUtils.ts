@@ -2,7 +2,7 @@ import { execaCommand } from 'execa'
 
 import { LogError } from './LogError.js'
 
-function extractVersionForPath(str: string): string {
+export const extractVersionForPath = (str: string): string => {
   const match = str.match(/\d\.\d{1,3}/g)
   if (match?.length !== 1) {
     throw new LogError({
@@ -12,7 +12,7 @@ function extractVersionForPath(str: string): string {
   return match[0].split('.').join('')
 }
 
-function extractPythonVersionForSemver(str: string): string {
+export const extractPythonVersionForSemver = (str: string): string => {
   const match = str.match(/\d(?:\.\d{1,3}){2}/g)
   if (match?.length !== 1) {
     throw new LogError({
@@ -22,7 +22,7 @@ function extractPythonVersionForSemver(str: string): string {
   return match[0].toString()
 }
 
-async function getPythonSiteString(): Promise<string> {
+export const getPythonSiteString = async (): Promise<string> => {
   const errorMessage = 'Error while getting the path of python libraries'
   try {
     const { stdout: pythonSite, failed: pythonSiteFailed } = await execaCommand(
@@ -38,7 +38,7 @@ async function getPythonSiteString(): Promise<string> {
   }
 }
 
-async function getPythonVersionString(): Promise<string> {
+export const getPythonVersionString = async (): Promise<string> => {
   const errorMessage = 'Error while getting the version of python'
   try {
     const { stdout: pythonVersionString, failed: pythonVersionFailed } =
@@ -50,11 +50,4 @@ async function getPythonVersionString(): Promise<string> {
   } catch (error: any) {
     throw new LogError({ message: errorMessage, logFileMessage: error })
   }
-}
-
-export {
-  extractVersionForPath,
-  extractPythonVersionForSemver,
-  getPythonSiteString,
-  getPythonVersionString
 }
