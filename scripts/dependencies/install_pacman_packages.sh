@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pacman --sync --needed --yes base-devel openssl zlib xz git bash
+pacman --sync --needed --noconfirm base-devel openssl zlib xz git bash
