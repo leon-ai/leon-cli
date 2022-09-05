@@ -44,7 +44,7 @@ export const test1CreateBirth = async (
       const dockerResult = await execa('docker', [
         'image',
         'inspect',
-        'leonai/leon'
+        'leon-ai/leon'
       ])
       t.equal(dockerResult.exitCode, 0)
     }
