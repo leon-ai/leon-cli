@@ -12,7 +12,7 @@ import { pyenvWindows } from './Windows/PyenvWindows.js'
 import { pipenvWindows } from './Windows/PipenvWindows.js'
 import { isLinux, isMacOS, isWindows } from '../utils/operatingSystem.js'
 
-const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: Linux, macOS and Windows.`
+const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: GNU/Linux, macOS and Windows.`
 
 export interface ExecuteScriptOptions {
   loader: {
@@ -104,7 +104,7 @@ class Requirements {
 
   public async installPackages(): Promise<void> {
     let packageManager: string | null = null
-    const packageManagers = ['apk', 'apt', 'brew', 'pacman', 'yum']
+    const packageManagers = ['apk', 'apt', 'brew', 'dnf', 'pacman', 'yum']
     for (const manager of packageManagers) {
       if (await this.checkSoftware(manager)) {
         packageManager = manager

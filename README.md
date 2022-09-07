@@ -21,7 +21,7 @@ _<p align="center">The companion for your Leon journey.</p>_
 
 Meet the Leon CLI, **the new companion for your [Leon](https://getleon.ai/) journey**!
 
-With this CLI, you can **get Leon** (your open-source personal assistant) running on **Linux, macOS or Windows, in only 3 commands**.
+With this CLI, you can **get Leon** (your open-source personal assistant) running on **GNU/Linux, macOS or Windows, in only 3 commands**.
 
 More commands are coming to **improve your comfort** and make the use of Leon even smoother.
 
