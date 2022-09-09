@@ -43,12 +43,11 @@ export class Log {
     const { commandPath, error } = options
     const message = error instanceof Error ? error.message : 'Fatal'
     console.error(`${chalk.red('Error:')} ${message}`)
-    if (error instanceof LogError) {
-      const logFileMessage = error.logFileMessage ?? ''
+    if (error instanceof LogError && error.logFileMessage != null) {
       const dateString = `[${new Date().toString()}]`
       const commandString =
         commandPath != null ? `[${Leon.NAME} ${commandPath}]` : ''
-      const data = `${dateString} ${commandString} ${error.message}\n${logFileMessage}\n\n`
+      const data = `${dateString} ${commandString} ${error.message}\n${error.logFileMessage}\n\n`
       console.error(
         `For further information, look at the log file located at ${Log.errorsConfig.path}`
       )

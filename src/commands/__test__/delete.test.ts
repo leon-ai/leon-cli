@@ -70,11 +70,5 @@ await tap.test('leon delete', async (t) => {
       ),
       true
     )
-    t.equal(
-      consoleErrorSpy.calledWith(
-        `For further information, look at the log file located at ${Log.errorsConfig.path}`
-      ),
-      true
-    )
   })
 })

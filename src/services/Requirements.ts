@@ -12,8 +12,6 @@ import { PyenvWindows } from './Windows/PyenvWindows.js'
 import { PipenvWindows } from './Windows/PipenvWindows.js'
 import { isGNULinux, isMacOS, isWindows } from '../utils/operatingSystem.js'
 
-const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: GNU/Linux, macOS and Windows.`
-
 export interface ExecuteScriptOptions {
   loader: {
     message: string
@@ -27,6 +25,21 @@ export interface ExecuteScriptOptions {
  * Requirements Singleton Class.
  */
 export class Requirements {
+  static readonly PYTHON_VERSION = '3.9.10'
+  static readonly PIPENV_VERSION = '2020.11.15'
+  static readonly PACKAGE_MANAGERS = [
+    'apk',
+    'apt',
+    'brew',
+    'dnf',
+    'pacman',
+    'yum'
+  ]
+  static readonly UNSUPPORTED_PACKAGE_MANAGER_MESSAGE = `Your package manager is not supported.\nSupported: ${Requirements.PACKAGE_MANAGERS.join(
+    ', '
+  )}.`
+  static readonly UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: GNU/Linux, macOS and Windows.`
+
   private static instance: Requirements
 
   private constructor() {}
@@ -61,7 +74,7 @@ export class Requirements {
     try {
       const { stdout } = await execaCommand('python --version')
       const [, actualVersion] = stdout.split(' ')
-      return semver.eq(actualVersion, '3.9.10')
+      return semver.eq(actualVersion, Requirements.PYTHON_VERSION)
     } catch {
       return false
     }
@@ -71,7 +84,7 @@ export class Requirements {
     try {
       const { stdout } = await execaCommand('pipenv --version')
       const [, , actualVersion] = stdout.split(' ')
-      return this.checkVersion(actualVersion, '2020.11.15')
+      return this.checkVersion(actualVersion, Requirements.PIPENV_VERSION)
     } catch {
       return false
     }
@@ -80,7 +93,8 @@ export class Requirements {
   public async checkSoftware(software: string): Promise<boolean> {
     try {
       const { exitCode } = await execaCommand(`${software} --version`)
-      return exitCode === 0
+      const EXIT_CODE_SUCCESS = 0
+      return exitCode === EXIT_CODE_SUCCESS
     } catch {
       return false
     }
@@ -118,8 +132,7 @@ export class Requirements {
 
   public async installPackages(): Promise<void> {
     let packageManager: string | null = null
-    const packageManagers = ['apk', 'apt', 'brew', 'dnf', 'pacman', 'yum']
-    for (const manager of packageManagers) {
+    for (const manager of Requirements.PACKAGE_MANAGERS) {
       if (await this.checkSoftware(manager)) {
         packageManager = manager
         break
@@ -139,11 +152,8 @@ export class Requirements {
         }
       })
     } else {
-      const packageManagersString = packageManagers.join(', ')
-      const message = `Your package manager is not supported.\nSupported: ${packageManagersString}.`
       throw new LogError({
-        message,
-        logFileMessage: message
+        message: Requirements.UNSUPPORTED_PACKAGE_MANAGER_MESSAGE
       })
     }
   }
@@ -166,9 +176,10 @@ export class Requirements {
     const hasPipenv = await this.checkPipenv()
     const hasPyenv = await this.checkSoftware('pyenv')
     let shouldInstallPipenvAfterPython = true
+    const pythonVersionString = `Python v${Requirements.PYTHON_VERSION}`
     if (!hasPython) {
       if (
-        (interactive && (await prompt.shouldInstall('Python v3.9.10'))) ||
+        (interactive && (await prompt.shouldInstall(pythonVersionString))) ||
         !interactive
       ) {
         if (isGNULinux || isMacOS) {
@@ -187,8 +198,7 @@ export class Requirements {
           await pyenvWindows.install()
         } else {
           throw new LogError({
-            message: UNSUPPORTED_OS_MESSAGE,
-            logFileMessage: UNSUPPORTED_OS_MESSAGE
+            message: Requirements.UNSUPPORTED_OS_MESSAGE
           })
         }
       }
@@ -212,8 +222,7 @@ export class Requirements {
           await pipenvWindows.install()
         } else {
           throw new LogError({
-            message: UNSUPPORTED_OS_MESSAGE,
-            logFileMessage: UNSUPPORTED_OS_MESSAGE
+            message: Requirements.UNSUPPORTED_OS_MESSAGE
           })
         }
       }

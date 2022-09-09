@@ -11,6 +11,9 @@ import {
 } from '../../utils/pythonUtils.js'
 import { addToPathOnWindows } from '../../utils/pathUtils.js'
 
+/**
+ * PipenvWindows Singleton Class.
+ */
 export class PipenvWindows {
   private static instance: PipenvWindows
 

@@ -21,6 +21,9 @@ import {
 import { isExistingPath } from '../../utils/isExistingPath.js'
 import { Requirements } from '../Requirements.js'
 
+/**
+ * PyenvWindows Singleton Class.
+ */
 export class PyenvWindows {
   static NAME = 'pyenv-win'
   static GITHUB_URL = `https://github.com/${PyenvWindows.NAME}/${PyenvWindows.NAME}`

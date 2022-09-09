@@ -1,5 +1,8 @@
 import readline from 'node:readline'
 
+/**
+ * Prompt Singleton Class.
+ */
 export class Prompt {
   static readonly POSITIVE_ANSWERS = ['y', 'yes']
   static readonly NEGATIVE_ANSWERS = ['n', 'no']
