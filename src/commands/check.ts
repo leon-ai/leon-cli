@@ -1,7 +1,7 @@
 import { Command, Option } from 'clipanion'
 
 import { LeonInstance } from '../services/LeonInstance.js'
-import { log } from '../services/Log.js'
+import { Log } from '../services/Log.js'
 
 export class CheckCommand extends Command {
   static paths = [['check']]
@@ -24,6 +24,7 @@ export class CheckCommand extends Command {
       await leonInstance.check()
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'check'

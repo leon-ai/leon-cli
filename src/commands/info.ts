@@ -3,7 +3,7 @@ import chalk from 'chalk'
 
 import { config } from '../services/Config.js'
 import { LeonInstance } from '../services/LeonInstance.js'
-import { log } from '../services/Log.js'
+import { Log } from '../services/Log.js'
 
 export class InfoCommand extends Command {
   static paths = [['info']]
@@ -39,6 +39,7 @@ export class InfoCommand extends Command {
       }
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'info'

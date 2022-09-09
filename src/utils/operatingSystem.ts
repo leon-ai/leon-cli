@@ -1,3 +1,7 @@
-export const isLinux = process.platform === 'linux'
-export const isMacOS = process.platform === 'darwin'
-export const isWindows = process.platform === 'win32'
+import os from 'node:os'
+
+const operatingSystemType = os.type()
+
+export const isGNULinux = operatingSystemType === 'Linux'
+export const isMacOS = operatingSystemType === 'Darwin'
+export const isWindows = operatingSystemType === 'Windows_NT'

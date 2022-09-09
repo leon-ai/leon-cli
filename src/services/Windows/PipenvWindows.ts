@@ -11,7 +11,18 @@ import {
 } from '../../utils/pythonUtils.js'
 import { addToPathOnWindows } from '../../utils/pathUtils.js'
 
-class PipenvWindows {
+export class PipenvWindows {
+  private static instance: PipenvWindows
+
+  private constructor() {}
+
+  public static getInstance(): PipenvWindows {
+    if (PipenvWindows.instance == null) {
+      PipenvWindows.instance = new PipenvWindows()
+    }
+    return PipenvWindows.instance
+  }
+
   public async install(): Promise<void> {
     const pipenvLoader = ora('Installing pipenv').start()
     try {
@@ -49,5 +60,3 @@ class PipenvWindows {
     }
   }
 }
-
-export const pipenvWindows = new PipenvWindows()

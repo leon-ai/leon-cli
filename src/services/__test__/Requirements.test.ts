@@ -4,57 +4,58 @@ import path from 'node:path'
 import tap from 'tap'
 import mockedEnv from 'mocked-env'
 
-import { requirements } from '../Requirements.js'
+import { Requirements } from '../Requirements.js'
 
-await tap.test('services/Requirements - checkVersion', async (t) => {
-  await t.test('should return false when there is no match', async (t) => {
-    const requirement = '3.7.2'
-    const commandAnswer = 'this command does not exist'
-    t.equal(requirements.checkVersion(commandAnswer, requirement), false)
-    const commandAnswer2 = 'python version is 3.2.0'
-    t.equal(requirements.checkVersion(commandAnswer2, requirement), false)
+const requirements = Requirements.getInstance()
+
+await tap.test('services/Requirements', async (t) => {
+  await t.test('checkVersion', async (t) => {
+    await t.test('should return false when there is no match', async (t) => {
+      const requirement = '3.7.2'
+      const commandAnswer = 'this command does not exist'
+      t.equal(requirements.checkVersion(commandAnswer, requirement), false)
+      const commandAnswer2 = 'python version is 3.2.0'
+      t.equal(requirements.checkVersion(commandAnswer2, requirement), false)
+    })
+
+    await t.test(
+      'should return false when requirement is wrongly typed',
+      async (t) => {
+        const requirement = 'wrong requirement'
+        const commandAnswer = '3.7.2'
+        t.equal(requirements.checkVersion(commandAnswer, requirement), false)
+      }
+    )
+
+    await t.test(
+      'should return true when the version is higher or equal than the requirement',
+      async (t) => {
+        const requirement = '3.0.0'
+        const commandAnswer = '3.7.2'
+        t.equal(requirements.checkVersion(commandAnswer, requirement), true)
+        const requirement2 = '3.7.2'
+        t.equal(requirements.checkVersion(commandAnswer, requirement2), true)
+      }
+    )
+
+    await t.test(
+      'should return false when the version is less than the requirement',
+      async (t) => {
+        const requirement = '3.9.10'
+        const commandAnswer = '3.9.7'
+        t.equal(requirements.checkVersion(commandAnswer, requirement), false)
+      }
+    )
   })
 
-  await t.test(
-    'should return false when requirement is wrongly typed',
-    async (t) => {
-      const requirement = 'wrong requirement'
-      const commandAnswer = '3.7.2'
-      t.equal(requirements.checkVersion(commandAnswer, requirement), false)
-    }
-  )
-
-  await t.test(
-    'should return true when the version is higher or equal than the requirement',
-    async (t) => {
-      const requirement = '3.0.0'
-      const commandAnswer = '3.7.2'
-      t.equal(requirements.checkVersion(commandAnswer, requirement), true)
-      const requirement2 = '3.7.2'
-      t.equal(requirements.checkVersion(commandAnswer, requirement2), true)
-    }
-  )
-
-  await t.test(
-    'should return false when the version is less than the requirement',
-    async (t) => {
-      const requirement = '3.9.10'
-      const commandAnswer = '3.9.7'
-      t.equal(requirements.checkVersion(commandAnswer, requirement), false)
-    }
-  )
-})
-
-await tap.test('services/Requirements - checkPython', async (t) => {
-  await t.test('should return a boolean', async () => {
-    const result = await requirements.checkPython()
-    t.type(result, 'boolean')
+  await t.test('checkPython', async (t) => {
+    await t.test('should return a boolean', async () => {
+      const result = await requirements.checkPython()
+      t.type(result, 'boolean')
+    })
   })
-})
 
-await tap.test(
-  'services/Requirements - checkEnvironmentVariable',
-  async (t) => {
+  await t.test('checkEnvironmentVariable', async (t) => {
     await t.test(
       'should return false because the environment variable is not set',
       async (t) => {
@@ -106,5 +107,5 @@ await tap.test(
         restore()
       }
     )
-  }
-)
+  })
+})

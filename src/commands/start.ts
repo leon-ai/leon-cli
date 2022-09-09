@@ -2,7 +2,7 @@ import * as typanion from 'typanion'
 import { Command, Option } from 'clipanion'
 
 import { LeonInstance } from '../services/LeonInstance.js'
-import { log } from '../services/Log.js'
+import { Log } from '../services/Log.js'
 
 export class StartCommand extends Command {
   static paths = [['start']]
@@ -30,6 +30,7 @@ export class StartCommand extends Command {
       await leonInstance.start(this.port)
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'start'

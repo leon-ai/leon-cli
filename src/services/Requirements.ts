@@ -7,10 +7,10 @@ import ora from 'ora'
 
 import { LogError } from '../utils/LogError.js'
 import { sudoExec } from '../utils/sudoExec.js'
-import { prompt } from './Prompt.js'
-import { pyenvWindows } from './Windows/PyenvWindows.js'
-import { pipenvWindows } from './Windows/PipenvWindows.js'
-import { isLinux, isMacOS, isWindows } from '../utils/operatingSystem.js'
+import { Prompt } from './Prompt.js'
+import { PyenvWindows } from './Windows/PyenvWindows.js'
+import { PipenvWindows } from './Windows/PipenvWindows.js'
+import { isGNULinux, isMacOS, isWindows } from '../utils/operatingSystem.js'
 
 const UNSUPPORTED_OS_MESSAGE = `Your OS (Operating System) is not supported.\nSupported OSes: GNU/Linux, macOS and Windows.`
 
@@ -23,7 +23,21 @@ export interface ExecuteScriptOptions {
   sudo?: boolean
 }
 
-class Requirements {
+/**
+ * Requirements Singleton Class.
+ */
+export class Requirements {
+  private static instance: Requirements
+
+  private constructor() {}
+
+  public static getInstance(): Requirements {
+    if (Requirements.instance == null) {
+      Requirements.instance = new Requirements()
+    }
+    return Requirements.instance
+  }
+
   public checkIfEnvironmentVariableContains(
     variable: string,
     content: string
@@ -147,16 +161,17 @@ class Requirements {
   }
 
   public async install(interactive: boolean): Promise<void> {
+    const prompt = Prompt.getInstance()
     const hasPython = await this.checkPython()
     const hasPipenv = await this.checkPipenv()
-    const hasPyenv = await requirements.checkSoftware('pyenv')
+    const hasPyenv = await this.checkSoftware('pyenv')
     let shouldInstallPipenvAfterPython = true
     if (!hasPython) {
       if (
         (interactive && (await prompt.shouldInstall('Python v3.9.10'))) ||
         !interactive
       ) {
-        if (isLinux || isMacOS) {
+        if (isGNULinux || isMacOS) {
           if (hasPyenv) {
             await this.installPythonOnUnix(
               'install_python_pipenv_with_pyenv.sh'
@@ -168,6 +183,7 @@ class Requirements {
             shouldInstallPipenvAfterPython = false
           }
         } else if (isWindows) {
+          const pyenvWindows = PyenvWindows.getInstance()
           await pyenvWindows.install()
         } else {
           throw new LogError({
@@ -186,12 +202,13 @@ class Requirements {
           message: 'Installing Pipenv',
           stderr: 'Failed to install Pipenv'
         }
-        if (isLinux || isMacOS) {
+        if (isGNULinux || isMacOS) {
           await this.executeScript({
             scriptCommand: ['install_pipenv.sh'],
             loader
           })
         } else if (isWindows) {
+          const pipenvWindows = PipenvWindows.getInstance()
           await pipenvWindows.install()
         } else {
           throw new LogError({
@@ -203,5 +220,3 @@ class Requirements {
     }
   }
 }
-
-export const requirements = new Requirements()

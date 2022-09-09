@@ -2,8 +2,8 @@ import { Command, Option } from 'clipanion'
 import chalk from 'chalk'
 
 import { Leon } from '../../services/Leon.js'
-import { log } from '../../services/Log.js'
-import { isLinux, isMacOS } from '../../utils/operatingSystem.js'
+import { Log } from '../../services/Log.js'
+import { isGNULinux, isMacOS } from '../../utils/operatingSystem.js'
 
 export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
@@ -55,7 +55,7 @@ export class CreateBirthCommand extends Command {
       await leon.createBirth()
       console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)
       console.log('You can start your leon instance:')
-      if (isLinux || isMacOS) {
+      if (isGNULinux || isMacOS) {
         console.log(`${chalk.cyan('exec $SHELL')}`)
       } else {
         console.log(`First, restart your command prompt.`)
@@ -63,6 +63,7 @@ export class CreateBirthCommand extends Command {
       console.log(`${chalk.cyan('leon start')}`)
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'create birth'

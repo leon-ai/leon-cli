@@ -2,7 +2,7 @@ import { Command, Option } from 'clipanion'
 import { execaCommand } from 'execa'
 
 import { LeonInstance } from '../services/LeonInstance.js'
-import { log } from '../services/Log.js'
+import { Log } from '../services/Log.js'
 import { CheckCommand } from './check.js'
 import { StartCommand } from './start.js'
 
@@ -46,6 +46,7 @@ export class RunCommand extends Command {
       await execaCommand(command, { stdio: 'inherit' })
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'run'

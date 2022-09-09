@@ -1,10 +1,25 @@
 import readline from 'node:readline'
 
-export const positiveAnswers = ['y', 'yes']
-export const negativeAnswers = ['n', 'no']
-export const acceptedAnswers = [...positiveAnswers, ...negativeAnswers, '']
-
 export class Prompt {
+  static readonly POSITIVE_ANSWERS = ['y', 'yes']
+  static readonly NEGATIVE_ANSWERS = ['n', 'no']
+  static readonly ACCEPTED_ANSWERS = [
+    ...Prompt.POSITIVE_ANSWERS,
+    ...Prompt.NEGATIVE_ANSWERS,
+    ''
+  ]
+
+  private static instance: Prompt
+
+  private constructor() {}
+
+  public static getInstance(): Prompt {
+    if (Prompt.instance == null) {
+      Prompt.instance = new Prompt()
+    }
+    return Prompt.instance
+  }
+
   public async shouldExecute(
     message: string,
     defaultValue: 'yes' | 'no'
@@ -19,11 +34,12 @@ export class Prompt {
           `${message} ${defaultValue === 'yes' ? '(Y/n)' : '(y/N)'} `,
           (answer: string) => {
             const cleanedAnswer = answer.toLowerCase().trim()
-            const isAcceptedAnswer = acceptedAnswers.includes(cleanedAnswer)
+            const isAcceptedAnswer =
+              Prompt.ACCEPTED_ANSWERS.includes(cleanedAnswer)
             if (isAcceptedAnswer) {
               readlineInterface.close()
               const isUserAccepting =
-                positiveAnswers.includes(cleanedAnswer) ||
+                Prompt.POSITIVE_ANSWERS.includes(cleanedAnswer) ||
                 (defaultValue === 'yes' && cleanedAnswer === '')
               resolve(isUserAccepting)
             } else {
@@ -46,5 +62,3 @@ export class Prompt {
     )
   }
 }
-
-export const prompt = new Prompt()

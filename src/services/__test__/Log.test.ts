@@ -5,10 +5,11 @@ import sinon from 'sinon'
 import fsMock from 'mock-fs'
 
 import { LogError } from '../../utils/LogError.js'
-import { Log, log } from '../Log.js'
+import { Log } from '../Log.js'
 
 await tap.test('services/Log', async (t) => {
   const message = 'Error occured'
+  const log = Log.getInstance()
 
   t.afterEach(() => {
     fsMock.restore()

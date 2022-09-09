@@ -1,19 +1,24 @@
 import tap from 'tap'
 
-import { acceptedAnswers } from '../Prompt.js'
+import { Prompt } from '../Prompt.js'
 
 await tap.test('services/Prompt', async (t) => {
-  await t.test('should accept yes, y, no, n as answers', async (t) => {
+  await t.test('should accept valid answers', async (t) => {
     const acceptableAnswers = ['y', 'Y', 'yes', 'Yes', 'n', 'N', 'No', 'no', '']
-    const wrongAnswers = ['Nope', 'Yay', 'Agreed', 'Anything you can imagine']
-    for (const answer of acceptedAnswers) {
+    for (const answer of acceptableAnswers) {
       t.equal(
-        acceptableAnswers.includes(answer.toLowerCase()),
+        Prompt.ACCEPTED_ANSWERS.includes(answer.toLowerCase()),
         true,
         `${answer} is accepted`
       )
+    }
+  })
+
+  await t.test('should disallow invalid answers', async (t) => {
+    const wrongAnswers = ['Nope', 'Yay', 'Agreed', 'Anything you can imagine']
+    for (const answer of wrongAnswers) {
       t.equal(
-        wrongAnswers.includes(answer.toLowerCase()),
+        Prompt.ACCEPTED_ANSWERS.includes(answer.toLowerCase()),
         false,
         `${answer} is not accepted`
       )

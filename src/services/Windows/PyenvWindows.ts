@@ -19,15 +19,26 @@ import {
   getWindowsUserPath
 } from '../../utils/pathUtils.js'
 import { isExistingPath } from '../../utils/isExistingPath.js'
-import { requirements } from '../Requirements.js'
+import { Requirements } from '../Requirements.js'
 
-class PyenvWindows {
+export class PyenvWindows {
   static NAME = 'pyenv-win'
   static GITHUB_URL = `https://github.com/${PyenvWindows.NAME}/${PyenvWindows.NAME}`
   static PYENV_PATH = path.join(os.homedir(), '.pyenv')
   static PYENV_WIN_PATH = `${PyenvWindows.PYENV_PATH}\\${PyenvWindows.NAME}\\`
   static PYENV_WIN_PATH_VALUE = `${PyenvWindows.PYENV_WIN_PATH}\\bin;${PyenvWindows.PYENV_WIN_PATH}\\shims`
   static PYTHON_VERSION = '3.9.10'
+
+  private static instance: PyenvWindows
+
+  private constructor() {}
+
+  public static getInstance(): PyenvWindows {
+    if (PyenvWindows.instance == null) {
+      PyenvWindows.instance = new PyenvWindows()
+    }
+    return PyenvWindows.instance
+  }
 
   private async installPython(): Promise<void> {
     const pythonLoader = ora(
@@ -107,6 +118,7 @@ class PyenvWindows {
   }
 
   public async install(): Promise<void> {
+    const requirements = Requirements.getInstance()
     const hasPyenv =
       (await isExistingPath(PyenvWindows.PYENV_PATH)) ||
       (await requirements.checkSoftware('pyenv'))
@@ -117,5 +129,3 @@ class PyenvWindows {
     await this.installPython()
   }
 }
-
-export const pyenvWindows = new PyenvWindows()

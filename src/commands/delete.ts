@@ -1,8 +1,8 @@
 import { Command, Option } from 'clipanion'
 
 import { LeonInstance } from '../services/LeonInstance.js'
-import { log } from '../services/Log.js'
-import { prompt } from '../services/Prompt.js'
+import { Log } from '../services/Log.js'
+import { Prompt } from '../services/Prompt.js'
 
 export class DeleteCommand extends Command {
   static paths = [['delete']]
@@ -26,6 +26,7 @@ export class DeleteCommand extends Command {
       console.log(
         `You are about to delete Leon instance "${leonInstance.name}".`
       )
+      const prompt = Prompt.getInstance()
       if (yes || (await prompt.shouldExecute('Are you sure?', 'no'))) {
         await leonInstance.delete()
         console.log(`Leon instance "${leonInstance.name}" deleted.`)
@@ -34,6 +35,7 @@ export class DeleteCommand extends Command {
       }
       return 0
     } catch (error) {
+      const log = Log.getInstance()
       log.error({
         error,
         commandPath: 'delete'

@@ -17,7 +17,7 @@ import { isExistingPath } from '../utils/isExistingPath.js'
 import { LeonInstance } from './LeonInstance.js'
 import { LogError } from '../utils/LogError.js'
 import { copyDirectory } from '../utils/copyDirectory.js'
-import { requirements } from './Requirements.js'
+import { Requirements } from './Requirements.js'
 import { config } from './Config.js'
 
 export interface LeonOptions {
@@ -85,6 +85,7 @@ export class Leon implements LeonOptions {
   }
 
   public async getSourceCode(): Promise<string> {
+    const requirements = Requirements.getInstance()
     const loader = ora(`Downloading Leon source code`).start()
     try {
       await createTemporaryEmptyFolder()
@@ -140,6 +141,7 @@ export class Leon implements LeonOptions {
   }
 
   public async createBirth(): Promise<void> {
+    const requirements = Requirements.getInstance()
     let cwdIsLeonCore = false
     const cwdPath = process.cwd()
     const cwdPackageJSONPath = path.join(cwdPath, 'package.json')

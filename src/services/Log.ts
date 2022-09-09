@@ -10,7 +10,21 @@ interface LogErrorOptions {
   error: unknown
 }
 
+/**
+ * Log Singleton Class.
+ */
 export class Log {
+  private static instance: Log
+
+  private constructor() {}
+
+  public static getInstance(): Log {
+    if (Log.instance == null) {
+      Log.instance = new Log()
+    }
+    return Log.instance
+  }
+
   static errorsConfig = new Conf({
     configName: 'log-errors',
     projectSuffix: '',
@@ -45,5 +59,3 @@ export class Log {
     }
   }
 }
-
-export const log = new Log()
