@@ -38,6 +38,7 @@ export interface LeonInstanceOptions extends CreateOptions {
 
 export class LeonInstance implements LeonInstanceOptions {
   static readonly INVALID_VERSION = '0.0.0'
+  static readonly DEFAULT_START_PORT = 1337
 
   public name: string
   public path: string
@@ -84,7 +85,8 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async start(port?: number): Promise<void> {
     process.chdir(this.path)
-    const LEON_PORT = port?.toString() ?? '1337'
+    const LEON_PORT_STRING = port ?? LeonInstance.DEFAULT_START_PORT
+    const LEON_PORT = LEON_PORT_STRING.toString()
     this.incrementStartCount()
     if (this.mode === 'docker') {
       return await this.startDocker(LEON_PORT)
@@ -160,24 +162,35 @@ export class LeonInstance implements LeonInstanceOptions {
       return instance.name === name
     })
     if (instance != null) {
-      return new LeonInstance(instance)
+      const leonInstance = new LeonInstance(instance)
+      if (await isExistingPath(instance.path)) {
+        return leonInstance
+      }
+      await leonInstance.delete()
+      return null
     }
     return null
   }
 
   static async get(name?: string): Promise<LeonInstance> {
+    let instanceName = name ?? 'default'
+    const logErrorAtLeastOneInstance = new LogError({
+      message: 'You should have at least one instance.'
+    })
     if (name == null) {
       const instances = config.get('instances', [])
       const isEmptyInstances = instances.length === 0
       if (isEmptyInstances) {
-        throw new LogError({
-          message: 'You should have at least one instance.'
-        })
+        throw logErrorAtLeastOneInstance
       }
-      return new LeonInstance(instances[0])
+      const firstInstance = instances[0]
+      instanceName = firstInstance.name
     }
-    const leonInstance = await LeonInstance.find(name)
+    const leonInstance = await LeonInstance.find(instanceName)
     if (leonInstance == null) {
+      if (name == null) {
+        throw logErrorAtLeastOneInstance
+      }
       throw new LogError({
         message: "This instance doesn't exists, please provider another name."
       })
@@ -243,7 +256,7 @@ export class LeonInstance implements LeonInstanceOptions {
   public async update(leon: Leon): Promise<void> {
     const currentVersion = await this.getVersion()
     const sourceCodePath = await leon.getSourceCode()
-    const sourceCodeVersion = await LeonInstance.getVersion(sourceCodePath)
+    const sourceCodeVersion = await this.getVersion()
     if (currentVersion !== sourceCodeVersion || leon.useDevelopGitBranch) {
       await fs.promises.rm(this.path, {
         force: true,
@@ -254,12 +267,12 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  public static async getVersion(sourceCodePath: string): Promise<string> {
-    const packageJsonPath = path.join(sourceCodePath, 'package.json')
+  public async getVersion(): Promise<string> {
+    const packageJsonPath = path.join(this.path, 'package.json')
     let version = LeonInstance.INVALID_VERSION
     if (await isExistingPath(packageJsonPath)) {
       const packageJSON = await readPackage({
-        cwd: sourceCodePath,
+        cwd: this.path,
         normalize: false
       })
       version = packageJSON.version ?? LeonInstance.INVALID_VERSION
@@ -267,22 +280,16 @@ export class LeonInstance implements LeonInstanceOptions {
     return version
   }
 
-  public async getVersion(): Promise<string> {
-    return await LeonInstance.getVersion(this.path)
-  }
-
-  public async logInfo(): Promise<void> {
+  public async info(): Promise<string> {
     const birthDay = new Date(this.birthDate)
     const birthDayString = date.format(birthDay, 'DD/MM/YYYY - HH:mm:ss')
     const version = await this.getVersion()
-    console.log(
-      table([
-        [chalk.bold('Name'), this.name],
-        [chalk.bold('Path'), this.path],
-        [chalk.bold('Mode'), this.mode],
-        [chalk.bold('Birth date'), birthDayString],
-        [chalk.bold('Version'), version]
-      ])
-    )
+    return table([
+      [chalk.bold('Name'), this.name],
+      [chalk.bold('Path'), this.path],
+      [chalk.bold('Mode'), this.mode],
+      [chalk.bold('Birth date'), birthDayString],
+      [chalk.bold('Version'), version]
+    ])
   }
 }

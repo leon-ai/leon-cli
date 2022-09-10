@@ -16,24 +16,36 @@ export class InfoCommand extends Command {
     description: 'Name of the Leon instance.'
   })
 
+  public static logNoInstancesFound(): void {
+    console.log(chalk.bold('No Leon instances found.'))
+    console.log('You can give birth to a Leon instance using:')
+    console.log(chalk.cyan('leon create birth'))
+  }
+
   async execute(): Promise<number> {
     try {
       if (this.name != null) {
         console.log()
         const leonInstance = await LeonInstance.get(this.name)
-        await leonInstance.logInfo()
+        console.log(await leonInstance.info())
       } else {
         const instances = config.get('instances', [])
         if (instances.length === 0) {
-          console.log(chalk.bold('No Leon instances found.'))
-          console.log('You can give birth to a Leon instance using:')
-          console.log(chalk.cyan('leon create birth'))
+          InfoCommand.logNoInstancesFound()
         } else {
-          console.log(chalk.cyan('\nLeon instances:\n'))
+          let infoResult = ''
           for (const instance of instances) {
-            const leonInstance = new LeonInstance(instance)
-            await leonInstance.logInfo()
-            console.log('------------------------------\n')
+            const leonInstance = await LeonInstance.find(instance.name)
+            if (leonInstance != null) {
+              infoResult += (await leonInstance.info()) + '\n'
+              infoResult += '------------------------------\n\n'
+            }
+          }
+          if (infoResult.length === 0) {
+            InfoCommand.logNoInstancesFound()
+          } else {
+            console.log(chalk.cyan('\nLeon instances:\n'))
+            console.log(infoResult)
           }
         }
       }
