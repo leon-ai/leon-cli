@@ -35,7 +35,7 @@ export class RunCommand extends Command {
     try {
       const script = this.script.join(' ')
       const command = 'npm run ' + script
-      const leonInstance = LeonInstance.get(this.name)
+      const leonInstance = await LeonInstance.get(this.name)
       const isBuiltin = BUILTIN_COMMANDS_KEYS.includes(script)
       if (isBuiltin) {
         const runCommand = BUILTIN_COMMANDS[script]

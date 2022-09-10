@@ -30,7 +30,7 @@ export class UpdateCommand extends Command {
 
   async execute(): Promise<number> {
     try {
-      const leonInstance = LeonInstance.get(this.name)
+      const leonInstance = await LeonInstance.get(this.name)
       const leon = new Leon({
         useDevelopGitBranch: this.useDevelopGitBranch,
         birthPath: leonInstance.path,

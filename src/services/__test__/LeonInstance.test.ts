@@ -32,13 +32,13 @@ await tap.test('services/LeonInstance', async (t) => {
     })
 
     await t.test('should find the instance with its name', async (t) => {
-      const instance = LeonInstance.find(leonInstance.name)
+      const instance = await LeonInstance.find(leonInstance.name)
       t.not(instance, undefined)
       t.equal(instance?.name, leonInstance.name)
     })
 
     await t.test('should not find the instance with wrong name', async (t) => {
-      const instance = LeonInstance.find('wrong name')
+      const instance = await LeonInstance.find('wrong name')
       t.equal(instance, null)
     })
   })
@@ -52,8 +52,8 @@ await tap.test('services/LeonInstance', async (t) => {
       fsMock({
         [config.path]: ''
       })
-      t.throws(() => {
-        return LeonInstance.get()
+      await t.rejects(async () => {
+        return await LeonInstance.get()
       })
     })
 
@@ -63,7 +63,7 @@ await tap.test('services/LeonInstance', async (t) => {
         fsMock({
           [config.path]: JSON.stringify(configData)
         })
-        const instance = LeonInstance.get()
+        const instance = await LeonInstance.get()
         t.equal(instance.name, leonInstance.name)
       }
     )
@@ -74,8 +74,8 @@ await tap.test('services/LeonInstance', async (t) => {
         fsMock({
           [config.path]: JSON.stringify(configData)
         })
-        t.throws(() => {
-          return LeonInstance.get('wrong name')
+        await t.rejects(async () => {
+          return await LeonInstance.get('wrong name')
         })
       }
     )
@@ -86,7 +86,7 @@ await tap.test('services/LeonInstance', async (t) => {
         fsMock({
           [config.path]: JSON.stringify(configData)
         })
-        const instance = LeonInstance.get(leonInstance.name)
+        const instance = await LeonInstance.get(leonInstance.name)
         t.equal(instance.name, leonInstance.name)
       }
     )

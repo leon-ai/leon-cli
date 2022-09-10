@@ -13,6 +13,24 @@ import type { LeonInstanceOptions } from '../../services/LeonInstance.js'
 import { LeonInstance } from '../../services/LeonInstance.js'
 import { Log } from '../../services/Log.js'
 
+const leonInstanceOptions: LeonInstanceOptions = {
+  name: 'random-name',
+  birthDate: '2022-02-20T10:11:33.315Z',
+  mode: 'docker',
+  path: '/path',
+  startCount: 0
+}
+
+const leonInstance = new LeonInstance(leonInstanceOptions)
+const configData: ConfigData = {
+  instances: [leonInstance]
+}
+const version = '1.0.0'
+const birthDayString = date.format(
+  new Date(leonInstance.birthDate),
+  'DD/MM/YYYY - HH:mm:ss'
+)
+
 await tap.test('leon info', async (t) => {
   t.afterEach(() => {
     fsMock.restore()
@@ -29,22 +47,6 @@ await tap.test('leon info', async (t) => {
     async (t) => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
-      const leonInstanceOptions: LeonInstanceOptions = {
-        name: 'random-name',
-        birthDate: '2022-02-20T10:11:33.315Z',
-        mode: 'docker',
-        path: '/path',
-        startCount: 0
-      }
-      const leonInstance = new LeonInstance(leonInstanceOptions)
-      const configData: ConfigData = {
-        instances: [leonInstance]
-      }
-      const version = '1.0.0'
-      const birthDayString = date.format(
-        new Date(leonInstance.birthDate),
-        'DD/MM/YYYY - HH:mm:ss'
-      )
       fsMock({
         [config.path]: JSON.stringify(configData),
         [leonInstance.path]: {
@@ -71,7 +73,7 @@ await tap.test('leon info', async (t) => {
   )
 
   await t.test(
-    'should succeeds and advise the user to create a instance',
+    'should succeeds and advise the user to create an instance',
     async (t) => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
@@ -92,6 +94,34 @@ await tap.test('leon info', async (t) => {
         true
       )
       t.equal(consoleLogSpy.calledWith(chalk.cyan('leon create birth')), true)
+    }
+  )
+
+  await t.test(
+    'should succeeds even with `package.json` of the instance not found',
+    async (t) => {
+      sinon.stub(console, 'log').value(() => {})
+      const consoleLogSpy = sinon.spy(console, 'log')
+      fsMock({
+        [config.path]: JSON.stringify(configData),
+        [leonInstance.path]: {}
+      })
+      const command = cli.process(['info'])
+      const exitCode = await command.execute()
+      t.equal(exitCode, 0)
+      t.equal(consoleLogSpy.calledWith(chalk.cyan('\nLeon instances:\n')), true)
+      t.equal(
+        consoleLogSpy.calledWith(
+          table([
+            [chalk.bold('Name'), leonInstance.name],
+            [chalk.bold('Path'), `${leonInstance.path}`],
+            [chalk.bold('Mode'), leonInstance.mode],
+            [chalk.bold('Birth date'), birthDayString],
+            [chalk.bold('Version'), '0.0.0']
+          ])
+        ),
+        true
+      )
     }
   )
 

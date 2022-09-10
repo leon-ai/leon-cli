@@ -184,7 +184,7 @@ export class Leon implements LeonOptions {
       const sourceCodePath = await this.getSourceCode()
       await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
     }
-    const leonInstance = LeonInstance.create({
+    const leonInstance = await LeonInstance.create({
       name: this.name,
       path: this.birthPath,
       mode

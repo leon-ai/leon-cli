@@ -5,7 +5,7 @@ import { LeonInstance } from '../../services/LeonInstance.js'
 
 export const test2Update = async (): Promise<void> => {
   await tap.test('leon update', async (t) => {
-    const leonInstance = LeonInstance.get()
+    const leonInstance = await LeonInstance.get()
     let oldVersion = await leonInstance.getVersion()
     const leonUpdateWithSameVersion = await execa('leon', ['update'])
     let newVersion = await leonInstance.getVersion()

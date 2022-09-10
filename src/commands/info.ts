@@ -20,7 +20,7 @@ export class InfoCommand extends Command {
     try {
       if (this.name != null) {
         console.log()
-        const leonInstance = LeonInstance.get(this.name)
+        const leonInstance = await LeonInstance.get(this.name)
         await leonInstance.logInfo()
       } else {
         const instances = config.get('instances', [])

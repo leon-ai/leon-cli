@@ -22,7 +22,7 @@ export class DeleteCommand extends Command {
   async execute(): Promise<number> {
     try {
       const { yes = false } = this
-      const leonInstance = LeonInstance.get(this.name)
+      const leonInstance = await LeonInstance.get(this.name)
       console.log(
         `You are about to delete Leon instance "${leonInstance.name}".`
       )

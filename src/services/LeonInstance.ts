@@ -37,6 +37,8 @@ export interface LeonInstanceOptions extends CreateOptions {
 }
 
 export class LeonInstance implements LeonInstanceOptions {
+  static readonly INVALID_VERSION = '0.0.0'
+
   public name: string
   public path: string
   public mode: InstanceType
@@ -152,7 +154,7 @@ export class LeonInstance implements LeonInstanceOptions {
     })
   }
 
-  static find(name: string): LeonInstance | null {
+  static async find(name: string): Promise<LeonInstance | null> {
     const instances = config.get('instances', [])
     const instance = instances.find((instance) => {
       return instance.name === name
@@ -163,7 +165,7 @@ export class LeonInstance implements LeonInstanceOptions {
     return null
   }
 
-  static get(name?: string): LeonInstance {
+  static async get(name?: string): Promise<LeonInstance> {
     if (name == null) {
       const instances = config.get('instances', [])
       const isEmptyInstances = instances.length === 0
@@ -174,7 +176,7 @@ export class LeonInstance implements LeonInstanceOptions {
       }
       return new LeonInstance(instances[0])
     }
-    const leonInstance = LeonInstance.find(name)
+    const leonInstance = await LeonInstance.find(name)
     if (leonInstance == null) {
       throw new LogError({
         message: "This instance doesn't exists, please provider another name."
@@ -210,8 +212,8 @@ export class LeonInstance implements LeonInstanceOptions {
     }
   }
 
-  static create(options: CreateOptions): LeonInstance {
-    let leonInstance = LeonInstance.find(options.name)
+  static async create(options: CreateOptions): Promise<LeonInstance> {
+    let leonInstance = await LeonInstance.find(options.name)
     if (leonInstance != null) {
       throw new LogError({
         message: 'This instance name already exists, please choose another name'
@@ -253,11 +255,16 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public static async getVersion(sourceCodePath: string): Promise<string> {
-    const packageJSON = await readPackage({
-      cwd: sourceCodePath,
-      normalize: false
-    })
-    return packageJSON.version ?? '0.0.0'
+    const packageJsonPath = path.join(sourceCodePath, 'package.json')
+    let version = LeonInstance.INVALID_VERSION
+    if (await isExistingPath(packageJsonPath)) {
+      const packageJSON = await readPackage({
+        cwd: sourceCodePath,
+        normalize: false
+      })
+      version = packageJSON.version ?? LeonInstance.INVALID_VERSION
+    }
+    return version
   }
 
   public async getVersion(): Promise<string> {
