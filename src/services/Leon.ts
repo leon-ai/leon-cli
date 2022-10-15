@@ -2,6 +2,7 @@ import path from 'node:path'
 import os from 'node:os'
 import fs from 'node:fs'
 import crypto from 'node:crypto'
+import stream from 'node:stream'
 
 import axios from 'axios'
 import ora from 'ora'
@@ -123,12 +124,12 @@ export class Leon implements LeonOptions {
       TEMPORARY_PATH,
       sourceCodeInformation.folderName
     )
+    const sourceCodeWriter = fs.createWriteStream(destination)
     const { data } = await axios.get(sourceCodeInformation.url, {
-      responseType: 'arraybuffer'
+      responseType: 'stream'
     })
-    await fs.promises.writeFile(destination, Buffer.from(data), {
-      encoding: 'binary'
-    })
+    data.pipe(sourceCodeWriter)
+    await stream.promises.finished(sourceCodeWriter)
     await extractZip(destination, { dir: TEMPORARY_PATH })
     return extractedPath
   }
@@ -141,7 +142,6 @@ export class Leon implements LeonOptions {
   }
 
   public async createBirth(): Promise<void> {
-    const requirements = Requirements.getInstance()
     let cwdIsLeonCore = false
     const cwdPath = process.cwd()
     const cwdPackageJSONPath = path.join(cwdPath, 'package.json')
@@ -177,9 +177,6 @@ export class Leon implements LeonOptions {
       })
     }
     const mode = this.useDocker ? 'docker' : 'classic'
-    if (mode === 'classic') {
-      await requirements.install(this.interactive)
-    }
     if (!cwdIsLeonCore) {
       const sourceCodePath = await this.getSourceCode()
       await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
