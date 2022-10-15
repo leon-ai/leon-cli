@@ -1,3 +1,6 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
 import tap from 'tap'
 import { execa } from 'execa'
 
@@ -6,6 +9,10 @@ import { LeonInstance } from '../../services/LeonInstance.js'
 export const test2Update = async (): Promise<void> => {
   await tap.test('leon update', async (t) => {
     const leonInstance = await LeonInstance.get()
+    await fs.promises.rm(path.join(leonInstance.path, '.env'), {
+      recursive: true,
+      force: true
+    })
     let oldVersion = await leonInstance.getVersion()
     const leonUpdateWithSameVersion = await execa('leon', ['update'])
     let newVersion = await leonInstance.getVersion()

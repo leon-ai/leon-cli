@@ -136,13 +136,16 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async install(): Promise<void> {
     await this.runScript({
-      command: 'npm install',
+      command: 'npm install --ignore-scripts=true',
       workingDirectory: this.path,
       loader: {
         message: 'Installing npm dependencies',
         stderr: 'Could not install the npm dependencies'
       }
     })
+    process.chdir(this.path)
+    const command = 'npm run postinstall'
+    await execaCommand(command, { stdio: 'inherit' })
   }
 
   static async find(name: string): Promise<LeonInstance | null> {
