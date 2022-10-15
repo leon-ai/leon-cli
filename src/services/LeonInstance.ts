@@ -33,7 +33,6 @@ export interface CreateOptions {
 
 export interface LeonInstanceOptions extends CreateOptions {
   birthDate: string
-  startCount: number
 }
 
 export class LeonInstance implements LeonInstanceOptions {
@@ -44,15 +43,13 @@ export class LeonInstance implements LeonInstanceOptions {
   public path: string
   public mode: InstanceType
   public birthDate: string
-  public startCount: number
 
   public constructor(options: LeonInstanceOptions) {
-    const { name, path, mode, birthDate, startCount } = options
+    const { name, path, mode, birthDate } = options
     this.name = name
     this.path = path
     this.mode = mode
     this.birthDate = birthDate
-    this.startCount = startCount
   }
 
   public async startDocker(LEON_PORT: string): Promise<void> {
@@ -68,13 +65,6 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async startClassic(LEON_PORT: string): Promise<void> {
-    if (this.startCount === 1) {
-      const dotenvPath = path.join(this.path, '.env')
-      if (await isExistingPath(dotenvPath)) {
-        await fs.promises.rm(dotenvPath)
-      }
-      await this.install()
-    }
     await execaCommand('npm start', {
       env: {
         LEON_PORT
@@ -87,7 +77,6 @@ export class LeonInstance implements LeonInstanceOptions {
     process.chdir(this.path)
     const LEON_PORT_STRING = port ?? LeonInstance.DEFAULT_START_PORT
     const LEON_PORT = LEON_PORT_STRING.toString()
-    this.incrementStartCount()
     if (this.mode === 'docker') {
       return await this.startDocker(LEON_PORT)
     }
@@ -198,18 +187,6 @@ export class LeonInstance implements LeonInstanceOptions {
     return leonInstance
   }
 
-  private incrementStartCount(): void {
-    this.startCount += 1
-    const instances = config.get('instances', [])
-    const instance = instances.find((instance) => {
-      return instance.name === this.name
-    })
-    if (instance != null) {
-      instance.startCount = this.startCount
-      config.set('instances', instances)
-    }
-  }
-
   public async delete(): Promise<void> {
     const instances = config.get('instances', [])
     const instanceIndex = instances.findIndex((instance) => {
@@ -236,8 +213,7 @@ export class LeonInstance implements LeonInstanceOptions {
       name: options.name,
       path: options.path,
       mode: options.mode,
-      birthDate: new Date().toISOString(),
-      startCount: 0
+      birthDate: new Date().toISOString()
     }
     leonInstance = new LeonInstance(instance)
     config.set('instances', [...config.get('instances', []), instance])

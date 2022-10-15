@@ -17,8 +17,7 @@ export const configSchema = {
       name: Type.String({ examples: ['Office'] }),
       path: Type.String({ examples: ['/home/user/.leon'] }),
       mode: instanceMode,
-      birthDate: Type.String({ examples: ['2021-04-26T13:47:41.319Z'] }),
-      startCount: Type.Integer({ examples: [1] })
+      birthDate: Type.String({ examples: ['2021-04-26T13:47:41.319Z'] })
     }),
     { default: [] }
   )

@@ -30,8 +30,7 @@ await tap.test('leon delete', async (t) => {
       name: 'random-name',
       birthDate: 'birthDate',
       mode: 'docker',
-      path: '/path',
-      startCount: 0
+      path: '/path'
     }
     const leonInstance = new LeonInstance(leonInstanceOptions)
     const configData: ConfigData = {
