@@ -1,23 +1,14 @@
 import path from 'node:path'
 import os from 'node:os'
-import fs from 'node:fs'
 import crypto from 'node:crypto'
-import stream from 'node:stream'
 
-import axios from 'axios'
 import ora from 'ora'
-import extractZip from 'extract-zip'
 import simpleGit from 'simple-git'
 import { readPackage } from 'read-pkg'
 
-import {
-  createTemporaryEmptyFolder,
-  TEMPORARY_PATH
-} from '../utils/createTemporaryEmptyFolder.js'
 import { isExistingPath } from '../utils/isExistingPath.js'
 import { LeonInstance } from './LeonInstance.js'
 import { LogError } from '../utils/LogError.js'
-import { copyDirectory } from '../utils/copyDirectory.js'
 import { Requirements } from './Requirements.js'
 import { config } from './Config.js'
 
@@ -26,9 +17,7 @@ export interface LeonOptions {
   birthPath?: string
   version?: string
   useDocker?: boolean
-  useGit?: boolean
   name?: string
-  interactive?: boolean
 }
 
 export class Leon implements LeonOptions {
@@ -41,9 +30,7 @@ export class Leon implements LeonOptions {
   public birthPath: string
   public version?: string
   public useDocker: boolean
-  public useGit: boolean
   public name: string
-  public interactive: boolean
 
   constructor(options: LeonOptions) {
     const {
@@ -51,94 +38,32 @@ export class Leon implements LeonOptions {
       birthPath,
       version,
       useDocker = false,
-      useGit = true,
-      name = crypto.randomUUID(),
-      interactive = false
+      name = crypto.randomUUID()
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
       birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
     this.version = version
     this.useDocker = useDocker
-    this.useGit = useGit
     this.name = name
-    this.interactive = interactive
   }
 
-  public getSourceCodeInformation(): {
-    url: string
-    zipName: string
-    folderName: string
-  } {
-    let url = `${Leon.GITHUB_URL}/archive`
-    let version = this.useDevelopGitBranch ? 'develop' : 'master'
-    if (this.version != null) {
-      version = this.version
-      url += '/refs/tags'
-    }
-    const folderName = `${Leon.NAME}-${version}`
-    const zipName = `${version}.zip`
-    return {
-      url: `${url}/${zipName}`,
-      zipName,
-      folderName
-    }
-  }
-
-  public async getSourceCode(): Promise<string> {
-    const requirements = Requirements.getInstance()
-    const loader = ora(`Downloading Leon source code`).start()
-    try {
-      await createTemporaryEmptyFolder()
-      let sourceCodePath = ''
-      const hasGitInstalled = await requirements.checkGit()
-      if (hasGitInstalled && this.useGit) {
-        sourceCodePath = path.join(TEMPORARY_PATH, 'leon-ai-git')
-        await simpleGit().clone(Leon.GITHUB_URL, sourceCodePath)
-        const git = simpleGit({ baseDir: sourceCodePath })
-        if (this.useDevelopGitBranch) {
-          await git.checkout('develop')
-        } else if (this.version != null) {
-          await git.checkout(this.version)
-        } else {
-          await git.checkout('master')
-        }
-      } else {
-        sourceCodePath = await this.download()
-      }
-      loader.succeed()
-      return sourceCodePath
-    } catch (error: any) {
-      loader.fail()
+  public async manageGit(): Promise<void> {
+    const dotGitPath = path.join(this.birthPath, '.git')
+    if (!(await isExistingPath(dotGitPath))) {
       throw new LogError({
-        message: `Could not download Leon source code`,
-        logFileMessage: error.toString()
+        message: `Leon source code is not a git repository.`
       })
     }
-  }
-
-  public async download(): Promise<string> {
-    const sourceCodeInformation = this.getSourceCodeInformation()
-    const destination = path.join(TEMPORARY_PATH, sourceCodeInformation.zipName)
-    const extractedPath = path.join(
-      TEMPORARY_PATH,
-      sourceCodeInformation.folderName
-    )
-    const sourceCodeWriter = fs.createWriteStream(destination)
-    const { data } = await axios.get(sourceCodeInformation.url, {
-      responseType: 'stream'
-    })
-    data.pipe(sourceCodeWriter)
-    await stream.promises.finished(sourceCodeWriter)
-    await extractZip(destination, { dir: TEMPORARY_PATH })
-    return extractedPath
-  }
-
-  public async transferSourceCodeFromTemporaryToBirthPath(
-    sourceCodePath: string
-  ): Promise<void> {
-    await fs.promises.mkdir(this.birthPath, { recursive: true })
-    await copyDirectory(sourceCodePath, this.birthPath)
+    const git = simpleGit({ baseDir: this.birthPath })
+    if (this.useDevelopGitBranch) {
+      await git.checkout('develop')
+    } else if (this.version != null) {
+      await git.checkout(this.version)
+    } else {
+      await git.checkout('master')
+    }
+    await git.pull()
   }
 
   public async createBirth(): Promise<void> {
@@ -178,8 +103,26 @@ export class Leon implements LeonOptions {
     }
     const mode = this.useDocker ? 'docker' : 'classic'
     if (!cwdIsLeonCore) {
-      const sourceCodePath = await this.getSourceCode()
-      await this.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
+      const requirements = Requirements.getInstance()
+      const loader = ora(`Downloading Leon source code`).start()
+      try {
+        const hasGitInstalled = await requirements.checkGit()
+        if (!hasGitInstalled) {
+          loader.fail()
+          throw new LogError({
+            message: `Git is not installed, please install it before using Leon.`
+          })
+        }
+        await simpleGit().clone(Leon.GITHUB_URL, this.birthPath)
+        await this.manageGit()
+        loader.succeed()
+      } catch (error: any) {
+        loader.fail()
+        throw new LogError({
+          message: `Could not download Leon source code`,
+          logFileMessage: error.toString()
+        })
+      }
     }
     const leonInstance = await LeonInstance.create({
       name: this.name,

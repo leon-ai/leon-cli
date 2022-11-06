@@ -24,10 +24,6 @@ export class UpdateCommand extends Command {
     description: 'Update Leon to latest `develop` Git branch.'
   })
 
-  public useGit = Option.Boolean('--git', true, {
-    description: 'Update Leon with Git (if possible).'
-  })
-
   async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
@@ -36,9 +32,7 @@ export class UpdateCommand extends Command {
         birthPath: leonInstance.path,
         version: this.version,
         useDocker: leonInstance.mode === 'docker',
-        useGit: this.useGit,
-        name: leonInstance.name,
-        interactive: false
+        name: leonInstance.name
       })
       const oldVersion = await leonInstance.getVersion()
       console.log(

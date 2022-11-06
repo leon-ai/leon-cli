@@ -8,8 +8,7 @@ export class CreateBirthCommand extends Command {
   static paths = [['create', 'birth']]
 
   static usage = {
-    description:
-      'Brings Leon to life by checking all the requirements and install them with your approval.'
+    description: 'Brings Leon to life.'
   }
 
   public useDevelopGitBranch = Option.Boolean('--develop', false, {
@@ -18,10 +17,6 @@ export class CreateBirthCommand extends Command {
 
   public useDocker = Option.Boolean('--docker', false, {
     description: 'Install Leon with Docker.'
-  })
-
-  public useGit = Option.Boolean('--git', true, {
-    description: 'Install Leon with Git (if possible).'
   })
 
   public birthPath = Option.String('--path', {
@@ -36,10 +31,6 @@ export class CreateBirthCommand extends Command {
     description: 'Give a name to your Leon instance.'
   })
 
-  public interactive = Option.Boolean('--interactive', {
-    description: 'Interactive mode (ask questions).'
-  })
-
   async execute(): Promise<number> {
     try {
       const leon = new Leon({
@@ -47,9 +38,7 @@ export class CreateBirthCommand extends Command {
         birthPath: this.birthPath,
         version: this.version,
         useDocker: this.useDocker,
-        useGit: this.useGit,
-        name: this.name,
-        interactive: this.interactive
+        name: this.name
       })
       await leon.createBirth()
       console.log(`\n${chalk.bold.green('Success:')} Leon is born! 🎉`)

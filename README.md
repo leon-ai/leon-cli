@@ -29,6 +29,7 @@ More commands are coming to **improve your comfort** and make the use of Leon ev
 
 ### Prerequisites
 
+- [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/) >= 16.0.0
 - [npm](https://npmjs.com/) >= 8.0.0
 

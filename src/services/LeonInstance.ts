@@ -209,7 +209,8 @@ export class LeonInstance implements LeonInstanceOptions {
     let leonInstance = await LeonInstance.find(options.name)
     if (leonInstance != null) {
       throw new LogError({
-        message: 'This instance name already exists, please choose another name'
+        message:
+          'This instance name already exists, please choose another name.'
       })
     }
     const instance = {
@@ -234,14 +235,9 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async update(leon: Leon): Promise<void> {
     const currentVersion = await this.getVersion()
-    const sourceCodePath = await leon.getSourceCode()
     const sourceCodeVersion = await this.getVersion()
     if (currentVersion !== sourceCodeVersion || leon.useDevelopGitBranch) {
-      await fs.promises.rm(this.path, {
-        force: true,
-        recursive: true
-      })
-      await leon.transferSourceCodeFromTemporaryToBirthPath(sourceCodePath)
+      await leon.manageGit()
       await this.configure()
     }
   }
