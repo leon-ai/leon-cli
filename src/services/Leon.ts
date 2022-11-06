@@ -3,7 +3,7 @@ import os from 'node:os'
 import crypto from 'node:crypto'
 
 import ora from 'ora'
-import simpleGit from 'simple-git'
+import simpleGit, { CheckRepoActions } from 'simple-git'
 import { readPackage } from 'read-pkg'
 
 import { isExistingPath } from '../utils/isExistingPath.js'
@@ -49,13 +49,13 @@ export class Leon implements LeonOptions {
   }
 
   public async manageGit(): Promise<void> {
-    const dotGitPath = path.join(this.birthPath, '.git')
-    if (!(await isExistingPath(dotGitPath))) {
+    const git = simpleGit({ baseDir: this.birthPath })
+    if (!(await git.checkIsRepo(CheckRepoActions.IS_REPO_ROOT))) {
       throw new LogError({
         message: `Leon source code is not a git repository.`
       })
     }
-    const git = simpleGit({ baseDir: this.birthPath })
+    await git.reset(['--hard'])
     if (this.useDevelopGitBranch) {
       await git.checkout('develop')
     } else if (this.version != null) {
