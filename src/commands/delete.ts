@@ -5,9 +5,9 @@ import { Log } from '../services/Log.js'
 import { Prompt } from '../services/Prompt.js'
 
 export class DeleteCommand extends Command {
-  static paths = [['delete']]
+  public static override paths = [['delete']]
 
-  static usage = {
+  public static override usage = {
     description: 'Delete a Leon instance.'
   }
 
@@ -19,7 +19,7 @@ export class DeleteCommand extends Command {
     description: 'Skip all questions with a "yes" answer.'
   })
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const { yes = false } = this
       const leonInstance = await LeonInstance.get(this.name)

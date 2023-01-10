@@ -5,9 +5,9 @@ import { Leon } from '../../services/Leon.js'
 import { Log } from '../../services/Log.js'
 
 export class CreateBirthCommand extends Command {
-  static paths = [['create', 'birth']]
+  public static override paths = [['create', 'birth']]
 
-  static usage = {
+  public static override usage = {
     description: 'Brings Leon to life.'
   }
 
@@ -31,7 +31,7 @@ export class CreateBirthCommand extends Command {
     description: 'Give a name to your Leon instance.'
   })
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const leon = new Leon({
         useDevelopGitBranch: this.useDevelopGitBranch,

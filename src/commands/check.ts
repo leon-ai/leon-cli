@@ -4,9 +4,9 @@ import { LeonInstance } from '../services/LeonInstance.js'
 import { Log } from '../services/Log.js'
 
 export class CheckCommand extends Command {
-  static paths = [['check']]
+  public static override paths = [['check']]
 
-  static usage = {
+  public static override usage = {
     description: 'Check how the setup went.'
   }
 
@@ -14,11 +14,11 @@ export class CheckCommand extends Command {
     description: 'Name of the Leon instance.'
   })
 
-  static async run(leonInstance: LeonInstance): Promise<void> {
+  public static async run(leonInstance: LeonInstance): Promise<void> {
     await leonInstance.check()
   }
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.check()

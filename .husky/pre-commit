@@ -3,3 +3,4 @@
 
 npm run lint:staged
 npm run build
+npm run build:typescript

@@ -32,7 +32,7 @@ export class Log {
     projectName: packageJSON.name,
     projectVersion: packageJSON.version,
     serialize: (value) => {
-      return value.errors as string
+      return value['errors'] as string
     },
     deserialize: (value) => {
       return { errors: value }
@@ -51,7 +51,7 @@ export class Log {
       console.error(
         `For further information, look at the log file located at ${Log.errorsConfig.path}`
       )
-      if (process.env.NODE_ENV === 'test') {
+      if (process.env['NODE_ENV'] === 'test') {
         console.error(data)
       }
       Log.errorsConfig.set('errors', data)

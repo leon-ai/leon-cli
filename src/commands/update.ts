@@ -6,9 +6,9 @@ import { LeonInstance } from '../services/LeonInstance.js'
 import { Log } from '../services/Log.js'
 
 export class UpdateCommand extends Command {
-  static paths = [['update']]
+  public static override paths = [['update']]
 
-  static usage = {
+  public static override usage = {
     description: 'Update a Leon instance.'
   }
 
@@ -24,7 +24,7 @@ export class UpdateCommand extends Command {
     description: 'Update Leon to latest `develop` Git branch.'
   })
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
       const leon = new Leon({

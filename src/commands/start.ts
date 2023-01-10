@@ -5,9 +5,9 @@ import { LeonInstance } from '../services/LeonInstance.js'
 import { Log } from '../services/Log.js'
 
 export class StartCommand extends Command {
-  static paths = [['start']]
+  public static override paths = [['start']]
 
-  static usage = {
+  public static override usage = {
     description: 'Start a Leon instance.'
   }
 
@@ -20,11 +20,11 @@ export class StartCommand extends Command {
     description: 'Run a Leon instance with a specific name.'
   })
 
-  static async run(leonInstance: LeonInstance): Promise<void> {
+  public static async run(leonInstance: LeonInstance): Promise<void> {
     await leonInstance.start()
   }
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const leonInstance = await LeonInstance.get(this.name)
       await leonInstance.start(this.port)

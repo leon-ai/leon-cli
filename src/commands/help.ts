@@ -1,9 +1,9 @@
 import { Builtins } from 'clipanion'
 
 export class HelpCommand extends Builtins.HelpCommand {
-  static paths = [['help']]
+  public static override paths = [['help']]
 
-  static usage = {
+  public static override usage = {
     description: 'List all commands available in the CLI.'
   }
 }

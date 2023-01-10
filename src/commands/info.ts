@@ -6,9 +6,9 @@ import { LeonInstance } from '../services/LeonInstance.js'
 import { Log } from '../services/Log.js'
 
 export class InfoCommand extends Command {
-  static paths = [['info']]
+  public static override paths = [['info']]
 
-  static usage = {
+  public static override usage = {
     description: 'Get basic information about installed Leon instances.'
   }
 
@@ -22,7 +22,7 @@ export class InfoCommand extends Command {
     console.log(chalk.cyan('leon create birth'))
   }
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       if (this.name != null) {
         console.log()

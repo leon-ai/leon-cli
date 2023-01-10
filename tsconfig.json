@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -7,9 +8,8 @@
     "outDir": "./build",
     "rootDir": "./src",
     "noEmit": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true
+    "exactOptionalPropertyTypes": false,
+    "checkJs": false
   },
   "exclude": ["node_modules", "temp", "tmp"]
 }

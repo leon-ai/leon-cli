@@ -18,9 +18,9 @@ const BUILTIN_COMMANDS: Builtin = {
 const BUILTIN_COMMANDS_KEYS = Object.keys(BUILTIN_COMMANDS)
 
 export class RunCommand extends Command {
-  static paths = [['run']]
+  public static override paths = [['run']]
 
-  static usage = {
+  public static override usage = {
     description:
       'Run a npm script from a Leon Instance (e.g: `leon run train` runs `npm run train` in the leon instance folder).'
   }
@@ -31,7 +31,7 @@ export class RunCommand extends Command {
 
   public script = Option.Proxy()
 
-  async execute(): Promise<number> {
+  public async execute(): Promise<number> {
     try {
       const script = this.script.join(' ')
       const command = 'npm run ' + script
@@ -39,8 +39,11 @@ export class RunCommand extends Command {
       const isBuiltin = BUILTIN_COMMANDS_KEYS.includes(script)
       if (isBuiltin) {
         const runCommand = BUILTIN_COMMANDS[script]
-        await runCommand(leonInstance)
-        return 0
+        if (runCommand != null) {
+          await runCommand(leonInstance)
+          return 0
+        }
+        throw new Error('Unknown builtin command: ' + script)
       }
       process.chdir(leonInstance.path)
       await execaCommand(command, { stdio: 'inherit' })

@@ -85,7 +85,7 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async runScript(options: RunNpmScriptOptions): Promise<void> {
     const { command, loader, workingDirectory, verbose = false } = options
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env['NODE_ENV'] === 'test') {
       console.log(`Working directory: ${workingDirectory}`)
     }
     process.chdir(workingDirectory)
@@ -176,6 +176,9 @@ export class LeonInstance implements LeonInstanceOptions {
         throw logErrorAtLeastOneInstance
       }
       const firstInstance = instances[0]
+      if (firstInstance == null) {
+        throw logErrorAtLeastOneInstance
+      }
       instanceName = firstInstance.name
     }
     const leonInstance = await LeonInstance.find(instanceName)
