@@ -15,16 +15,16 @@ export const test3Start = async (): Promise<void> => {
     })
     try {
       await waitOn({
-        resources: [`http-get://localhost:${PORT}/`],
-        delay: 1000,
-        timeout: 480_000
+        resources: [`http-get://127.0.0.1:${PORT}/`],
+        delay: 10_000,
+        timeout: 600_000
       })
-      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10000 }, () => {
+      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10_000 }, () => {
         terminate(startSubprocess?.pid ?? 0)
       })
-      t.pass(`Success: Leon is running on http://localhost:${PORT}/`)
+      t.pass(`Success: Leon is running on http://127.0.0.1:${PORT}/`)
     } catch (error: any) {
-      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10000 }, () => {
+      terminate(startSubprocess.pid ?? 0, 'SIGINT', { timeout: 10_000 }, () => {
         terminate(startSubprocess?.pid ?? 0)
       })
       t.fail(error)
