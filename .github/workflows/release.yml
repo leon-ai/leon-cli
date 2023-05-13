@@ -7,6 +7,11 @@ on:
 jobs:
   release:
     runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'write'
+      issues: 'write'
+      pull-requests: 'write'
+      id-token: 'write'
     steps:
       - uses: 'actions/checkout@v3.5.2'
         with:
@@ -26,6 +31,9 @@ jobs:
         run: 'npm run build'
 
       - run: 'npm run build:typescript'
+
+      - name: 'Verify the integrity of provenance attestations and registry signatures for installed dependencies'
+        run: 'npm audit signatures'
 
       - name: 'Release'
         run: 'npm run release'
