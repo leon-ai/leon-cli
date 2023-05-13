@@ -10,16 +10,16 @@ jobs:
   lint:
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: 'actions/checkout@v3.5.0'
+      - uses: 'actions/checkout@v3.5.2'
 
-      - name: 'Use Node.js'
+      - name: 'Setup Node.js'
         uses: 'actions/setup-node@v3.6.0'
         with:
           node-version: 'lts/*'
           cache: 'npm'
 
-      - name: 'Install'
-        run: 'npm install'
+      - name: 'Install dependencies'
+        run: 'npm clean-install'
 
       - run: 'npm run lint:commit -- --to "${{ github.sha }}"'
       - run: 'npm run lint:editorconfig'

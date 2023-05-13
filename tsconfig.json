@@ -10,6 +10,5 @@
     "noEmit": true,
     "exactOptionalPropertyTypes": false,
     "checkJs": false
-  },
-  "exclude": ["node_modules", "temp", "tmp"]
+  }
 }
