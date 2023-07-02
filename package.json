@@ -36,7 +36,8 @@
     "provenance": true
   },
   "files": [
-    "build"
+    "build",
+    "!**/*.test.js"
   ],
   "main": "build/index.js",
   "bin": {
