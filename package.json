@@ -37,7 +37,8 @@
   },
   "files": [
     "build",
-    "!**/*.test.js"
+    "!**/*.test.js",
+    "!**/*.map"
   ],
   "main": "build/index.js",
   "bin": {
@@ -47,6 +48,7 @@
     "build": "rimraf ./build && swc ./src --out-dir ./build",
     "build:dev": "swc ./src --out-dir ./build --watch",
     "build:typescript": "tsc",
+    "start": "node --enable-source-maps build/index.js",
     "lint:commit": "commitlint",
     "lint:editorconfig": "editorconfig-checker",
     "lint:markdown": "markdownlint-cli2",

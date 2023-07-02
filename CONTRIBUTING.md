@@ -21,7 +21,7 @@ All work on **Leon** happens directly on [GitHub](https://github.com/leon-ai). B
 
 ```sh
 # Download the source code
-git clone https://github.com/leon-ai/leon-cli.git
+git clone git@github.com:leon-ai/leon-cli.git
 
 # Install npm dependencies
 npm install
