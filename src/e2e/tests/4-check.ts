@@ -1,10 +1,12 @@
-import tap from 'tap'
+import test from 'node:test'
+import assert from 'node:assert/strict'
+
 import { execa } from 'execa'
 
 export const test4Check = async (): Promise<void> => {
-  await tap.test('leon check', async (t) => {
+  await test('leon check', async () => {
     const result = await execa('leon', ['check'])
-    t.equal(result.exitCode, 0)
-    t.equal(result.stdout.includes('.: CHECKING :.'), true)
+    assert.strictEqual(result.exitCode, 0)
+    assert.strictEqual(result.stdout.includes('.: CHECKING :.'), true)
   })
 }

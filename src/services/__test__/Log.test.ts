@@ -1,6 +1,7 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
 import fs from 'node:fs'
 
-import tap from 'tap'
 import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
@@ -8,7 +9,7 @@ import chalk from 'chalk'
 import { LogError } from '../../utils/LogError.js'
 import { Log } from '../Log.js'
 
-await tap.test('services/Log', async (t) => {
+await test('services/Log', async (t) => {
   const log = Log.getInstance()
 
   t.afterEach(() => {
@@ -19,12 +20,12 @@ await tap.test('services/Log', async (t) => {
   await t.test('error', async (t) => {
     await t.test(
       'should only display the `message` with `logFileMessage` not defined',
-      async (t) => {
+      async () => {
         sinon.stub(console, 'error').value(() => {})
         const message = 'message'
         const consoleErrorSpy = sinon.spy(console, 'error')
         log.error({ error: new LogError({ message }) })
-        t.equal(
+        assert.strictEqual(
           consoleErrorSpy.calledWith(`${chalk.red('Error:')} ${message}`),
           true
         )
@@ -33,7 +34,7 @@ await tap.test('services/Log', async (t) => {
 
     await t.test(
       'should display the `message` and write to log file the `logFileMessage`',
-      async (t) => {
+      async () => {
         fsMock({
           [Log.errorsConfig.path]: ''
         })
@@ -44,13 +45,13 @@ await tap.test('services/Log', async (t) => {
         let fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
           encoding: 'utf-8'
         })
-        t.equal(fileContent.length, 0)
+        assert.strictEqual(fileContent.length, 0)
         log.error({ error: new LogError({ message, logFileMessage }) })
-        t.equal(
+        assert.strictEqual(
           consoleErrorSpy.calledWith(`${chalk.red('Error:')} ${message}`),
           true
         )
-        t.equal(
+        assert.strictEqual(
           consoleErrorSpy.calledWith(
             `For further information, look at the log file located at ${Log.errorsConfig.path}`
           ),
@@ -59,8 +60,8 @@ await tap.test('services/Log', async (t) => {
         fileContent = await fs.promises.readFile(Log.errorsConfig.path, {
           encoding: 'utf-8'
         })
-        t.equal(fileContent.includes(message), true)
-        t.equal(fileContent.includes(logFileMessage), true)
+        assert.strictEqual(fileContent.includes(message), true)
+        assert.strictEqual(fileContent.includes(logFileMessage), true)
       }
     )
   })

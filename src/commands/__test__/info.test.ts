@@ -1,4 +1,6 @@
-import tap from 'tap'
+import test from 'node:test'
+import assert from 'node:assert/strict'
+
 import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
@@ -31,20 +33,20 @@ const birthDayString = date.format(
   'DD/MM/YYYY - HH:mm:ss'
 )
 
-await tap.test('leon info', async (t) => {
+await test('leon info', async (t) => {
   t.afterEach(() => {
     fsMock.restore()
     sinon.restore()
   })
 
-  await t.test('should be instance of the command', async (t) => {
+  await t.test('should be instance of the command', async () => {
     const command = cli.process(['info'])
-    t.equal(command instanceof InfoCommand, true)
+    assert.strictEqual(command instanceof InfoCommand, true)
   })
 
   await t.test(
     'should succeeds and display information about instance',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
       fsMock({
@@ -55,8 +57,11 @@ await tap.test('leon info', async (t) => {
       })
       const command = cli.process(['info'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 0)
-      t.equal(consoleLogSpy.calledWith(chalk.cyan('\nLeon instances:\n')), true)
+      assert.strictEqual(exitCode, 0)
+      assert.strictEqual(
+        consoleLogSpy.calledWith(chalk.cyan('\nLeon instances:\n')),
+        true
+      )
       let infoResult = table([
         [chalk.bold('Name'), leonInstance.name],
         [chalk.bold('Path'), leonInstance.path],
@@ -65,13 +70,13 @@ await tap.test('leon info', async (t) => {
         [chalk.bold('Version'), version]
       ])
       infoResult += '\n------------------------------\n\n'
-      t.equal(consoleLogSpy.calledWith(infoResult), true)
+      assert.strictEqual(consoleLogSpy.calledWith(infoResult), true)
     }
   )
 
   await t.test(
     'should succeeds and advise the user to create an instance',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
       fsMock({
@@ -79,24 +84,27 @@ await tap.test('leon info', async (t) => {
       })
       const command = cli.process(['info'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 0)
-      t.equal(
+      assert.strictEqual(exitCode, 0)
+      assert.strictEqual(
         consoleLogSpy.calledWith(chalk.bold('No Leon instances found.')),
         true
       )
-      t.equal(
+      assert.strictEqual(
         consoleLogSpy.calledWith(
           'You can give birth to a Leon instance using:'
         ),
         true
       )
-      t.equal(consoleLogSpy.calledWith(chalk.cyan('leon create birth')), true)
+      assert.strictEqual(
+        consoleLogSpy.calledWith(chalk.cyan('leon create birth')),
+        true
+      )
     }
   )
 
   await t.test(
     'should succeeds and advise the user to create an instance with instance path not found',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
       fsMock({
@@ -104,26 +112,29 @@ await tap.test('leon info', async (t) => {
       })
       const command = cli.process(['info'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 0)
-      t.equal(await isExistingPath(leonInstance.path), false)
-      t.strictSame(config.get('instances', []), [])
-      t.equal(
+      assert.strictEqual(exitCode, 0)
+      assert.strictEqual(await isExistingPath(leonInstance.path), false)
+      assert.deepStrictEqual(config.get('instances', []), [])
+      assert.strictEqual(
         consoleLogSpy.calledWith(chalk.bold('No Leon instances found.')),
         true
       )
-      t.equal(
+      assert.strictEqual(
         consoleLogSpy.calledWith(
           'You can give birth to a Leon instance using:'
         ),
         true
       )
-      t.equal(consoleLogSpy.calledWith(chalk.cyan('leon create birth')), true)
+      assert.strictEqual(
+        consoleLogSpy.calledWith(chalk.cyan('leon create birth')),
+        true
+      )
     }
   )
 
   await t.test(
     'should succeeds even with `package.json` of the instance not found',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'log').value(() => {})
       const consoleLogSpy = sinon.spy(console, 'log')
       fsMock({
@@ -132,8 +143,11 @@ await tap.test('leon info', async (t) => {
       })
       const command = cli.process(['info'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 0)
-      t.equal(consoleLogSpy.calledWith(chalk.cyan('\nLeon instances:\n')), true)
+      assert.strictEqual(exitCode, 0)
+      assert.strictEqual(
+        consoleLogSpy.calledWith(chalk.cyan('\nLeon instances:\n')),
+        true
+      )
       let infoResult = table([
         [chalk.bold('Name'), leonInstance.name],
         [chalk.bold('Path'), leonInstance.path],
@@ -142,11 +156,11 @@ await tap.test('leon info', async (t) => {
         [chalk.bold('Version'), '0.0.0']
       ])
       infoResult += '\n------------------------------\n\n'
-      t.equal(consoleLogSpy.calledWith(infoResult), true)
+      assert.strictEqual(consoleLogSpy.calledWith(infoResult), true)
     }
   )
 
-  await t.test('should fails and show a error message', async (t) => {
+  await t.test('should fails and show a error message', async () => {
     sinon.stub(console, 'error').value(() => {})
     const consoleErrorSpy = sinon.spy(console, 'error')
     fsMock({
@@ -155,8 +169,8 @@ await tap.test('leon info', async (t) => {
     })
     const command = cli.process(['info', '--name="random-name"'])
     const exitCode = await command.execute()
-    t.equal(exitCode, 1)
-    t.equal(
+    assert.strictEqual(exitCode, 1)
+    assert.strictEqual(
       consoleErrorSpy.calledWith(
         `${chalk.red(
           'Error:'

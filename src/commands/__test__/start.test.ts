@@ -1,4 +1,6 @@
-import tap from 'tap'
+import test from 'node:test'
+import assert from 'node:assert/strict'
+
 import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
@@ -23,20 +25,20 @@ const configData: ConfigData = {
   instances: [leonInstance]
 }
 
-await tap.test('leon start', async (t) => {
+await test('leon start', async (t) => {
   t.afterEach(() => {
     fsMock.restore()
     sinon.restore()
   })
 
-  await t.test('should be instance of the command', async (t) => {
+  await t.test('should be instance of the command', async () => {
     const command = cli.process(['start'])
-    t.equal(command instanceof StartCommand, true)
+    assert.strictEqual(command instanceof StartCommand, true)
   })
 
   await t.test(
     'should fails with instance not found (automatic config cleaner)',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'error').value(() => {})
       const consoleErrorSpy = sinon.spy(console, 'error')
       fsMock({
@@ -44,10 +46,10 @@ await tap.test('leon start', async (t) => {
       })
       const command = cli.process(['start'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 1)
-      t.equal(await isExistingPath(leonInstance.path), false)
-      t.strictSame(config.get('instances', []), [])
-      t.equal(
+      assert.strictEqual(exitCode, 1)
+      assert.strictEqual(await isExistingPath(leonInstance.path), false)
+      assert.deepStrictEqual(config.get('instances', []), [])
+      assert.strictEqual(
         consoleErrorSpy.calledWith(
           `${chalk.red('Error:')} You should have at least one instance.`
         ),
@@ -58,7 +60,7 @@ await tap.test('leon start', async (t) => {
 
   await t.test(
     'should fails with instance not found with specified name',
-    async (t) => {
+    async () => {
       sinon.stub(console, 'error').value(() => {})
       const consoleErrorSpy = sinon.spy(console, 'error')
       fsMock({
@@ -66,8 +68,8 @@ await tap.test('leon start', async (t) => {
       })
       const command = cli.process(['start', '--name="random-name"'])
       const exitCode = await command.execute()
-      t.equal(exitCode, 1)
-      t.equal(
+      assert.strictEqual(exitCode, 1)
+      assert.strictEqual(
         consoleErrorSpy.calledWith(
           `${chalk.red(
             'Error:'

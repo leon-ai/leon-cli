@@ -1,11 +1,12 @@
-import tap from 'tap'
+import test from 'node:test'
+import assert from 'node:assert/strict'
 
 import { UpdateCommand } from '../update.js'
 import { cli } from '../../cli.js'
 
-await tap.test('leon update', async (t) => {
-  await t.test('should be instance of the command', async (t) => {
+await test('leon update', async (t) => {
+  await t.test('should be instance of the command', async () => {
     const command = cli.process(['update'])
-    t.equal(command instanceof UpdateCommand, true)
+    assert.strictEqual(command instanceof UpdateCommand, true)
   })
 })

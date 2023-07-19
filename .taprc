@@ -1,9 +1,0 @@
-ts: false
-jsx: false
-flow: false
-check-coverage: false
-coverage: false
-timeout: 1200000
-
-files:
-  - 'build/**/*.test.js'

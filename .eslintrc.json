@@ -1,11 +1,9 @@
 {
   "extends": ["conventions", "prettier"],
   "plugins": ["prettier", "import", "unicorn"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
-  },
-  "env": {
-    "node": true
   },
   "rules": {
     "prettier/prettier": "error",
