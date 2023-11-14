@@ -7,6 +7,9 @@
     "moduleResolution": "NodeNext",
     "outDir": "./build",
     "rootDir": "./src",
+    "paths": {
+      "#src/*": ["./src/*"]
+    },
     "noEmit": true,
     "exactOptionalPropertyTypes": false,
     "checkJs": false

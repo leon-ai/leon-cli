@@ -3,10 +3,10 @@ import assert from 'node:assert/strict'
 
 import fsMock from 'mock-fs'
 
-import type { ConfigData } from '../Config.js'
-import { config } from '../Config.js'
-import type { LeonInstanceOptions } from '../LeonInstance.js'
-import { LeonInstance } from '../LeonInstance.js'
+import type { ConfigData } from '#src/services/Config.js'
+import { config } from '#src/services/Config.js'
+import type { LeonInstanceOptions } from '#src/services/LeonInstance.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',

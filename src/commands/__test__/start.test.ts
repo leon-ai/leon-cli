@@ -5,13 +5,13 @@ import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
 
-import { StartCommand } from '../start.js'
-import { cli } from '../../cli.js'
-import type { ConfigData } from '../../services/Config.js'
-import { config } from '../../services/Config.js'
-import type { LeonInstanceOptions } from '../../services/LeonInstance.js'
-import { LeonInstance } from '../../services/LeonInstance.js'
-import { isExistingPath } from '../../utils/isExistingPath.js'
+import { StartCommand } from '#src/commands/start.js'
+import { cli } from '#src/cli.js'
+import type { ConfigData } from '#src/services/Config.js'
+import { config } from '#src/services/Config.js'
+import type { LeonInstanceOptions } from '#src/services/LeonInstance.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',

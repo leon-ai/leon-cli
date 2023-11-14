@@ -1,9 +1,9 @@
 import { Command, Option } from 'clipanion'
 import chalk from 'chalk'
 
-import { config } from '../services/Config.js'
-import { LeonInstance } from '../services/LeonInstance.js'
-import { Log } from '../services/Log.js'
+import { config } from '#src/services/Config.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { Log } from '#src/services/Log.js'
 
 export class InfoCommand extends Command {
   public static override paths = [['info']]

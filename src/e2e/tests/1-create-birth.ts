@@ -4,8 +4,8 @@ import path from 'node:path'
 
 import { execa } from 'execa'
 
-import { Leon } from '../../services/Leon.js'
-import { isExistingPath } from '../../utils/isExistingPath.js'
+import { Leon } from '#src/services/Leon.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
 
 interface Options {
   useDocker?: boolean

@@ -40,14 +40,16 @@
     "!**/*.test.js",
     "!**/*.map"
   ],
+  "imports": {
+    "#src/*": "./build/*"
+  },
   "main": "build/index.js",
   "bin": {
     "leon": "build/index.js"
   },
   "scripts": {
-    "build": "rimraf ./build && swc ./src --out-dir ./build",
+    "build": "rimraf ./build && swc ./src --out-dir ./build && tsc",
     "build:dev": "swc ./src --out-dir ./build --watch",
-    "build:typescript": "tsc",
     "start": "node --enable-source-maps build/index.js",
     "lint:commit": "commitlint",
     "lint:editorconfig": "editorconfig-checker",

@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import { UpdateCommand } from '../update.js'
-import { cli } from '../../cli.js'
+import { UpdateCommand } from '#src/commands/update.js'
+import { cli } from '#src/cli.js'
 
 await test('leon update', async (t) => {
   await t.test('should be instance of the command', async () => {

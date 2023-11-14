@@ -30,8 +30,6 @@ jobs:
       - name: 'Build'
         run: 'npm run build'
 
-      - run: 'npm run build:typescript'
-
       - name: 'Verify the integrity of provenance attestations and registry signatures for installed dependencies'
         run: 'npm audit signatures'
 

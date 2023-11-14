@@ -7,14 +7,14 @@ import chalk from 'chalk'
 import { table } from 'table'
 import date from 'date-and-time'
 
-import { cli } from '../../cli.js'
-import { InfoCommand } from '../info.js'
-import type { ConfigData } from '../../services/Config.js'
-import { config } from '../../services/Config.js'
-import type { LeonInstanceOptions } from '../../services/LeonInstance.js'
-import { LeonInstance } from '../../services/LeonInstance.js'
-import { Log } from '../../services/Log.js'
-import { isExistingPath } from '../../utils/isExistingPath.js'
+import { cli } from '#src/cli.js'
+import { InfoCommand } from '#src/commands/info.js'
+import type { ConfigData } from '#src/services/Config.js'
+import { config } from '#src/services/Config.js'
+import type { LeonInstanceOptions } from '#src/services/LeonInstance.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { Log } from '#src/services/Log.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
 
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',

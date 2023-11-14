@@ -2,8 +2,8 @@
 import { Cli } from 'clipanion'
 import updateNotifier from 'update-notifier'
 
-import { cli } from './cli.js'
-import { packageJSON } from './packageJSON.js'
+import { cli } from '#src/cli.js'
+import { packageJSON } from '#src/packageJSON.js'
 
 const [, , ...arguments_] = process.argv
 

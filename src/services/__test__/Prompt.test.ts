@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Prompt } from '../Prompt.js'
+import { Prompt } from '#src/services/Prompt.js'
 
 await test('services/Prompt', async (t) => {
   await t.test('should accept valid answers', async () => {

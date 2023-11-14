@@ -1,10 +1,10 @@
 import { Command, Option } from 'clipanion'
 import { execaCommand } from 'execa'
 
-import { LeonInstance } from '../services/LeonInstance.js'
-import { Log } from '../services/Log.js'
-import { CheckCommand } from './check.js'
-import { StartCommand } from './start.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { Log } from '#src/services/Log.js'
+import { CheckCommand } from '#src/commands/check.js'
+import { StartCommand } from '#src/commands/start.js'
 
 interface Builtin {
   [key: string]: (leonInstance: LeonInstance) => Promise<void>

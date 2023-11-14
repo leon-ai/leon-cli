@@ -3,7 +3,7 @@ import Conf from 'conf'
 import type { Static } from '@sinclair/typebox'
 import { Type } from '@sinclair/typebox'
 
-import { packageJSON } from '../packageJSON.js'
+import { packageJSON } from '#src/packageJSON.js'
 
 export const instanceModes = [Type.Literal('classic'), Type.Literal('docker')]
 

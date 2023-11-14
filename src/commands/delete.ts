@@ -1,8 +1,8 @@
 import { Command, Option } from 'clipanion'
 
-import { LeonInstance } from '../services/LeonInstance.js'
-import { Log } from '../services/Log.js'
-import { Prompt } from '../services/Prompt.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { Log } from '#src/services/Log.js'
+import { Prompt } from '#src/services/Prompt.js'
 
 export class DeleteCommand extends Command {
   public static override paths = [['delete']]

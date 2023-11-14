@@ -5,7 +5,7 @@ import path from 'node:path'
 
 import { execa } from 'execa'
 
-import { LeonInstance } from '../../services/LeonInstance.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
 
 const TWENTY_MINUTES = 20 * 60 * 1000
 

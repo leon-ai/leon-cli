@@ -8,10 +8,10 @@ import { readPackage } from 'read-pkg'
 import { table } from 'table'
 import chalk from 'chalk'
 
-import { config } from './Config.js'
-import { LogError } from '../utils/LogError.js'
-import { isExistingPath } from '../utils/isExistingPath.js'
-import type { Leon } from './Leon.js'
+import { config } from '#src/services/Config.js'
+import { LogError } from '#src/utils/LogError.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
+import type { Leon } from '#src/services/Leon.js'
 
 export type InstanceType = 'classic' | 'docker'
 

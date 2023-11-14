@@ -1,8 +1,8 @@
 import { Command, Option } from 'clipanion'
 import chalk from 'chalk'
 
-import { Leon } from '../../services/Leon.js'
-import { Log } from '../../services/Log.js'
+import { Leon } from '#src/services/Leon.js'
+import { Log } from '#src/services/Log.js'
 
 export class CreateBirthCommand extends Command {
   public static override paths = [['create', 'birth']]

@@ -1,15 +1,15 @@
 import { Builtins, Cli } from 'clipanion'
 
-import { Leon } from './services/Leon.js'
-import { packageJSON } from './packageJSON.js'
-import { CreateBirthCommand } from './commands/create/birth.js'
-import { CheckCommand } from './commands/check.js'
-import { HelpCommand } from './commands/help.js'
-import { InfoCommand } from './commands/info.js'
-import { DeleteCommand } from './commands/delete.js'
-import { RunCommand } from './commands/run.js'
-import { StartCommand } from './commands/start.js'
-import { UpdateCommand } from './commands/update.js'
+import { Leon } from '#src/services/Leon.js'
+import { packageJSON } from '#src/packageJSON.js'
+import { CreateBirthCommand } from '#src/commands/create/birth.js'
+import { CheckCommand } from '#src/commands/check.js'
+import { HelpCommand } from '#src/commands/help.js'
+import { InfoCommand } from '#src/commands/info.js'
+import { DeleteCommand } from '#src/commands/delete.js'
+import { RunCommand } from '#src/commands/run.js'
+import { StartCommand } from '#src/commands/start.js'
+import { UpdateCommand } from '#src/commands/update.js'
 
 export const cli = new Cli({
   binaryLabel: Leon.NAME,

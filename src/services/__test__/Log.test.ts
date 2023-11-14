@@ -6,8 +6,8 @@ import sinon from 'sinon'
 import fsMock from 'mock-fs'
 import chalk from 'chalk'
 
-import { LogError } from '../../utils/LogError.js'
-import { Log } from '../Log.js'
+import { LogError } from '#src/utils/LogError.js'
+import { Log } from '#src/services/Log.js'
 
 await test('services/Log', async (t) => {
   const log = Log.getInstance()

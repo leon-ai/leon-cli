@@ -1,8 +1,8 @@
 import Conf from 'conf'
 import chalk from 'chalk'
 
-import { LogError } from '../utils/LogError.js'
-import { Leon } from './Leon.js'
+import { LogError } from '#src/utils/LogError.js'
+import { Leon } from '#src/services/Leon.js'
 import { packageJSON } from '../packageJSON.js'
 
 interface LogErrorOptions {

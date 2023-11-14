@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import fsMock from 'mock-fs'
 
-import { isExistingPath } from '../isExistingPath.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
 
 await test('utils/isExistingPath', async (t) => {
   t.afterEach(() => {

@@ -6,11 +6,11 @@ import ora from 'ora'
 import { simpleGit, CheckRepoActions } from 'simple-git'
 import { readPackage } from 'read-pkg'
 
-import { isExistingPath } from '../utils/isExistingPath.js'
-import { LeonInstance } from './LeonInstance.js'
-import { LogError } from '../utils/LogError.js'
-import { Requirements } from './Requirements.js'
-import { config } from './Config.js'
+import { isExistingPath } from '#src/utils/isExistingPath.js'
+import { LeonInstance } from '#src/services/LeonInstance.js'
+import { LogError } from '#src/utils/LogError.js'
+import { Requirements } from '#src/services/Requirements.js'
+import { config } from '#src/services/Config.js'
 
 export interface LeonOptions {
   useDevelopGitBranch?: boolean
