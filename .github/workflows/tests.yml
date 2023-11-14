@@ -10,10 +10,10 @@ jobs:
   test-unit:
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: 'actions/checkout@v3.5.3'
+      - uses: 'actions/checkout@v4.1.1'
 
       - name: 'Setup Node.js'
-        uses: 'actions/setup-node@v3.6.0'
+        uses: 'actions/setup-node@v4.0.0'
         with:
           node-version: '20.x'
           cache: 'npm'
@@ -31,7 +31,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     timeout-minutes: 15
     steps:
-      - uses: 'actions/checkout@v3.5.3'
+      - uses: 'actions/checkout@v4.1.1'
 
       - name: 'Setup Docker'
         uses: 'actions-hub/docker/cli@master'
@@ -39,7 +39,7 @@ jobs:
           SKIP_LOGIN: true
 
       - name: 'Setup Node.js'
-        uses: 'actions/setup-node@v3.6.0'
+        uses: 'actions/setup-node@v4.0.0'
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -69,10 +69,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: 'actions/checkout@v3.5.3'
+      - uses: 'actions/checkout@v4.1.1'
 
       - name: 'Setup Node.js'
-        uses: 'actions/setup-node@v3.6.0'
+        uses: 'actions/setup-node@v4.0.0'
         with:
           node-version: '20.x'
           cache: 'npm'

@@ -3,7 +3,7 @@ import os from 'node:os'
 import crypto from 'node:crypto'
 
 import ora from 'ora'
-import simpleGit, { CheckRepoActions } from 'simple-git'
+import { simpleGit, CheckRepoActions } from 'simple-git'
 import { readPackage } from 'read-pkg'
 
 import { isExistingPath } from '../utils/isExistingPath.js'
