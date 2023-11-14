@@ -31,7 +31,6 @@ await test('leon delete', async (t) => {
     const leonInstanceOptions: LeonInstanceOptions = {
       name: 'random-name',
       birthDate: 'birthDate',
-      mode: 'docker',
       path: '/path'
     }
     const leonInstance = new LeonInstance(leonInstanceOptions)

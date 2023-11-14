@@ -16,7 +16,6 @@ import { isExistingPath } from '#src/utils/isExistingPath.js'
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
   birthDate: '2022-02-20T10:11:33.315Z',
-  mode: 'docker',
   path: '/path'
 }
 

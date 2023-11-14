@@ -5,18 +5,11 @@ import { Type } from '@sinclair/typebox'
 
 import { packageJSON } from '#src/packageJSON.js'
 
-export const instanceModes = [Type.Literal('classic'), Type.Literal('docker')]
-
-const instanceMode = Type.Union(instanceModes)
-
-export type InstanceMode = Static<typeof instanceMode>
-
 export const configSchema = {
   instances: Type.Array(
     Type.Object({
       name: Type.String({ examples: ['Office'] }),
       path: Type.String({ examples: ['/home/user/.leon'] }),
-      mode: instanceMode,
       birthDate: Type.String({ examples: ['2021-04-26T13:47:41.319Z'] })
     }),
     { default: [] }

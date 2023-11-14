@@ -38,6 +38,7 @@
   "files": [
     "build",
     "!**/*.test.js",
+    "!**/*.test.d.ts",
     "!**/*.map"
   ],
   "imports": {
@@ -58,8 +59,7 @@
     "lint:prettier": "prettier . --check",
     "lint:staged": "lint-staged",
     "test:unit": "cross-env NODE_ENV=test node --enable-source-maps --test build/",
-    "test:e2e-docker": "cross-env NODE_ENV=test node --enable-source-maps --test ./build/e2e/docker.test.e2e.js",
-    "test:e2e-classic": "cross-env NODE_ENV=test node --enable-source-maps --test ./build/e2e/classic.test.e2e.js",
+    "test:e2e": "cross-env NODE_ENV=test node --enable-source-maps --test ./build/e2e/classic.test.e2e.js",
     "release": "semantic-release",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",

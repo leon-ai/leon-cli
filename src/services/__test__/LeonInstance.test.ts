@@ -11,7 +11,6 @@ import { LeonInstance } from '#src/services/LeonInstance.js'
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
   birthDate: 'birthDate',
-  mode: 'docker',
   path: '/path'
 }
 

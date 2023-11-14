@@ -31,7 +31,6 @@ export class UpdateCommand extends Command {
         useDevelopGitBranch: this.useDevelopGitBranch,
         birthPath: leonInstance.path,
         version: this.version,
-        useDocker: leonInstance.mode === 'docker',
         name: leonInstance.name
       })
       const oldVersion = await leonInstance.getVersion()

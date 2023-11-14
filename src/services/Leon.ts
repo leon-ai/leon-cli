@@ -16,7 +16,6 @@ export interface LeonOptions {
   useDevelopGitBranch?: boolean
   birthPath?: string
   version?: string
-  useDocker?: boolean
   name?: string
 }
 
@@ -29,7 +28,6 @@ export class Leon implements LeonOptions {
   public useDevelopGitBranch: boolean
   public birthPath: string
   public version?: string
-  public useDocker: boolean
   public name: string
 
   constructor(options: LeonOptions) {
@@ -37,14 +35,12 @@ export class Leon implements LeonOptions {
       useDevelopGitBranch = false,
       birthPath,
       version,
-      useDocker = false,
       name = crypto.randomUUID()
     } = options
     this.useDevelopGitBranch = useDevelopGitBranch
     this.birthPath =
       birthPath != null ? path.resolve(birthPath) : Leon.DEFAULT_BIRTH_PATH
     this.version = version
-    this.useDocker = useDocker
     this.name = name
   }
 
@@ -101,7 +97,6 @@ export class Leon implements LeonOptions {
         message: `${this.name} already exists, please provide another instance name.`
       })
     }
-    const mode = this.useDocker ? 'docker' : 'classic'
     if (!cwdIsLeonCore) {
       const requirements = Requirements.getInstance()
       const loader = ora(`Downloading Leon source code`).start()
@@ -126,8 +121,7 @@ export class Leon implements LeonOptions {
     }
     const leonInstance = await LeonInstance.create({
       name: this.name,
-      path: this.birthPath,
-      mode
+      path: this.birthPath
     })
     await leonInstance.configure()
   }

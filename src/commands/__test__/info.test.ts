@@ -19,7 +19,6 @@ import { isExistingPath } from '#src/utils/isExistingPath.js'
 const leonInstanceOptions: LeonInstanceOptions = {
   name: 'random-name',
   birthDate: '2022-02-20T10:11:33.315Z',
-  mode: 'docker',
   path: '/path'
 }
 
@@ -65,7 +64,6 @@ await test('leon info', async (t) => {
       let infoResult = table([
         [chalk.bold('Name'), leonInstance.name],
         [chalk.bold('Path'), leonInstance.path],
-        [chalk.bold('Mode'), leonInstance.mode],
         [chalk.bold('Birth date'), birthDayString],
         [chalk.bold('Version'), version]
       ])
@@ -151,7 +149,6 @@ await test('leon info', async (t) => {
       let infoResult = table([
         [chalk.bold('Name'), leonInstance.name],
         [chalk.bold('Path'), leonInstance.path],
-        [chalk.bold('Mode'), leonInstance.mode],
         [chalk.bold('Birth date'), birthDayString],
         [chalk.bold('Version'), '0.0.0']
       ])

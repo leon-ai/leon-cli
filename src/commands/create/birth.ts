@@ -15,10 +15,6 @@ export class CreateBirthCommand extends Command {
     description: 'Install Leon from the `develop` Git branch.'
   })
 
-  public useDocker = Option.Boolean('--docker', false, {
-    description: 'Install Leon with Docker.'
-  })
-
   public birthPath = Option.String('--path', {
     description: 'Location of your Leon instance.'
   })
@@ -37,7 +33,6 @@ export class CreateBirthCommand extends Command {
         useDevelopGitBranch: this.useDevelopGitBranch,
         birthPath: this.birthPath,
         version: this.version,
-        useDocker: this.useDocker,
         name: this.name
       })
       await leon.createBirth()

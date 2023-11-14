@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { execa, execaCommand } from 'execa'
+import { execaCommand } from 'execa'
 import ora from 'ora'
 import date from 'date-and-time'
 import { readPackage } from 'read-pkg'
@@ -12,8 +12,6 @@ import { config } from '#src/services/Config.js'
 import { LogError } from '#src/utils/LogError.js'
 import { isExistingPath } from '#src/utils/isExistingPath.js'
 import type { Leon } from '#src/services/Leon.js'
-
-export type InstanceType = 'classic' | 'docker'
 
 export interface RunNpmScriptOptions {
   workingDirectory: string
@@ -28,7 +26,6 @@ export interface RunNpmScriptOptions {
 export interface CreateOptions {
   name: string
   path: string
-  mode: InstanceType
 }
 
 export interface LeonInstanceOptions extends CreateOptions {
@@ -41,46 +38,25 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public name: string
   public path: string
-  public mode: InstanceType
   public birthDate: string
 
   public constructor(options: LeonInstanceOptions) {
-    const { name, path, mode, birthDate } = options
+    const { name, path, birthDate } = options
     this.name = name
     this.path = path
-    this.mode = mode
     this.birthDate = birthDate
-  }
-
-  public async startDocker(LEON_PORT: string): Promise<void> {
-    await execa('npm', ['run', 'docker:run'], {
-      env: {
-        LEON_PORT
-      },
-      stdio: 'inherit'
-    })
-    process.on('SIGINT', (async () => {
-      await execa('docker-compose', ['down'])
-    }) as unknown as () => void)
-  }
-
-  public async startClassic(LEON_PORT: string): Promise<void> {
-    await execaCommand('npm start', {
-      env: {
-        LEON_PORT
-      },
-      stdio: 'inherit'
-    })
   }
 
   public async start(port?: number): Promise<void> {
     process.chdir(this.path)
     const LEON_PORT_STRING = port ?? LeonInstance.DEFAULT_START_PORT
     const LEON_PORT = LEON_PORT_STRING.toString()
-    if (this.mode === 'docker') {
-      return await this.startDocker(LEON_PORT)
-    }
-    return await this.startClassic(LEON_PORT)
+    await execaCommand('npm start', {
+      env: {
+        LEON_PORT
+      },
+      stdio: 'inherit'
+    })
   }
 
   public async runScript(options: RunNpmScriptOptions): Promise<void> {
@@ -107,20 +83,8 @@ export class LeonInstance implements LeonInstanceOptions {
 
   public async check(): Promise<void> {
     process.chdir(this.path)
-    const command =
-      'npm run ' + (this.mode === 'docker' ? 'docker:check' : 'check')
+    const command = 'npm run ' + 'check'
     await execaCommand(command, { stdio: 'inherit' })
-  }
-
-  public async buildDockerImage(): Promise<void> {
-    await this.runScript({
-      command: 'npm run docker:build',
-      loader: {
-        message: 'Building the Leon Docker image',
-        stderr: 'Could not build Leon with Docker'
-      },
-      workingDirectory: this.path
-    })
   }
 
   public async build(): Promise<void> {
@@ -219,7 +183,6 @@ export class LeonInstance implements LeonInstanceOptions {
     const instance = {
       name: options.name,
       path: options.path,
-      mode: options.mode,
       birthDate: new Date().toISOString()
     }
     leonInstance = new LeonInstance(instance)
@@ -228,12 +191,8 @@ export class LeonInstance implements LeonInstanceOptions {
   }
 
   public async configure(): Promise<void> {
-    if (this.mode === 'docker') {
-      await this.buildDockerImage()
-    } else {
-      await this.install()
-      await this.build()
-    }
+    await this.install()
+    await this.build()
   }
 
   public async update(leon: Leon): Promise<void> {
@@ -265,7 +224,6 @@ export class LeonInstance implements LeonInstanceOptions {
     return table([
       [chalk.bold('Name'), this.name],
       [chalk.bold('Path'), this.path],
-      [chalk.bold('Mode'), this.mode],
       [chalk.bold('Birth date'), birthDayString],
       [chalk.bold('Version'), version]
     ])
